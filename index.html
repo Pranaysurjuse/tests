@@ -2,134 +2,50 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>All Subjects - Progress Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TESTS</title>
 <style>
+  :root {
+    --paper: #101613; --card: #1a2420; --card-border: #2a3a33;
+    --teal: #2bb3a0; --teal-deep: #1f5c52; --text: #f2f5f3; --muted: #8fa79d;
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #f2f5f3; padding: 32px 20px 80px; }
-  .wrap { max-width: 860px; margin: 0 auto; }
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #3b9dff; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
-  h1 { font-size: 26px; margin: 0 0 4px; font-weight: 700; opacity:0; animation: fadeInUp 0.5s ease 0.05s forwards; }
-  .sub { color: #949494; font-size: 14px; margin: 0 0 28px; opacity:0; animation: fadeInUp 0.5s ease 0.1s forwards; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-  .kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
-  .kpi-card { background: #141414; border: 1px solid #2a2a2a; border-left: 3px solid var(--accent); border-radius: 12px; padding: 16px; opacity: 0; animation: fadeInUp 0.5s ease forwards; }
-  .kpi-name { font-family: 'Courier New', monospace; font-size: 12px; color: var(--accent); margin: 0 0 8px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .kpi-value { font-size: 26px; font-weight: 700; font-family: 'Courier New', monospace; margin: 0; }
-  .kpi-value small { font-size: 13px; color: #949494; font-weight: 400; }
-  .kpi-delta { font-size: 12px; margin: 8px 0 0; }
-  .kpi-delta.up { color: #6fcf97; }
-  .kpi-delta.down { color: #ef8b7c; }
-
-  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #3b9dff; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 18px; }
-
-  .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 14px; padding: 26px 22px 18px; }
-  .legend { display: flex; gap: 18px; margin-bottom: 16px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 7px; font-family: 'Courier New', monospace; font-size: 12.5px; color: #d8d8d8; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-
-  svg text { font-family: 'Courier New', monospace; }
-  .grid-line { stroke: #232323; stroke-width: 1; }
-  .axis-label { fill: #6b6b6b; font-size: 10.5px; }
-  .val-label { font-size: 11px; font-weight: 700; }
-  .trend-path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-  .pt { opacity: 0; animation: popIn 0.3s ease forwards; }
-  @keyframes popIn { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
-
-  .flag-note { margin-top: 18px; font-size: 12.5px; color: #ffb84d; background: #2b220f; padding: 10px 14px; border-radius: 8px; display: flex; gap: 8px; align-items: flex-start; }
-
-  .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at 20% -10%, #1c332c 0%, var(--paper) 55%);
+    color: var(--text); margin: 0; min-height: 100vh; padding: 32px 18px 48px;
+  }
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--teal); margin: 0 0 6px; }
+  h1 { font-size: 22px; margin: 0 0 6px; font-weight: 700; }
+  p.sub { color: var(--muted); font-size: 14px; margin: 0 0 26px; line-height: 1.4; }
+  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--teal); margin: 26px 0 12px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  a.card {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    height: 84px; padding: 16px; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
+    text-decoration: none; transition: transform 0.12s, border-color 0.12s;
+  }
+  a.card:active { transform: scale(0.97); }
+  a.card .icon { font-size: 20px; margin-bottom: 6px; }
+  .footer-note { margin-top: 34px; font-size: 12px; color: #56685f; text-align: center; }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <p class="eyebrow">Cognition Test Tracker &middot; All Subjects</p>
-  <h1>Progress across Chemistry, Physics &amp; Maths</h1>
-  <p class="sub">Every tracked test from 20/06 to 22/07, class tests and standalone practice tests combined.</p>
+  <p class="eyebrow">TESTS &middot; Home</p>
+  <h1>Cognition Test Tracker</h1>
+  <p class="sub">Live progress &mdash; always up to date, works on any network.</p>
 
-  <div class="kpi-row">
-    <div class="kpi-card" style="--accent:#3b9dff; animation-delay:0.05s;">
-      <p class="kpi-name">Chemistry</p>
-      <p class="kpi-value">78<small> / 100</small></p>
-      <p class="kpi-delta up">&#9650; +25 vs last (53&rarr;78)</p>
-    </div>
-    <div class="kpi-card" style="--accent:#6fcf97; animation-delay:0.1s;">
-      <p class="kpi-name">Physics</p>
-      <p class="kpi-value">60<small> / 100</small></p>
-      <p class="kpi-delta up">&#9650; +30 vs last (30&rarr;60)</p>
-    </div>
-    <div class="kpi-card" style="--accent:#ef8b7c; animation-delay:0.15s;">
-      <p class="kpi-name">Maths</p>
-      <p class="kpi-value">37<small> / 100</small></p>
-      <p class="kpi-delta down">&#9660; -33 vs last (70&rarr;37)</p>
-    </div>
+  <div class="section-label">Progress dashboards</div>
+  <div class="grid">
+    <a class="card" href="physics.html"><span class="icon">&#9889;</span>Physics</a>
+    <a class="card" href="chemistry.html"><span class="icon">&#129514;</span>Chemistry</a>
+    <a class="card" href="maths.html"><span class="icon">&#8721;</span>Maths</a>
+    <a class="card" href="combine.html"><span class="icon">&#128218;</span>Combine</a>
   </div>
 
-  <div class="section-label">Score trend</div>
-  <div class="chart-card">
-    <div class="legend">
-      <div class="legend-item"><span class="legend-dot" style="background:#3b9dff;"></span>Chemistry</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#6fcf97;"></span>Physics</div>
-      <div class="legend-item"><span class="legend-dot" style="background:#ef8b7c;"></span>Maths</div>
-    </div>
-    <svg viewBox="0 0 700 260" width="100%" style="overflow:visible;">
-      <line class="grid-line" x1="60" y1="30" x2="60" y2="200"></line>
-      <line class="grid-line" x1="60" y1="200" x2="660" y2="200"></line>
-      <line class="grid-line" x1="60" y1="115" x2="660" y2="115"></line>
-      <line class="grid-line" x1="60" y1="30" x2="660" y2="30"></line>
-      <text class="axis-label" x="26" y="204">0</text>
-      <text class="axis-label" x="18" y="119">50</text>
-      <text class="axis-label" x="12" y="34">100</text>
-
-      <!-- Chemistry: 20/06=58, 01/07=53, 22/07=78 -->
-      <path class="trend-path" stroke="#3b9dff" stroke-dasharray="700" stroke-dashoffset="700"
-        d="M 100,101 L 286,110 L 640,67"
-        style="animation: draw 1.3s ease 0.3s forwards;"></path>
-      <circle class="pt" cx="100" cy="101" r="5.5" fill="#3b9dff" style="animation-delay:1.3s;"></circle>
-      <circle class="pt" cx="286" cy="110" r="5.5" fill="#3b9dff" style="animation-delay:1.4s;"></circle>
-      <circle class="pt" cx="640" cy="67" r="6.5" fill="#3b9dff" style="animation-delay:1.5s;"></circle>
-      <text class="val-label" x="86" y="86" fill="#3b9dff">58</text>
-      <text class="val-label" x="272" y="128" fill="#3b9dff">53</text>
-      <text class="val-label" x="616" y="52" fill="#3b9dff">78</text>
-
-      <!-- Physics: 24/06=30, 04/07=60 -->
-      <path class="trend-path" stroke="#6fcf97" stroke-dasharray="300" stroke-dashoffset="300"
-        d="M 168,149 L 336,98"
-        style="animation: draw 1.3s ease 0.5s forwards;"></path>
-      <circle class="pt" cx="168" cy="149" r="5.5" fill="#6fcf97" style="animation-delay:1.5s;"></circle>
-      <circle class="pt" cx="336" cy="98" r="5.5" fill="#6fcf97" style="animation-delay:1.6s;"></circle>
-      <text class="val-label" x="154" y="167" fill="#6fcf97">30</text>
-      <text class="val-label" x="322" y="88" fill="#6fcf97">60</text>
-
-      <!-- Maths: 27/06=58, 08/07=70, 18/07=37 -->
-      <path class="trend-path" stroke="#ef8b7c" stroke-dasharray="500" stroke-dashoffset="500"
-        d="M 218,101 L 404,81 L 573,137"
-        style="animation: draw 1.3s ease 0.7s forwards;"></path>
-      <circle class="pt" cx="218" cy="101" r="5.5" fill="#ef8b7c" style="animation-delay:1.7s;"></circle>
-      <circle class="pt" cx="404" cy="81" r="5.5" fill="#ef8b7c" style="animation-delay:1.8s;"></circle>
-      <circle class="pt" cx="573" cy="137" r="6.5" fill="#ef8b7c" style="animation-delay:1.9s;"></circle>
-      <text class="val-label" x="204" y="86" fill="#ef8b7c">58</text>
-      <text class="val-label" x="390" y="66" fill="#ef8b7c">70</text>
-      <text class="val-label" x="580" y="155" fill="#ef8b7c">37</text>
-
-      <text class="axis-label" x="80" y="222">20 Jun</text>
-      <text class="axis-label" x="148" y="234">24 Jun</text>
-      <text class="axis-label" x="198" y="222">27 Jun</text>
-      <text class="axis-label" x="266" y="234">01 Jul</text>
-      <text class="axis-label" x="318" y="222">04 Jul</text>
-      <text class="axis-label" x="384" y="234">08 Jul</text>
-      <text class="axis-label" x="553" y="222">18 Jul</text>
-      <text class="axis-label" x="605" y="234">22 Jul</text>
-    </svg>
-
-    <div class="flag-note">&#9888; Maths dropped sharply on 18/07 (70&rarr;37) right after two straight improvements &mdash; worth a closer look at what happened that test specifically, rather than treating it as normal variance.</div>
-  </div>
-
-  <p class="footer-note">Live &middot; Cognition Test Tracker &middot; All Subjects</p>
-</div>
-
-<style>
-  @keyframes draw { to { stroke-dashoffset: 0; } }
-</style>
+  <p class="footer-note">Live &middot; Cognition Test Tracker</p>
 </body>
 </html>

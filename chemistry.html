@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemistry - Progress Dashboard</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #f2f5f3; padding: 32px 20px 80px; position:relative; overflow-x:hidden; }
+  .wrap { max-width: 860px; margin: 0 auto; position:relative; z-index:1; }
+  .home-pill{position:fixed;top:14px;left:14px;z-index:9999;background:#1a2420;border:1px solid #2a3a33;color:#f2f5f3;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12.5px;padding:7px 12px;border-radius:20px;
+    text-decoration:none;display:flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+
+  .bg-signature{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .bg-signature svg{ position:absolute; top:-8%; right:-12%; width:72vmin; height:72vmin; opacity:.4; }
+  .orbit{ animation:spin 18s linear infinite; transform-origin:100px 100px; }
+  .orbit2{ animation-duration:26s; animation-direction:reverse; }
+  @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .orbit{ animation:none; } }
+
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #3b9dff; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
+  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; opacity:0; animation: fadeInUp 0.5s ease 0.05s forwards; }
+  .sub { color: #949494; font-size: 13.5px; margin: 0 0 20px; opacity:0; animation: fadeInUp 0.5s ease 0.1s forwards; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .note-box { background: #0f1a2e; border: 1px solid #3b9dff55; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px; color: #d8d8d8; line-height: 1.5; opacity:0; animation: fadeInUp 0.5s ease 0.12s forwards; }
+  .note-box b { color: #3b9dff; }
+
+  .toggle-row { display: flex; gap: 8px; margin-bottom: 20px; opacity:0; animation: fadeInUp 0.5s ease 0.15s forwards; }
+  .toggle-btn {
+    font-family: 'Courier New', monospace; font-size: 12.5px; letter-spacing: 0.03em;
+    background: #141414; color: #949494; border: 1px solid #2a2a2a;
+    padding: 9px 18px; border-radius: 8px; cursor: pointer;
+  }
+  .toggle-btn.active { background: #3b9dff; color: #08160f; border-color: #3b9dff; font-weight: 700; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  .kpi-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; opacity: 0; animation: fadeInUp 0.5s ease forwards; }
+  .kpi-card.corner { border-color: #3b9dff44; }
+  .kpi-label { font-size: 11.5px; color: #949494; margin: 0 0 6px; }
+  .kpi-value { font-size: 22px; font-weight: 700; font-family: 'Courier New', monospace; margin: 0; }
+  .kpi-value small { font-size: 12px; color: #949494; font-weight: 400; }
+  .kpi-delta { font-size: 11.5px; margin: 6px 0 0; display: flex; align-items: center; gap: 4px; }
+  .kpi-delta.up { color: #6fcf97; }
+  .kpi-delta.down { color: #ef8b7c; }
+  .kpi-delta.tag { color: #6b6b6b; }
+
+  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #3b9dff; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 18px; }
+
+  .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px 20px 16px; position: relative; }
+  svg text { font-family: 'Courier New', monospace; }
+  .grid-line { stroke: #232323; stroke-width: 1; }
+  .axis-label { fill: #6b6b6b; font-size: 11px; }
+  .val-label { fill: #d8d8d8; font-size: 12px; font-weight: 700; }
+  .pt-hit { fill: transparent; cursor: pointer; }
+
+  .tooltip {
+    position: absolute; background: #1c1c1c; border: 1px solid #3b9dff; border-radius: 8px;
+    padding: 8px 12px; font-family: 'Courier New', monospace; font-size: 12px; color: #f2f5f3;
+    pointer-events: none; opacity: 0; transition: opacity 0.15s; white-space: nowrap; z-index: 10;
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip .t-date { color: #3b9dff; font-weight: 700; }
+  .tooltip .t-type { color: #6b6b6b; font-size: 11px; }
+
+  table.hist { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+  table.hist th { text-align: left; font-family: 'Courier New', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: #949494; padding: 8px 10px; border-bottom: 1px solid #2a2a2a; }
+  table.hist td { padding: 9px 10px; border-bottom: 1px solid #1e1e1e; font-family: 'Courier New', monospace; }
+  table.hist tr:last-child td { border-bottom: none; }
+  .rank-badge { font-size: 10.5px; padding: 2px 7px; border-radius: 5px; background: #1c3226; color: #6fcf97; }
+  .rank-badge.mid { background: #232323; color: #b8c9c1; }
+  .dash { color: #444; }
+
+  .empty-msg { font-size: 13px; color: #6b6b6b; padding: 40px 10px; text-align: center; }
+
+  .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
+</style>
+</head>
+<body>
+<a href="index.html" class="home-pill">&#8592; Home</a>
+<div class="bg-signature">
+  <svg viewBox="0 0 200 200">
+    <g class="orbit">
+      <polygon points="100,45 147,72 147,128 100,155 53,128 53,72" fill="none" stroke="#3b9dff" stroke-width="1.4" opacity=".6"></polygon>
+      <circle cx="100" cy="45" r="3" fill="#3b9dff"></circle>
+      <circle cx="147" cy="72" r="3" fill="#3b9dff"></circle>
+      <circle cx="147" cy="128" r="3" fill="#3b9dff"></circle>
+      <circle cx="100" cy="155" r="3" fill="#3b9dff"></circle>
+      <circle cx="53" cy="128" r="3" fill="#3b9dff"></circle>
+      <circle cx="53" cy="72" r="3" fill="#3b9dff"></circle>
+    </g>
+    <g class="orbit orbit2">
+      <ellipse cx="100" cy="100" rx="90" ry="30" fill="none" stroke="#3b9dff" stroke-width="1" opacity=".3"></ellipse>
+    </g>
+    <circle cx="100" cy="100" r="6" fill="#3b9dff" opacity=".55"></circle>
+  </svg>
+</div>
+<div class="wrap">
+  <p class="eyebrow">Chemistry &middot; Progress dashboard</p>
+  <h1>Score trend across tests</h1>
+  <p class="sub">Class tests and standalone practice tests, combined and cross-checked against verified answer keys.</p>
+
+  <div class="note-box"><b>Note:</b> tests here have different max marks (100 or 112), so the "Score" view plots percentage of max, not raw marks &mdash; this keeps every test comparable on the same scale.</div>
+
+  <div class="toggle-row">
+    <button class="toggle-btn active" id="btnScore">Score (%)</button>
+    <button class="toggle-btn" id="btnAccuracy">Accuracy</button>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="section-label">Trend</div>
+  <div class="chart-card">
+    <div id="chartArea"></div>
+    <div class="tooltip" id="tooltip"></div>
+  </div>
+
+  <div class="section-label">Full test history</div>
+  <div class="chart-card">
+    <table class="hist">
+      <thead><tr><th>Date</th><th>Type</th><th>Score</th><th>%</th><th>Accuracy</th><th>Class rank</th></tr></thead>
+      <tbody id="histBody"></tbody>
+    </table>
+  </div>
+
+  <p class="footer-note">Live &middot; Cognition Test Tracker &middot; Chemistry</p>
+</div>
+
+<script>
+  const ACCENT = '#3b9dff';
+  const DATA = [
+    {date: "2026-06-20", label: "20 Jun", score: 58, maxScore: 100, accuracy: null, type: "Class test", rank: 2, classSize: 38},
+    {date: "2026-07-01", label: "01 Jul", score: 53, maxScore: 100, accuracy: null, type: "Class test", rank: 1, classSize: 35},
+    {date: "2026-07-22", label: "22 Jul", score: 78, maxScore: 100, accuracy: 80.0, type: "Practice test", rank: null, classSize: null},
+    {date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null},
+    {date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null}
+  ];
+  DATA.forEach(d => d.percent = (d.score / d.maxScore) * 100);
+
+  let mode = 'score';
+
+  function renderKPIs() {
+    const kpiRow = document.getElementById('kpiRow');
+    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
+    if (pts.length === 0) { kpiRow.innerHTML = ''; return; }
+    const values = pts.map(d => mode === 'score' ? d.percent : d.accuracy);
+    const latest = values[values.length - 1];
+    const prev = values.length > 1 ? values[values.length - 2] : null;
+    const best = Math.max(...values);
+    const avg = (values.reduce((a,b) => a+b, 0) / values.length).toFixed(1);
+    const delta = prev !== null ? (latest - prev) : null;
+
+    kpiRow.innerHTML = `
+      <div class="kpi-card" style="animation-delay:0.05s;">
+        <p class="kpi-label">Latest</p>
+        <p class="kpi-value">${latest.toFixed(1)}<small>%</small></p>
+        ${delta !== null ? `<p class="kpi-delta ${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '&#9650;' : '&#9660;'} ${delta >= 0 ? '+' : ''}${delta.toFixed(1)} vs previous</p>` : `<p class="kpi-delta tag">first test</p>`}
+      </div>
+      <div class="kpi-card corner" style="animation-delay:0.1s;">
+        <p class="kpi-label">Previous test</p>
+        <p class="kpi-value">${prev !== null ? prev.toFixed(1) + '%' : '&mdash;'}</p>
+        <p class="kpi-delta tag">${pts.length > 1 ? pts[pts.length-2].label : ''}</p>
+      </div>
+      <div class="kpi-card" style="animation-delay:0.15s;">
+        <p class="kpi-label">Best</p>
+        <p class="kpi-value">${best.toFixed(1)}%</p>
+        <p class="kpi-delta tag">personal high</p>
+      </div>
+      <div class="kpi-card" style="animation-delay:0.2s;">
+        <p class="kpi-label">Average</p>
+        <p class="kpi-value">${avg}%</p>
+        <p class="kpi-delta tag">${pts.length} tests</p>
+      </div>
+    `;
+  }
+
+  function renderChart() {
+    const chartArea = document.getElementById('chartArea');
+    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
+
+    if (pts.length < 2) {
+      chartArea.innerHTML = `<div class="empty-msg">Not enough data yet.</div>`;
+      return;
+    }
+
+    const dates = pts.map(d => new Date(d.date).getTime());
+    const minD = Math.min(...dates), maxD = Math.max(...dates);
+    const span = Math.max(maxD - minD, 1);
+    const xFor = t => 60 + ((t - minD) / span) * 580;
+    const yFor = v => 200 - (v / 100) * 170;
+
+    const coords = pts.map((d, i) => ({ ...d, x: xFor(dates[i]), y: yFor(mode === 'score' ? d.percent : d.accuracy), v: mode === 'score' ? d.percent : d.accuracy }));
+    const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + ' ' + c.x.toFixed(1) + ',' + c.y.toFixed(1)).join(' ');
+    const areaD = pathD + ` L ${coords[coords.length-1].x.toFixed(1)},200 L ${coords[0].x.toFixed(1)},200 Z`;
+
+    let pointsSvg = '';
+    coords.forEach((c, i) => {
+      const isLatest = i === coords.length - 1;
+      pointsSvg += `
+        <circle class="pt-hit" cx="${c.x}" cy="${c.y}" r="16" data-idx="${i}"></circle>
+        <circle class="pt-visible" cx="${c.x}" cy="${c.y}" r="${isLatest ? 7 : 6}" fill="${ACCENT}" style="opacity:0;animation:popIn 0.3s ease ${1.5 + i*0.12}s forwards;pointer-events:none;"></circle>
+        <text class="val-label" x="${c.x - 14}" y="${c.y - 14}">${c.v.toFixed(1)}%</text>
+        <text class="axis-label" x="${c.x - 16}" y="222">${c.label}</text>
+      `;
+    });
+
+    chartArea.innerHTML = `
+      <svg viewBox="0 0 700 260" width="100%" style="overflow:visible;">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${ACCENT}" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="${ACCENT}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <style>
+          @keyframes draw { to { stroke-dashoffset: 0; } }
+          @keyframes popIn { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+          @keyframes fadeIn { to { opacity: 1; } }
+        </style>
+        <line class="grid-line" x1="60" y1="30" x2="660" y2="30"></line>
+        <line class="grid-line" x1="60" y1="115" x2="660" y2="115"></line>
+        <line class="grid-line" x1="60" y1="200" x2="660" y2="200"></line>
+        <line class="grid-line" x1="60" y1="30" x2="60" y2="200"></line>
+        <text class="axis-label" x="30" y="204">0</text>
+        <text class="axis-label" x="22" y="119">50</text>
+        <text class="axis-label" x="14" y="34">100</text>
+        <path d="${areaD}" fill="url(#areaGrad)" opacity="0" style="animation: fadeIn 1s ease 1.2s forwards;"></path>
+        <path d="${pathD}" stroke="${ACCENT}" stroke-width="2.5" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation: draw 1.3s ease 0.3s forwards;"></path>
+        ${pointsSvg}
+      </svg>
+    `;
+
+    const tooltip = document.getElementById('tooltip');
+    chartArea.querySelectorAll('.pt-hit').forEach(hit => {
+      hit.addEventListener('mouseenter', () => {
+        const idx = parseInt(hit.getAttribute('data-idx'));
+        const c = coords[idx];
+        tooltip.innerHTML = `<span class="t-date">${c.label}</span><br><span class="t-type">${c.type}</span><br>${mode === 'score' ? 'Score' : 'Accuracy'}: <strong>${c.v.toFixed(1)}%</strong>${mode === 'score' ? ' (' + c.score + '/' + c.maxScore + ')' : ''}${c.rank ? '<br>Rank: #' + c.rank + ' of ' + c.classSize : ''}`;
+        tooltip.classList.add('show');
+      });
+      hit.addEventListener('mousemove', (e) => {
+        const rect = chartArea.getBoundingClientRect();
+        tooltip.style.left = (e.clientX - rect.left + 14) + 'px';
+        tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+      });
+      hit.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+    });
+  }
+
+  function renderHistory() {
+    const tbody = document.getElementById('histBody');
+    tbody.innerHTML = DATA.slice().reverse().map(d => `
+      <tr>
+        <td>${d.label} '26</td>
+        <td>${d.type}</td>
+        <td>${d.score} / ${d.maxScore}</td>
+        <td>${d.percent.toFixed(1)}%</td>
+        <td>${d.accuracy !== null ? d.accuracy.toFixed(1) + '%' : '<span class="dash">&mdash;</span>'}</td>
+        <td>${d.rank ? `<span class="rank-badge ${d.rank > 3 ? 'mid' : ''}">#${d.rank} / ${d.classSize}</span>` : '<span class="dash">&mdash;</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function render() {
+    renderKPIs();
+    renderChart();
+    renderHistory();
+  }
+
+  document.getElementById('btnScore').addEventListener('click', function() {
+    mode = 'score';
+    this.classList.add('active');
+    document.getElementById('btnAccuracy').classList.remove('active');
+    render();
+  });
+  document.getElementById('btnAccuracy').addEventListener('click', function() {
+    mode = 'accuracy';
+    this.classList.add('active');
+    document.getElementById('btnScore').classList.remove('active');
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
