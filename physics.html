@@ -230,25 +230,25 @@
     }
     const max = 100;
     const xFor = i => 100 + i * (440/(pts.length-1));
-    const yFor = v => 170 - (v/max)*150;
+    const yFor = v => 260 - (v/max)*230;
     const coords = pts.map((d,i) => Object.assign({}, d, {x:xFor(i), y:yFor(mode==='score'?d.score:d.accuracy), v: mode==='score'?d.score:d.accuracy}));
     const pathD = coords.map((c,i) => (i===0?'M':'L')+' '+c.x.toFixed(1)+','+c.y.toFixed(1)).join(' ');
-    const areaD = pathD + ' L ' + coords[coords.length-1].x.toFixed(1) + ',170 L ' + coords[0].x.toFixed(1) + ',170 Z';
+    const areaD = pathD + ' L ' + coords[coords.length-1].x.toFixed(1) + ',260 L ' + coords[0].x.toFixed(1) + ',260 Z';
 
     let dots = '';
     coords.forEach((c,i) => {
       dots += '<circle cx="'+c.x+'" cy="'+c.y+'" r="5" fill="var(--bg)" stroke="'+colorFor(i)+'" stroke-width="2.5"></circle>' +
         '<text class="valtag" x="'+(c.x-10)+'" y="'+(c.y-14)+'">'+c.v+(mode==='accuracy'?'%':'')+'</text>' +
-        '<text class="axis" x="'+(c.x-18)+'" y="198">'+c.label+'</text>';
+        '<text class="axis" x="'+(c.x-18)+'" y="282">'+c.label+'</text>';
     });
 
-    el.innerHTML = '<svg viewBox="0 0 600 220" width="100%" style="overflow:visible;">' +
+    el.innerHTML = '<svg viewBox="0 0 600 300" width="100%" style="overflow:visible;">' +
       '<line class="scope-grid" x1="40" y1="20" x2="580" y2="20"></line>' +
-      '<line class="scope-mid" x1="40" y1="95" x2="580" y2="95"></line>' +
-      '<line class="scope-grid" x1="40" y1="170" x2="580" y2="170"></line>' +
-      '<line class="scope-grid" x1="40" y1="20" x2="40" y2="170"></line>' +
-      '<text class="axis" x="10" y="174">0</text>' +
-      '<text class="axis" x="4" y="99">50</text>' +
+      '<line class="scope-mid" x1="40" y1="140" x2="580" y2="140"></line>' +
+      '<line class="scope-grid" x1="40" y1="260" x2="580" y2="260"></line>' +
+      '<line class="scope-grid" x1="40" y1="20" x2="40" y2="260"></line>' +
+      '<text class="axis" x="10" y="264">0</text>' +
+      '<text class="axis" x="4" y="144">50</text>' +
       '<text class="axis" x="0" y="24">100</text>' +
       '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
       '<stop offset="0%" stop-color="var(--blue)"></stop>' +
