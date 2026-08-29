@@ -191,7 +191,7 @@
     const minD = Math.min(...dates), maxD = Math.max(...dates);
     const span = Math.max(maxD - minD, 1);
     const xFor = t => 60 + ((t - minD) / span) * 580;
-    const yFor = v => 300 - (v / 100) * 270;
+    const yFor = v => 400 - (v / 100) * 360;
 
     const coords = pts.map((d, i) => ({ ...d, x: xFor(dates[i]), y: yFor(mode === 'score' ? d.score : d.accuracy), v: mode === 'score' ? d.score : d.accuracy }));
     const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + ' ' + c.x.toFixed(1) + ',' + c.y.toFixed(1)).join(' ');
@@ -204,12 +204,12 @@
         <circle class="pt-hit" cx="${c.x}" cy="${c.y}" r="16" data-idx="${i}"></circle>
         <circle class="pt-visible" cx="${c.x}" cy="${c.y}" r="${isLatest ? 7 : 6}" fill="${ACCENT}" style="opacity:0;animation:popIn 0.3s ease ${1.5 + i*0.12}s forwards;pointer-events:none;"></circle>
         <text class="val-label" x="${c.x - 10}" y="${c.y - 14}">${c.v}${mode === 'accuracy' ? '%' : ''}</text>
-        <text class="axis-label" x="${c.x - 16}" y="322">${c.label}</text>
+        <text class="axis-label" x="${c.x - 16}" y="422">${c.label}</text>
       `;
     });
 
     chartArea.innerHTML = `
-      <svg viewBox="0 0 700 340" width="100%" style="overflow:visible;">
+      <svg viewBox="0 0 700 440" width="100%" style="overflow:visible;">
         <defs>
           <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="${ACCENT}" stop-opacity="0.35"/>
@@ -222,11 +222,11 @@
           @keyframes fadeIn { to { opacity: 1; } }
         </style>
         <line class="grid-line" x1="60" y1="30" x2="660" y2="30"></line>
-        <line class="grid-line" x1="60" y1="165" x2="660" y2="165"></line>
-        <line class="grid-line" x1="60" y1="300" x2="660" y2="300"></line>
-        <line class="grid-line" x1="60" y1="30" x2="60" y2="300"></line>
-        <text class="axis-label" x="30" y="304">0</text>
-        <text class="axis-label" x="22" y="169">50</text>
+        <line class="grid-line" x1="60" y1="220" x2="660" y2="220"></line>
+        <line class="grid-line" x1="60" y1="400" x2="660" y2="400"></line>
+        <line class="grid-line" x1="60" y1="30" x2="60" y2="400"></line>
+        <text class="axis-label" x="30" y="404">0</text>
+        <text class="axis-label" x="22" y="224">50</text>
         <text class="axis-label" x="14" y="34">100</text>
         <path d="${areaD}" fill="url(#areaGrad)" opacity="0" style="animation: fadeIn 1s ease 1.2s forwards;"></path>
         <path d="${pathD}" stroke="${ACCENT}" stroke-width="2.5" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation: draw 1.3s ease 0.3s forwards;"></path>

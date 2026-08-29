@@ -195,7 +195,7 @@
   if (DATA.length < 2) {
     trendEl.innerHTML = `<div class="empty-msg">Trend needs at least two tests &mdash; will build up as more are logged.</div>`;
   } else {
-    const W = 700, H = 340, padL = 46, padR = 20, padT = 20, padB = 34;
+    const W = 700, H = 440, padL = 46, padR = 20, padT = 20, padB = 34;
     const n = DATA.length;
     const xFor = i => padL + (n === 1 ? 0 : i * ((W - padL - padR) / (n - 1)));
     const yFor = v => (H - padB) - (v / 100) * (H - padB - padT);
