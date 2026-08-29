@@ -115,8 +115,8 @@
   svg text{font-family:var(--mono);}
   .scope-grid{stroke:var(--grid); stroke-width:1;}
   .scope-mid{stroke:#2a3644; stroke-width:1; stroke-dasharray:3 4;}
-  .axis{fill:var(--muted); font-size:10px;}
-  .valtag{fill:var(--text); font-size:12px; font-weight:700;}
+  .axis{fill:var(--muted); font-size:12px;}
+  .valtag{fill:var(--text); font-size:14px; font-weight:700;}
   .empty-scope{
     display:flex; align-items:center; justify-content:center; height:190px;
     font-family:var(--mono); font-size:12.5px; color:var(--muted); text-align:center; padding:0 20px; line-height:1.6;
@@ -237,7 +237,7 @@
 
     let dots = '';
     coords.forEach((c,i) => {
-      dots += '<circle cx="'+c.x+'" cy="'+c.y+'" r="5" fill="var(--bg)" stroke="'+colorFor(i)+'" stroke-width="2.5"></circle>' +
+      dots += '<circle cx="'+c.x+'" cy="'+c.y+'" r="7" fill="var(--bg)" stroke="'+colorFor(i)+'" stroke-width="3.5"></circle>' +
         '<text class="valtag" x="'+(c.x-10)+'" y="'+(c.y-14)+'">'+c.v+(mode==='accuracy'?'%':'')+'</text>' +
         '<text class="axis" x="'+(c.x-18)+'" y="382">'+c.label+'</text>';
     });
@@ -255,7 +255,7 @@
       '<stop offset="100%" stop-color="var(--blue)" stop-opacity="0"></stop>' +
       '</linearGradient></defs>' +
       '<path d="'+areaD+'" fill="url(#g)" opacity=".18"></path>' +
-      '<path d="'+pathD+'" stroke="var(--blue)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>' +
+      '<path d="'+pathD+'" stroke="var(--blue)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>' +
       dots +
       '</svg>';
   }

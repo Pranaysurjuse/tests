@@ -59,8 +59,8 @@
   .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px 20px 16px; position: relative; }
   svg text { font-family: 'Courier New', monospace; }
   .grid-line { stroke: #232323; stroke-width: 1; }
-  .axis-label { fill: #6b6b6b; font-size: 11px; }
-  .val-label { fill: #d8d8d8; font-size: 12px; font-weight: 700; }
+  .axis-label { fill: #8a8a8a; font-size: 12.5px; }
+  .val-label { fill: #d8d8d8; font-size: 14px; font-weight: 700; }
   .pt-hit { fill: transparent; cursor: pointer; }
 
   .tooltip {
@@ -202,7 +202,7 @@
       const isLatest = i === coords.length - 1;
       pointsSvg += `
         <circle class="pt-hit" cx="${c.x}" cy="${c.y}" r="16" data-idx="${i}"></circle>
-        <circle class="pt-visible" cx="${c.x}" cy="${c.y}" r="${isLatest ? 7 : 6}" fill="${ACCENT}" style="opacity:0;animation:popIn 0.3s ease ${1.5 + i*0.12}s forwards;pointer-events:none;"></circle>
+        <circle class="pt-visible" cx="${c.x}" cy="${c.y}" r="${isLatest ? 9 : 8}" fill="${ACCENT}" style="opacity:0;animation:popIn 0.3s ease ${1.5 + i*0.12}s forwards;pointer-events:none;"></circle>
         <text class="val-label" x="${c.x - 10}" y="${c.y - 14}">${c.v}${mode === 'accuracy' ? '%' : ''}</text>
         <text class="axis-label" x="${c.x - 16}" y="422">${c.label}</text>
       `;
@@ -212,7 +212,7 @@
       <svg viewBox="0 0 700 440" width="100%" style="overflow:visible;">
         <defs>
           <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${ACCENT}" stop-opacity="0.35"/>
+            <stop offset="0%" stop-color="${ACCENT}" stop-opacity="0.45"/>
             <stop offset="100%" stop-color="${ACCENT}" stop-opacity="0"/>
           </linearGradient>
         </defs>
@@ -229,7 +229,7 @@
         <text class="axis-label" x="22" y="224">50</text>
         <text class="axis-label" x="14" y="34">100</text>
         <path d="${areaD}" fill="url(#areaGrad)" opacity="0" style="animation: fadeIn 1s ease 1.2s forwards;"></path>
-        <path d="${pathD}" stroke="${ACCENT}" stroke-width="2.5" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation: draw 1.3s ease 0.3s forwards;"></path>
+        <path d="${pathD}" stroke="${ACCENT}" stroke-width="4" fill="none" stroke-dasharray="1000" stroke-dashoffset="1000" style="animation: draw 1.3s ease 0.3s forwards;"></path>
         ${pointsSvg}
       </svg>
     `;
