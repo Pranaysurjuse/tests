@@ -203,7 +203,7 @@
 
     const coords = pts.map((d, i) => ({ ...d, x: xFor(dates[i]), y: yFor(mode === 'score' ? d.percent : d.accuracy), v: mode === 'score' ? d.percent : d.accuracy }));
     const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + ' ' + c.x.toFixed(1) + ',' + c.y.toFixed(1)).join(' ');
-    const areaD = pathD + ` L ${coords[coords.length-1].x.toFixed(1)},200 L ${coords[0].x.toFixed(1)},200 Z`;
+    const areaD = pathD + ` L ${coords[coords.length-1].x.toFixed(1)},400 L ${coords[0].x.toFixed(1)},400 Z`;
 
     let pointsSvg = '';
     coords.forEach((c, i) => {
