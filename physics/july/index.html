@@ -142,7 +142,7 @@
 </style>
 </head>
 <body>
-<a href="index.html" class="home-pill">&#8592; Home</a>
+<a href="../../index.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><a href="../june/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">June</a><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">July</span><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../../physics.html" style="color:#6b9fff;font-family:monospace;font-size:12px;margin-left:6px;">All months &rarr;</a></div>
 <div class="bg-grid"></div>
 <div class="bg-signature">
   <svg viewBox="0 0 200 200">
@@ -156,13 +156,6 @@
   <p class="eyebrow">Live tracking &middot; Cognition Academy</p>
   <h1>Physics — Signal Log</h1>
   <p class="sub">// Class-test score trace, XI PCM</p>
-  <div style="margin:0 0 18px;">
-    <a href="june/index.html" style="color:#6b9fff;font-family:var(--mono);font-size:12px;text-decoration:none;">June &rarr;</a>
-    <span style="color:#3a4655;margin:0 6px;">|</span>
-    <a href="july/index.html" style="color:#6b9fff;font-family:var(--mono);font-size:12px;text-decoration:none;">July &rarr;</a>
-    <span style="color:#3a4655;margin:0 6px;">|</span>
-    <a href="august/index.html" style="color:#6b9fff;font-family:var(--mono);font-size:12px;text-decoration:none;">August &rarr;</a>
-  </div>
 
   <div class="channels">
     <button class="ch-btn active" id="btnScore"><b>CH1</b>Score</button>
@@ -183,9 +176,7 @@
 
 <script>
   const DATA = [
-    {date:"2026-06-24", label:"24 JUN", score:30, accuracy:null, rank:5, classSize:33},
     {date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38},
-    {date:"2026-08-17", label:"17 AUG", score:45, accuracy:null, rank:null, classSize:null}
   ];
   const colorFor = i => [ 'var(--blue)', 'var(--cyan)', 'var(--amber)' ][i % 3];
   let mode = 'score';

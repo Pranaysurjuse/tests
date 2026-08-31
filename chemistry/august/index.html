@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maths - Progress Dashboard</title>
+<title>Chemistry - Progress Dashboard</title>
 <style>
   * { box-sizing: border-box; }
   body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #f2f5f3; padding: 24px 20px 80px; position:relative; overflow-x:hidden; }
@@ -13,19 +13,19 @@
     text-decoration:none;align-items:center;gap:5px;margin-bottom:14px;}
 
   .bg-signature{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
-  .bg-signature svg{ position:absolute; top:-6%; right:-10%; width:70vmin; height:70vmin; opacity:.4; }
-  .curve-draw{ stroke-dasharray:600; stroke-dashoffset:600; animation:drawCurve 2.4s ease-out .3s forwards; }
-  .curve2{ animation-delay:.6s; }
-  @keyframes drawCurve{ to{ stroke-dashoffset:0; } }
-  @media (prefers-reduced-motion: reduce){ .curve-draw{ animation:none; stroke-dashoffset:0; } }
+  .bg-signature svg{ position:absolute; top:-8%; right:-12%; width:72vmin; height:72vmin; opacity:.4; }
+  .orbit{ animation:spin 18s linear infinite; transform-origin:100px 100px; }
+  .orbit2{ animation-duration:26s; animation-direction:reverse; }
+  @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .orbit{ animation:none; } }
 
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #ef8b7c; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #3b9dff; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
   h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; opacity:0; animation: fadeInUp 0.5s ease 0.05s forwards; }
   .sub { color: #949494; font-size: 13.5px; margin: 0 0 20px; opacity:0; animation: fadeInUp 0.5s ease 0.1s forwards; }
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .trend-alert { background: #2b220f; border: 1px solid #ffb84d55; border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; opacity:0; animation: fadeInUp 0.5s ease 0.13s forwards; font-size: 13px; color: #d8d8d8; line-height: 1.5; }
-  .trend-alert b { color: #ffb84d; }
+  .note-box { background: #0f1a2e; border: 1px solid #3b9dff55; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; font-size: 12.5px; color: #d8d8d8; line-height: 1.5; opacity:0; animation: fadeInUp 0.5s ease 0.12s forwards; }
+  .note-box b { color: #3b9dff; }
 
   .toggle-row { display: flex; gap: 8px; margin-bottom: 20px; opacity:0; animation: fadeInUp 0.5s ease 0.15s forwards; }
   .toggle-btn {
@@ -33,7 +33,7 @@
     background: #141414; color: #949494; border: 1px solid #2a2a2a;
     padding: 9px 18px; border-radius: 8px; cursor: pointer;
   }
-  .toggle-btn.active { background: #ef8b7c; color: #08160f; border-color: #ef8b7c; font-weight: 700; }
+  .toggle-btn.active { background: #3b9dff; color: #08160f; border-color: #3b9dff; font-weight: 700; }
 
   .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
   @media (max-width: 480px) {
@@ -45,7 +45,7 @@
     table.hist { min-width: 460px; }
   }
   .kpi-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; opacity: 0; animation: fadeInUp 0.5s ease forwards; }
-  .kpi-card.corner { border-color: #ef8b7c44; }
+  .kpi-card.corner { border-color: #3b9dff44; }
   .kpi-label { font-size: 11.5px; color: #949494; margin: 0 0 6px; }
   .kpi-value { font-size: 22px; font-weight: 700; font-family: 'Courier New', monospace; margin: 0; }
   .kpi-value small { font-size: 12px; color: #949494; font-weight: 400; }
@@ -54,7 +54,7 @@
   .kpi-delta.down { color: #ef8b7c; }
   .kpi-delta.tag { color: #6b6b6b; }
 
-  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #ef8b7c; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 18px; }
+  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #3b9dff; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 18px; }
 
   .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px 20px 16px; position: relative; }
   svg text { font-family: 'Courier New', monospace; }
@@ -64,16 +64,16 @@
   .pt-hit { fill: transparent; cursor: pointer; }
 
   .tooltip {
-    position: absolute; background: #1c1c1c; border: 1px solid #ef8b7c; border-radius: 8px;
+    position: absolute; background: #1c1c1c; border: 1px solid #3b9dff; border-radius: 8px;
     padding: 8px 12px; font-family: 'Courier New', monospace; font-size: 12px; color: #f2f5f3;
     pointer-events: none; opacity: 0; transition: opacity 0.15s; white-space: nowrap; z-index: 10;
   }
   .tooltip.show { opacity: 1; }
-  .tooltip .t-date { color: #ef8b7c; font-weight: 700; }
+  .tooltip .t-date { color: #3b9dff; font-weight: 700; }
   .tooltip .t-type { color: #6b6b6b; font-size: 11px; }
 
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -20px; padding: 0 20px; }
-  table.hist { width: 100%; min-width: 480px; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+  table.hist { width: 100%; min-width: 520px; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
   table.hist th { text-align: left; font-family: 'Courier New', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: #949494; padding: 8px 10px; border-bottom: 1px solid #2a2a2a; }
   table.hist td { padding: 9px 10px; border-bottom: 1px solid #1e1e1e; font-family: 'Courier New', monospace; }
   table.hist tr:last-child td { border-bottom: none; }
@@ -87,33 +87,33 @@
 </style>
 </head>
 <body>
-<a href="index.html" class="home-pill">&#8592; Home</a>
+<a href="../../index.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><a href="../june/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">June</a><a href="../july/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">July</a><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">August</span><a href="../../chemistry.html" style="color:#6b9fff;font-family:monospace;font-size:12px;margin-left:6px;">All months &rarr;</a></div>
 <div class="bg-signature">
   <svg viewBox="0 0 200 200">
-    <line x1="15" y1="12" x2="15" y2="185" stroke="#ef8b7c" stroke-width="1" opacity=".5"></line>
-    <line x1="15" y1="185" x2="195" y2="185" stroke="#ef8b7c" stroke-width="1" opacity=".5"></line>
-    <path class="curve-draw" d="M 15,180 Q 90,10 165,175 T 195,150" fill="none" stroke="#ef8b7c" stroke-width="1.6"></path>
-    <path class="curve-draw curve2" d="M 15,110 C 50,50 80,170 115,110 C 150,50 175,170 195,130" fill="none" stroke="#ef8b7c" stroke-width="1" opacity=".55"></path>
-    <circle cx="90" cy="20" r="2.5" fill="#ef8b7c" opacity=".7"></circle>
-    <circle cx="165" cy="175" r="2.5" fill="#ef8b7c" opacity=".7"></circle>
+    <g class="orbit">
+      <polygon points="100,45 147,72 147,128 100,155 53,128 53,72" fill="none" stroke="#3b9dff" stroke-width="1.4" opacity=".6"></polygon>
+      <circle cx="100" cy="45" r="3" fill="#3b9dff"></circle>
+      <circle cx="147" cy="72" r="3" fill="#3b9dff"></circle>
+      <circle cx="147" cy="128" r="3" fill="#3b9dff"></circle>
+      <circle cx="100" cy="155" r="3" fill="#3b9dff"></circle>
+      <circle cx="53" cy="128" r="3" fill="#3b9dff"></circle>
+      <circle cx="53" cy="72" r="3" fill="#3b9dff"></circle>
+    </g>
+    <g class="orbit orbit2">
+      <ellipse cx="100" cy="100" rx="90" ry="30" fill="none" stroke="#3b9dff" stroke-width="1" opacity=".3"></ellipse>
+    </g>
+    <circle cx="100" cy="100" r="6" fill="#3b9dff" opacity=".55"></circle>
   </svg>
 </div>
 <div class="wrap">
-  <p class="eyebrow">Maths &middot; Progress dashboard</p>
+  <p class="eyebrow">Chemistry &middot; Progress dashboard</p>
   <h1>Score trend across tests</h1>
   <p class="sub">Class tests and standalone practice tests, combined and cross-checked against verified answer keys.</p>
-  <div style="margin:0 0 18px;">
-    <a href="maths/june/index.html" style="color:#ef8b7c;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">June &rarr;</a>
-    <span style="color:#333;margin:0 6px;">|</span>
-    <a href="maths/july/index.html" style="color:#ef8b7c;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">July &rarr;</a>
-    <span style="color:#333;margin:0 6px;">|</span>
-    <a href="maths/august/index.html" style="color:#ef8b7c;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">August &rarr;</a>
-  </div>
 
-  <div class="trend-alert"><b>&#9888; Three-test downward trend:</b> 58 &rarr; 70 &rarr; 37 &rarr; 18. Worth a real look at what's changed rather than treating each dip separately.</div>
+  <div class="note-box"><b>Note:</b> tests here have different max marks (100 or 112), so the "Score" view plots percentage of max, not raw marks &mdash; this keeps every test comparable on the same scale.</div>
 
   <div class="toggle-row">
-    <button class="toggle-btn active" id="btnScore">Score</button>
+    <button class="toggle-btn active" id="btnScore">Score (%)</button>
     <button class="toggle-btn" id="btnAccuracy">Accuracy</button>
   </div>
 
@@ -129,23 +129,22 @@
   <div class="chart-card">
     <div class="table-scroll">
     <table class="hist">
-      <thead><tr><th>Date</th><th>Type</th><th>Score</th><th>Accuracy</th><th>Class rank</th></tr></thead>
+      <thead><tr><th>Date</th><th>Type</th><th>Score</th><th>%</th><th>Accuracy</th><th>Class rank</th></tr></thead>
       <tbody id="histBody"></tbody>
     </table>
     </div>
   </div>
 
-  <p class="footer-note">Live &middot; Cognition Test Tracker &middot; Maths</p>
+  <p class="footer-note">Live &middot; Cognition Test Tracker &middot; Chemistry</p>
 </div>
 
 <script>
-  const ACCENT = '#ef8b7c';
+  const ACCENT = '#3b9dff';
   const DATA = [
-    {date: "2026-06-27", label: "27 Jun", score: 58, accuracy: null, type: "Class test", rank: 1, classSize: 28},
-    {date: "2026-07-08", label: "08 Jul", score: 70, accuracy: null, type: "Class test", rank: 3, classSize: 36},
-    {date: "2026-07-18", label: "18 Jul", score: 37, accuracy: 55.0, type: "Practice test", rank: null, classSize: null},
-    {date: "2026-08-01", label: "01 Aug", score: 18, accuracy: 40.0, type: "Class test", rank: null, classSize: null}
+    {date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null},
+    {date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null}
   ];
+  DATA.forEach(d => d.percent = (d.score / d.maxScore) * 100);
 
   let mode = 'score';
 
@@ -153,33 +152,32 @@
     const kpiRow = document.getElementById('kpiRow');
     const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
     if (pts.length === 0) { kpiRow.innerHTML = ''; return; }
-    const values = pts.map(d => mode === 'score' ? d.score : d.accuracy);
+    const values = pts.map(d => mode === 'score' ? d.percent : d.accuracy);
     const latest = values[values.length - 1];
     const prev = values.length > 1 ? values[values.length - 2] : null;
     const best = Math.max(...values);
     const avg = (values.reduce((a,b) => a+b, 0) / values.length).toFixed(1);
-    const unit = mode === 'score' ? ' / 100' : '%';
     const delta = prev !== null ? (latest - prev) : null;
 
     kpiRow.innerHTML = `
       <div class="kpi-card" style="animation-delay:0.05s;">
         <p class="kpi-label">Latest</p>
-        <p class="kpi-value">${latest}<small>${unit}</small></p>
+        <p class="kpi-value">${latest.toFixed(1)}<small>%</small></p>
         ${delta !== null ? `<p class="kpi-delta ${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '&#9650;' : '&#9660;'} ${delta >= 0 ? '+' : ''}${delta.toFixed(1)} vs previous</p>` : `<p class="kpi-delta tag">first test</p>`}
       </div>
       <div class="kpi-card corner" style="animation-delay:0.1s;">
         <p class="kpi-label">Previous test</p>
-        <p class="kpi-value">${prev !== null ? prev + unit : '&mdash;'}</p>
+        <p class="kpi-value">${prev !== null ? prev.toFixed(1) + '%' : '&mdash;'}</p>
         <p class="kpi-delta tag">${pts.length > 1 ? pts[pts.length-2].label : ''}</p>
       </div>
       <div class="kpi-card" style="animation-delay:0.15s;">
         <p class="kpi-label">Best</p>
-        <p class="kpi-value">${best}${unit}</p>
+        <p class="kpi-value">${best.toFixed(1)}%</p>
         <p class="kpi-delta tag">personal high</p>
       </div>
       <div class="kpi-card" style="animation-delay:0.2s;">
         <p class="kpi-label">Average</p>
-        <p class="kpi-value">${avg}${unit}</p>
+        <p class="kpi-value">${avg}%</p>
         <p class="kpi-delta tag">${pts.length} tests</p>
       </div>
     `;
@@ -190,7 +188,7 @@
     const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
 
     if (pts.length < 2) {
-      chartArea.innerHTML = `<div class="empty-msg">${mode === 'accuracy' ? 'Not enough accuracy data yet.' : 'Not enough data yet.'}</div>`;
+      chartArea.innerHTML = `<div class="empty-msg">Not enough data yet.</div>`;
       return;
     }
 
@@ -200,7 +198,7 @@
     const xFor = t => 60 + ((t - minD) / span) * 580;
     const yFor = v => 400 - (v / 100) * 360;
 
-    const coords = pts.map((d, i) => ({ ...d, x: xFor(dates[i]), y: yFor(mode === 'score' ? d.score : d.accuracy), v: mode === 'score' ? d.score : d.accuracy }));
+    const coords = pts.map((d, i) => ({ ...d, x: xFor(dates[i]), y: yFor(mode === 'score' ? d.percent : d.accuracy), v: mode === 'score' ? d.percent : d.accuracy }));
     const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + ' ' + c.x.toFixed(1) + ',' + c.y.toFixed(1)).join(' ');
     const areaD = pathD + ` L ${coords[coords.length-1].x.toFixed(1)},400 L ${coords[0].x.toFixed(1)},400 Z`;
 
@@ -210,7 +208,7 @@
       pointsSvg += `
         <circle class="pt-hit" cx="${c.x}" cy="${c.y}" r="16" data-idx="${i}"></circle>
         <circle class="pt-visible" cx="${c.x}" cy="${c.y}" r="${isLatest ? 9 : 8}" fill="${ACCENT}" style="opacity:0;animation:popIn 0.3s ease ${1.5 + i*0.12}s forwards;pointer-events:none;"></circle>
-        <text class="val-label" x="${c.x - 10}" y="${c.y - 14}">${c.v}${mode === 'accuracy' ? '%' : ''}</text>
+        <text class="val-label" x="${c.x - 14}" y="${c.y - 14}">${c.v.toFixed(1)}%</text>
         <text class="axis-label" x="${c.x - 16}" y="422">${c.label}</text>
       `;
     });
@@ -246,7 +244,7 @@
       hit.addEventListener('mouseenter', () => {
         const idx = parseInt(hit.getAttribute('data-idx'));
         const c = coords[idx];
-        tooltip.innerHTML = `<span class="t-date">${c.label}</span><br><span class="t-type">${c.type}</span><br>${mode === 'score' ? 'Score' : 'Accuracy'}: <strong>${c.v}${mode === 'accuracy' ? '%' : '/100'}</strong>${c.rank ? '<br>Rank: #' + c.rank + ' of ' + c.classSize : ''}`;
+        tooltip.innerHTML = `<span class="t-date">${c.label}</span><br><span class="t-type">${c.type}</span><br>${mode === 'score' ? 'Score' : 'Accuracy'}: <strong>${c.v.toFixed(1)}%</strong>${mode === 'score' ? ' (' + c.score + '/' + c.maxScore + ')' : ''}${c.rank ? '<br>Rank: #' + c.rank + ' of ' + c.classSize : ''}`;
         tooltip.classList.add('show');
       });
       hit.addEventListener('mousemove', (e) => {
@@ -264,7 +262,8 @@
       <tr>
         <td>${d.label} '26</td>
         <td>${d.type}</td>
-        <td>${d.score} / 100</td>
+        <td>${d.score} / ${d.maxScore}</td>
+        <td>${d.percent.toFixed(1)}%</td>
         <td>${d.accuracy !== null ? d.accuracy.toFixed(1) + '%' : '<span class="dash">&mdash;</span>'}</td>
         <td>${d.rank ? `<span class="rank-badge ${d.rank > 3 ? 'mid' : ''}">#${d.rank} / ${d.classSize}</span>` : '<span class="dash">&mdash;</span>'}</td>
       </tr>

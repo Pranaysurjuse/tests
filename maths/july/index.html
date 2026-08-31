@@ -87,7 +87,7 @@
 </style>
 </head>
 <body>
-<a href="index.html" class="home-pill">&#8592; Home</a>
+<a href="../../index.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><a href="../june/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">June</a><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">July</span><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../../maths.html" style="color:#6b9fff;font-family:monospace;font-size:12px;margin-left:6px;">All months &rarr;</a></div>
 <div class="bg-signature">
   <svg viewBox="0 0 200 200">
     <line x1="15" y1="12" x2="15" y2="185" stroke="#ef8b7c" stroke-width="1" opacity=".5"></line>
@@ -102,13 +102,6 @@
   <p class="eyebrow">Maths &middot; Progress dashboard</p>
   <h1>Score trend across tests</h1>
   <p class="sub">Class tests and standalone practice tests, combined and cross-checked against verified answer keys.</p>
-  <div style="margin:0 0 18px;">
-    <a href="maths/june/index.html" style="color:#ef8b7c;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">June &rarr;</a>
-    <span style="color:#333;margin:0 6px;">|</span>
-    <a href="maths/july/index.html" style="color:#ef8b7c;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">July &rarr;</a>
-    <span style="color:#333;margin:0 6px;">|</span>
-    <a href="maths/august/index.html" style="color:#ef8b7c;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">August &rarr;</a>
-  </div>
 
   <div class="trend-alert"><b>&#9888; Three-test downward trend:</b> 58 &rarr; 70 &rarr; 37 &rarr; 18. Worth a real look at what's changed rather than treating each dip separately.</div>
 
@@ -141,10 +134,8 @@
 <script>
   const ACCENT = '#ef8b7c';
   const DATA = [
-    {date: "2026-06-27", label: "27 Jun", score: 58, accuracy: null, type: "Class test", rank: 1, classSize: 28},
     {date: "2026-07-08", label: "08 Jul", score: 70, accuracy: null, type: "Class test", rank: 3, classSize: 36},
     {date: "2026-07-18", label: "18 Jul", score: 37, accuracy: 55.0, type: "Practice test", rank: null, classSize: null},
-    {date: "2026-08-01", label: "01 Aug", score: 18, accuracy: 40.0, type: "Class test", rank: null, classSize: null}
   ];
 
   let mode = 'score';
