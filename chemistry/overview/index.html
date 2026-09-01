@@ -87,7 +87,7 @@
 </style>
 </head>
 <body>
-<a href="../../index.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">June</span><a href="../july/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">July</a><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../overview/index.html" style="color:#6b9fff;font-family:monospace;font-size:12px;margin-left:6px;">All months &rarr;</a></div>
+<a href="../../index.html" class="home-pill">&#8592; Home</a>
 <div class="bg-signature">
   <svg viewBox="0 0 200 200">
     <g class="orbit">
@@ -109,6 +109,13 @@
   <p class="eyebrow">Chemistry &middot; Progress dashboard</p>
   <h1>Score trend across tests</h1>
   <p class="sub">Class tests and standalone practice tests, combined and cross-checked against verified answer keys.</p>
+  <div style="margin:0 0 18px;">
+    <a href="../june/index.html" style="color:#3b9dff;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">June &rarr;</a>
+    <span style="color:#333;margin:0 6px;">|</span>
+    <a href="../july/index.html" style="color:#3b9dff;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">July &rarr;</a>
+    <span style="color:#333;margin:0 6px;">|</span>
+    <a href="../august/index.html" style="color:#3b9dff;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">August &rarr;</a>
+  </div>
 
   <div class="note-box"><b>Note:</b> tests here have different max marks (100 or 112), so the "Score" view plots percentage of max, not raw marks &mdash; this keeps every test comparable on the same scale.</div>
 
@@ -142,6 +149,10 @@
   const ACCENT = '#3b9dff';
   const DATA = [
     {date: "2026-06-20", label: "20 Jun", score: 58, maxScore: 100, accuracy: null, type: "Class test", rank: 2, classSize: 38},
+    {date: "2026-07-01", label: "01 Jul", score: 53, maxScore: 100, accuracy: null, type: "Class test", rank: 1, classSize: 35},
+    {date: "2026-07-22", label: "22 Jul", score: 78, maxScore: 100, accuracy: 80.0, type: "Practice test", rank: null, classSize: null},
+    {date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null},
+    {date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null}
   ];
   DATA.forEach(d => d.percent = (d.score / d.maxScore) * 100);
 

@@ -1,306 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PHYS · Signal Log</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Physics</title>
 <style>
-  :root{
-    --bg:#080b10;
-    --panel:#0e131b;
-    --panel-2:#11171f;
-    --grid:#1c2530;
-    --line:#212b38;
-    --blue:#4da6ff;
-    --blue-dim:#4da6ff33;
-    --cyan:#5be8ff;
-    --amber:#ffb454;
-    --red:#ff6b6b;
-    --text:#e6edf5;
-    --muted:#5c6c80;
-    --mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
-    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  :root { --paper: #0a0a0a; --card: #141414; --card-border: #2a2a2a; --accent: #4da6ff; --text: #f2f5f3; --muted: #8a8a8a; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--paper); color: var(--text);
+    min-height: 100vh; min-height: 100dvh; padding: 24px 16px 40px;
+    display: flex; align-items: center; justify-content: center;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{background:var(--bg);}
-  body{
-    color:var(--text); font-family:var(--sans); margin:0; padding:24px 16px 60px;
-    position:relative; overflow-x:hidden;
+  .wrap { max-width: 420px; width: 100%; }
+  .home-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--card-border); color: var(--text);
+    font-size: 12.5px; padding: 7px 12px; border-radius: 20px; text-decoration: none; margin-bottom: 18px; }
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
+  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  a.card {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    min-height: 84px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
+    text-decoration: none; transition: transform 0.12s;
   }
-  .bg-grid{
-    position:fixed; inset:0; z-index:0; pointer-events:none;
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 28px 28px;
-  }
-  .bg-signature{
-    position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
-  }
-  .bg-signature svg{position:absolute; top:-10%; right:-15%; width:80vmin; height:80vmin; opacity:.5;}
-  .wave-ring{
-    fill:none; stroke:var(--blue); stroke-width:1;
-    animation: expand 6s ease-out infinite;
-    transform-origin: center;
-  }
-  .wave-ring.r2{animation-delay:2s;}
-  .wave-ring.r3{animation-delay:4s;}
-  @keyframes expand{
-    0%{ r:20; opacity:.7; }
-    100%{ r:280; opacity:0; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .wave-ring{animation:none; opacity:.12;}
-    .eyebrow::before{animation:none;}
-  }
-
-  .wrap{max-width:640px; margin:0 auto; position:relative; z-index:1;}
-
-  .eyebrow{
-    font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
-    color:var(--blue); margin:0 0 6px; display:flex; align-items:center; gap:8px;
-  }
-  .eyebrow::before{content:''; width:6px; height:6px; border-radius:50%; background:var(--blue); box-shadow:0 0 8px var(--blue); animation:pulse 2s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
-  h1{font-size:26px; margin:0 0 4px; font-weight:800; letter-spacing:-.01em;}
-  .sub{color:var(--muted); font-size:13px; margin:0 0 18px; font-family:var(--mono);}
-
-  .channels{display:flex; gap:8px; margin-bottom:20px;}
-  .ch-btn{
-    flex:1; font-family:var(--mono); font-size:12px; letter-spacing:.04em;
-    background:var(--panel); color:var(--muted); border:1px solid var(--line);
-    padding:10px 12px; border-radius:10px; cursor:pointer; text-align:left;
-  }
-  .ch-btn b{display:block; font-size:9.5px; letter-spacing:.1em; opacity:.7; margin-bottom:2px; font-weight:500;}
-  .ch-btn.active{background:#132133; color:var(--blue); border-color:var(--blue); box-shadow:0 0 0 1px var(--blue) inset;}
-
-  .readout{
-    background:linear-gradient(180deg, var(--panel), var(--panel-2));
-    border:1px solid var(--line); border-radius:16px; padding:24px 22px; margin-bottom:16px;
-    position:relative; overflow:hidden;
-  }
-  .readout::after{
-    content:''; position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(circle at 85% 0%, var(--blue-dim), transparent 55%);
-  }
-  .readout-top{display:flex; justify-content:space-between; align-items:flex-start; position:relative;}
-  .readout-label{font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase;}
-  .readout-tag{font-family:var(--mono); font-size:10.5px; color:var(--amber); border:1px solid #ffb45444; background:#ffb45414; padding:3px 8px; border-radius:6px;}
-  .readout-value{font-family:var(--mono); font-size:64px; font-weight:700; line-height:1; margin:14px 0 2px; color:var(--text); position:relative;}
-  @media (max-width: 420px){
-    .readout-value{font-size:48px;}
-    .readout{padding:20px 16px;}
-    .ch-btn{font-size:11px; padding:9px 8px;}
-    h1{font-size:22px;}
-    .kpi-v{font-size:16px;}
-    .log-row{grid-template-columns:48px 1fr auto; font-size:11.5px;}
-    .scope{padding:14px 8px 6px;}
-  }
-  .readout-value span{font-size:22px; color:var(--muted); font-weight:400;}
-  .readout-delta{font-family:var(--mono); font-size:13px; color:var(--red); display:flex; align-items:center; gap:6px;}
-  .readout-delta.up{color:var(--cyan);}
-
-  .kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:20px;}
-  .kpi{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 10px;}
-  .kpi-l{font-family:var(--mono); font-size:9.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin:0 0 6px;}
-  .kpi-v{font-family:var(--mono); font-size:18px; font-weight:700; margin:0;}
-
-  .section-label{
-    font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--blue);
-    border-bottom:1px dashed var(--line); padding-bottom:8px; margin:28px 0 16px; display:flex; justify-content:space-between;
-  }
-  .section-label span:last-child{color:var(--muted);}
-
-  .scope{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px 14px 8px; position:relative; min-height:220px;}
-  svg text{font-family:var(--mono);}
-  .scope-grid{stroke:var(--grid); stroke-width:1;}
-  .scope-mid{stroke:#2a3644; stroke-width:1; stroke-dasharray:3 4;}
-  .axis{fill:var(--muted); font-size:12px;}
-  .valtag{fill:var(--text); font-size:14px; font-weight:700;}
-  .empty-scope{
-    display:flex; align-items:center; justify-content:center; height:190px;
-    font-family:var(--mono); font-size:12.5px; color:var(--muted); text-align:center; padding:0 20px; line-height:1.6;
-  }
-
-  .log{background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
-  .log-row{
-    display:grid; grid-template-columns:64px 1fr auto; gap:10px; align-items:center;
-    padding:13px 14px; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12.5px;
-  }
-  .log-row:last-child{border-bottom:none;}
-  .log-id{color:var(--blue); font-weight:700;}
-  .log-date{color:var(--muted); font-size:11px;}
-  .log-score{font-size:15px; font-weight:700; text-align:right;}
-  .log-bar-wrap{height:4px; background:var(--grid); border-radius:2px; margin-top:6px; overflow:hidden;}
-  .log-bar{height:100%; border-radius:2px;}
-  .log-dash{color:#3a4655;}
-
-  .foot{margin-top:26px; text-align:center; font-family:var(--mono); font-size:10.5px; color:#3a4655; letter-spacing:.05em;}
-  .home-pill{position:static;display:inline-flex;background:#11171f;border:1px solid #212b38;color:#e6edf5;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12.5px;padding:7px 12px;border-radius:20px;
-    text-decoration:none;align-items:center;gap:5px;margin-bottom:14px;}
+  a.card:active { transform: scale(0.97); }
+  a.card .icon { font-size: 20px; margin-bottom: 6px; }
+  a.card.overview { grid-column: 1 / -1; background: linear-gradient(135deg, var(--card), #1a1a1a); border-color: var(--accent); }
+  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
 </style>
 </head>
 <body>
-<a href="index.html" class="home-pill">&#8592; Home</a>
-<div class="bg-grid"></div>
-<div class="bg-signature">
-  <svg viewBox="0 0 200 200">
-    <circle class="wave-ring" cx="100" cy="100" r="20"></circle>
-    <circle class="wave-ring r2" cx="100" cy="100" r="20"></circle>
-    <circle class="wave-ring r3" cx="100" cy="100" r="20"></circle>
-  </svg>
-</div>
-
 <div class="wrap">
-  <p class="eyebrow">Live tracking &middot; Cognition Academy</p>
-  <h1>Physics — Signal Log</h1>
-  <p class="sub">// Class-test score trace, XI PCM</p>
-  <div style="margin:0 0 18px;">
-    <a href="june/index.html" style="color:#6b9fff;font-family:var(--mono);font-size:12px;text-decoration:none;">June &rarr;</a>
-    <span style="color:#3a4655;margin:0 6px;">|</span>
-    <a href="july/index.html" style="color:#6b9fff;font-family:var(--mono);font-size:12px;text-decoration:none;">July &rarr;</a>
-    <span style="color:#3a4655;margin:0 6px;">|</span>
-    <a href="august/index.html" style="color:#6b9fff;font-family:var(--mono);font-size:12px;text-decoration:none;">August &rarr;</a>
+  <a href="../index.html" class="home-pill">&#8592; Home</a>
+  <p class="eyebrow">physics &middot; Choose a month</p>
+  <h1>physics Dashboards</h1>
+  <p class="sub">Pick a month to see that month's tests, or view the full trend across all months.</p>
+  <div class="grid">
+    <a class="card" href="june/index.html"><span class="icon">&#127774;</span>June</a>
+    <a class="card" href="july/index.html"><span class="icon">&#9729;&#65039;</span>July</a>
+    <a class="card" href="august/index.html"><span class="icon">&#128293;</span>August</a>
+    <a class="card overview" href="overview/index.html"><span class="icon">&#128200;</span>All months</a>
   </div>
-
-  <div class="channels">
-    <button class="ch-btn active" id="btnScore"><b>CH1</b>Score</button>
-    <button class="ch-btn" id="btnAcc"><b>CH2</b>Accuracy</button>
-  </div>
-
-  <div id="readoutArea"></div>
-  <div class="kpis" id="kpiArea"></div>
-
-  <div class="section-label"><span>Trend</span><span id="sampleCount">3 samples</span></div>
-  <div class="scope"><div id="chartArea"></div></div>
-
-  <div class="section-label"><span>Test log</span><span>desc</span></div>
-  <div class="log" id="logArea"></div>
-
-  <p class="foot">LIVE · COGNITION TEST TRACKER · PHYSICS</p>
+  <p class="footer-note">Cognition Test Tracker &middot; physics</p>
 </div>
-
-<script>
-  const DATA = [
-    {date:"2026-06-24", label:"24 JUN", score:30, accuracy:null, rank:5, classSize:33},
-    {date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38},
-    {date:"2026-08-17", label:"17 AUG", score:45, accuracy:null, rank:null, classSize:null}
-  ];
-  const colorFor = i => [ 'var(--blue)', 'var(--cyan)', 'var(--amber)' ][i % 3];
-  let mode = 'score';
-
-  function renderReadout(){
-    const el = document.getElementById('readoutArea');
-    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
-    if(pts.length === 0){
-      el.innerHTML = '<div class="readout"><div class="readout-label">Latest reading</div>' +
-        '<div class="readout-value" style="font-size:20px;color:var(--muted);font-weight:500;">No accuracy data yet</div></div>';
-      return;
-    }
-    const latest = pts[pts.length-1];
-    const val = mode === 'score' ? latest.score : latest.accuracy;
-    const unit = mode === 'score' ? '/100' : '%';
-    const prev = pts.length > 1 ? (mode==='score'?pts[pts.length-2].score:pts[pts.length-2].accuracy) : null;
-    const delta = prev !== null ? val - prev : null;
-    el.innerHTML = '<div class="readout"><div class="readout-top">' +
-      '<div><div class="readout-label">Latest reading</div>' +
-      '<div class="readout-value">'+val+'<span>'+unit+'</span></div>' +
-      (delta !== null ? '<div class="readout-delta '+(delta>=0?'up':'')+'">'+(delta>=0?'▲':'▼')+' '+(delta>=0?'+':'')+delta+' from previous test</div>' : '<div class="readout-delta up">first logged test</div>') +
-      '</div><div class="readout-tag">'+latest.label+'</div></div></div>';
-  }
-
-  function renderKPIs(){
-    const el = document.getElementById('kpiArea');
-    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
-    if(pts.length === 0){ el.innerHTML = ''; return; }
-    const vals = pts.map(d => mode==='score'?d.score:d.accuracy);
-    const best = Math.max(...vals);
-    const avg = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1);
-    const unit = mode === 'score' ? '' : '%';
-    el.innerHTML =
-      '<div class="kpi"><p class="kpi-l">Best</p><p class="kpi-v">'+best+unit+'</p></div>' +
-      '<div class="kpi"><p class="kpi-l">Average</p><p class="kpi-v">'+avg+unit+'</p></div>' +
-      '<div class="kpi"><p class="kpi-l">Tests logged</p><p class="kpi-v">'+String(pts.length).padStart(2,'0')+'</p></div>';
-  }
-
-  function renderChart(){
-    const el = document.getElementById('chartArea');
-    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
-    document.getElementById('sampleCount').textContent = pts.length + ' sample' + (pts.length===1?'':'s');
-
-    if(pts.length < 2){
-      el.innerHTML = '<div class="empty-scope">' + (mode==='accuracy'
-        ? 'No accuracy data logged yet.<br>Accuracy needs correct/wrong counts per question — only available for individually-marked tests, not class rank sheets.<br>It will appear here once one is logged.'
-        : 'Not enough data yet.') + '</div>';
-      return;
-    }
-    const max = 100;
-    const xFor = i => 100 + i * (440/(pts.length-1));
-    const yFor = v => 360 - (v/max)*330;
-    const coords = pts.map((d,i) => Object.assign({}, d, {x:xFor(i), y:yFor(mode==='score'?d.score:d.accuracy), v: mode==='score'?d.score:d.accuracy}));
-    const pathD = coords.map((c,i) => (i===0?'M':'L')+' '+c.x.toFixed(1)+','+c.y.toFixed(1)).join(' ');
-    const areaD = pathD + ' L ' + coords[coords.length-1].x.toFixed(1) + ',360 L ' + coords[0].x.toFixed(1) + ',360 Z';
-
-    let dots = '';
-    coords.forEach((c,i) => {
-      dots += '<circle cx="'+c.x+'" cy="'+c.y+'" r="7" fill="var(--bg)" stroke="'+colorFor(i)+'" stroke-width="3.5"></circle>' +
-        '<text class="valtag" x="'+(c.x-10)+'" y="'+(c.y-14)+'">'+c.v+(mode==='accuracy'?'%':'')+'</text>' +
-        '<text class="axis" x="'+(c.x-18)+'" y="382">'+c.label+'</text>';
-    });
-
-    el.innerHTML = '<svg viewBox="0 0 600 400" width="100%" style="overflow:visible;">' +
-      '<line class="scope-grid" x1="40" y1="20" x2="580" y2="20"></line>' +
-      '<line class="scope-mid" x1="40" y1="190" x2="580" y2="190"></line>' +
-      '<line class="scope-grid" x1="40" y1="360" x2="580" y2="360"></line>' +
-      '<line class="scope-grid" x1="40" y1="20" x2="40" y2="360"></line>' +
-      '<text class="axis" x="10" y="364">0</text>' +
-      '<text class="axis" x="4" y="194">50</text>' +
-      '<text class="axis" x="0" y="24">100</text>' +
-      '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" stop-color="var(--blue)"></stop>' +
-      '<stop offset="100%" stop-color="var(--blue)" stop-opacity="0"></stop>' +
-      '</linearGradient></defs>' +
-      '<path d="'+areaD+'" fill="url(#g)" opacity=".18"></path>' +
-      '<path d="'+pathD+'" stroke="var(--blue)" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>' +
-      dots +
-      '</svg>';
-  }
-
-  function renderLog(){
-    const el = document.getElementById('logArea');
-    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
-    if(pts.length === 0){
-      el.innerHTML = '<div class="log-row" style="grid-template-columns:1fr;"><span class="log-dash">No accuracy-tracked tests logged yet.</span></div>';
-      return;
-    }
-    const rev = pts.slice().reverse();
-    el.innerHTML = rev.map((d,i) => {
-      const idx = pts.length - i;
-      const val = mode==='score' ? d.score : d.accuracy;
-      const col = colorFor(pts.length-idx);
-      const rankStr = d.rank ? (' &middot; Rank #'+d.rank+'/'+d.classSize) : '';
-      const dparts = d.date.split('-');
-      const dispDate = dparts[2]+'/'+dparts[1]+'/'+dparts[0];
-      return '<div class="log-row">' +
-        '<div class="log-id">#'+String(idx).padStart(2,'0')+'</div>' +
-        '<div><div class="log-date">'+dispDate+rankStr+'</div>' +
-        '<div class="log-bar-wrap"><div class="log-bar" style="width:'+val+'%; background:'+col+';"></div></div></div>' +
-        '<div class="log-score" style="color:'+col+';">'+val+(mode==='accuracy'?'%':'')+'</div>' +
-        '</div>';
-    }).join('');
-  }
-
-  function render(){ renderReadout(); renderKPIs(); renderChart(); renderLog(); }
-
-  document.getElementById('btnScore').addEventListener('click', function(){
-    mode='score'; this.classList.add('active'); document.getElementById('btnAcc').classList.remove('active'); render();
-  });
-  document.getElementById('btnAcc').addEventListener('click', function(){
-    mode='accuracy'; this.classList.add('active'); document.getElementById('btnScore').classList.remove('active'); render();
-  });
-
-  render();
-</script>
 </body>
 </html>

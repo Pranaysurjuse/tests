@@ -2,260 +2,48 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Combine - Progress Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Combine</title>
 <style>
+  :root { --paper: #0a0a0a; --card: #141414; --card-border: #2a2a2a; --accent: #a78bfa; --text: #f2f5f3; --muted: #8a8a8a; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #f2f5f3; padding: 24px 20px 80px; }
-  .wrap { max-width: 860px; margin: 0 auto; }
-  .home-pill{position:static;display:inline-flex;background:#1a2420;border:1px solid #2a3a33;color:#f2f5f3;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12.5px;padding:7px 12px;border-radius:20px;
-    text-decoration:none;align-items:center;gap:5px;margin-bottom:14px;}
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #a78bfa; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
-  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; opacity:0; animation: fadeInUp 0.5s ease 0.05s forwards; }
-  .sub { color: #949494; font-size: 13.5px; margin: 0 0 24px; opacity:0; animation: fadeInUp 0.5s ease 0.1s forwards; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
-  @media (max-width: 480px) {
-    .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .kpi-value { font-size: 19px; }
-    h1 { font-size: 20px; }
-    .chart-card { padding: 18px 12px 14px; }
-    .subj-label { width: 72px; font-size: 12px; }
-    .legend { gap: 12px; }
-    .legend-item { font-size: 11px; }
-    table.hist { min-width: 460px; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--paper); color: var(--text);
+    min-height: 100vh; min-height: 100dvh; padding: 24px 16px 40px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .kpi-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 14px; opacity: 0; animation: fadeInUp 0.5s ease forwards; }
-  .kpi-label { font-size: 11.5px; color: #949494; margin: 0 0 6px; }
-  .kpi-value { font-size: 22px; font-weight: 700; font-family: 'Courier New', monospace; margin: 0; }
-  .kpi-value small { font-size: 12px; color: #949494; font-weight: 400; }
-  .kpi-delta { font-size: 11.5px; margin: 6px 0 0; color: #6b6b6b; }
-
-  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a78bfa; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 18px; }
-
-  .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 24px 20px 20px; }
-  .subj-bars { display: flex; flex-direction: column; gap: 16px; }
-  .subj-bar-row { display: flex; align-items: center; gap: 14px; }
-  .subj-label { width: 90px; font-family: 'Courier New', monospace; font-size: 13px; flex-shrink: 0; }
-  .subj-track { flex: 1; height: 22px; background: #232323; border-radius: 6px; overflow: hidden; }
-  .subj-fill { height: 100%; width: 0; border-radius: 6px; transition: width 1.2s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; box-sizing: border-box; }
-  .subj-fill span { font-family: 'Courier New', monospace; font-size: 11.5px; font-weight: 700; color: #08160f; white-space: nowrap; }
-  .subj-fill.label-outside span { color: #d8d8d8; }
-  .subj-fill.label-outside { justify-content: flex-start; padding-left: 0; padding-right: 0; overflow: visible; }
-  .subj-fill.label-outside span { position: relative; left: calc(100% + 8px); }
-
-  .empty-msg { font-size: 13px; color: #6b6b6b; padding: 20px 10px; text-align: center; }
-
-  .alert-box { background: #2b1a0f; border: 1px solid #ffb84d55; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #d8d8d8; line-height: 1.6; opacity:0; animation: fadeInUp 0.5s ease 0.02s forwards; }
-  .alert-box b { color: #ffb84d; }
-  .alert-box ul { margin: 6px 0 0; padding-left: 18px; }
-
-  .legend { display: flex; gap: 18px; margin-bottom: 16px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-family: 'Courier New', monospace; font-size: 12px; color: #d8d8d8; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .trend-axis { fill: #8a8a8a; font-size: 12.5px; font-family: 'Courier New', monospace; }
-  .trend-grid { stroke: #232323; stroke-width: 1; }
-  .trend-val { font-size: 13.5px; font-weight: 700; font-family: 'Courier New', monospace; }
-
-  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -20px; padding: 0 20px; }
-  table.hist { width: 100%; min-width: 480px; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
-  table.hist th { text-align: left; font-family: 'Courier New', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: #949494; padding: 8px 10px; border-bottom: 1px solid #2a2a2a; }
-  table.hist td { padding: 9px 10px; border-bottom: 1px solid #1e1e1e; font-family: 'Courier New', monospace; }
-  table.hist tr:last-child td { border-bottom: none; }
-
-  .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
+  .wrap { max-width: 420px; width: 100%; }
+  .home-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--card-border); color: var(--text);
+    font-size: 12.5px; padding: 7px 12px; border-radius: 20px; text-decoration: none; margin-bottom: 18px; }
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
+  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  a.card {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    min-height: 84px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
+    text-decoration: none; transition: transform 0.12s;
+  }
+  a.card:active { transform: scale(0.97); }
+  a.card .icon { font-size: 20px; margin-bottom: 6px; }
+  a.card.overview { grid-column: 1 / -1; background: linear-gradient(135deg, var(--card), #1a1a1a); border-color: var(--accent); }
+  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
 </style>
 </head>
 <body>
-<a href="index.html" class="home-pill">&#8592; Home</a>
 <div class="wrap">
-  <p class="eyebrow">Combine &middot; Progress dashboard</p>
-  <h1>Score by subject &amp; test history</h1>
-  <p class="sub">Combine tests span Physics, Chemistry and Maths in one paper &mdash; tracked separately from each subject's dedicated Wed/Sat tests.</p>
-  <div style="margin:0 0 18px;">
-    <a href="combine/august/index.html" style="color:#a78bfa;font-family:'Courier New',monospace;font-size:12px;text-decoration:none;">August &rarr;</a>
+  <a href="../index.html" class="home-pill">&#8592; Home</a>
+  <p class="eyebrow">combine &middot; Choose a month</p>
+  <h1>combine Dashboards</h1>
+  <p class="sub">Pick a month to see that month's tests, or view the full trend across all months.</p>
+  <div class="grid">
+    <a class="card" href="august/index.html"><span class="icon">&#128293;</span>August</a>
+    <a class="card overview" href="overview/index.html"><span class="icon">&#128200;</span>All months</a>
   </div>
-
-  <div id="alertArea"></div>
-
-  <div class="kpi-row" id="kpiRow"></div>
-
-  <div class="section-label">Latest test - subject breakdown</div>
-  <div class="chart-card">
-    <div class="subj-bars" id="subjBars"></div>
-  </div>
-
-  <div class="section-label">Subject trend across tests</div>
-  <div class="chart-card">
-    <div class="legend" id="trendLegend"></div>
-    <div id="trendChart"></div>
-  </div>
-
-  <div class="section-label">Full test history</div>
-  <div class="chart-card">
-    <div class="table-scroll">
-    <table class="hist">
-      <thead><tr><th>Date</th><th>Total</th><th>Accuracy</th><th>Physics</th><th>Chemistry</th><th>Maths</th></tr></thead>
-      <tbody id="histBody"></tbody>
-    </table>
-    </div>
-  </div>
-
-  <p class="footer-note">Live &middot; Cognition Test Tracker &middot; Combine</p>
+  <p class="footer-note">Cognition Test Tracker &middot; combine</p>
 </div>
-
-<script>
-  const DATA = [
-    {date: "2026-08-08", label: "08 Aug", score: 143, maxScore: 300, accuracy: 62.5, correct: 40, wrong: 24, skipped: 11,
-     subjects: {
-       physics: {score: 57, maxScore: 100, correct: 16, wrong: 9, skipped: 0},
-       chemistry: {score: 61, maxScore: 100, correct: 17, wrong: 8, skipped: 0},
-       maths: {score: 25, maxScore: 100, correct: 7, wrong: 7, skipped: 11}
-     }},
-    {date: "2026-08-23", label: "23 Aug", score: 95, maxScore: 300, accuracy: 56.0, correct: 28, wrong: 22, skipped: 25,
-     subjects: {
-       physics: {score: 33, maxScore: 100, correct: 10, wrong: 10, skipped: 5},
-       chemistry: {score: 54, maxScore: 100, correct: 15, wrong: 8, skipped: 2},
-       maths: {score: 8, maxScore: 100, correct: 3, wrong: 4, skipped: 18}
-     }}
-  ];
-
-  const latest = DATA[DATA.length - 1];
-  const previous = DATA.length > 1 ? DATA[DATA.length - 2] : null;
-  const percent = (latest.score / latest.maxScore) * 100;
-  const subjColorsK = { physics: '#6fcf97', chemistry: '#3b9dff', maths: '#ef8b7c' };
-  const subjLabelsK = { physics: 'Physics', chemistry: 'Chemistry', maths: 'Maths' };
-  const subjEntries = Object.entries(latest.subjects);
-  const strongest = subjEntries.reduce((a, b) => a[1].score >= b[1].score ? a : b);
-  const weakest = subjEntries.reduce((a, b) => a[1].score <= b[1].score ? a : b);
-
-  const alertEl = document.getElementById('alertArea');
-  if (previous) {
-    const spikes = [];
-    Object.keys(latest.subjects).forEach(key => {
-      const cur = latest.subjects[key].skipped || 0;
-      const prev = previous.subjects[key].skipped || 0;
-      const jump = cur - prev;
-      if (jump >= 4 && (prev === 0 || cur >= prev * 1.8)) {
-        spikes.push(`<b>${subjLabelsK[key]}</b>: skipped questions jumped from ${prev} to ${cur}`);
-      }
-    });
-    if (spikes.length > 0) {
-      alertEl.innerHTML = `<div class="alert-box">&#9888; <b>Skip-rate spike detected</b> vs the previous combine test:<ul><li>${spikes.join('</li><li>')}</li></ul>A skip spike is a different problem from getting things wrong &mdash; worth checking whether it's a time-management issue (ran out of time) or a confidence issue (saw the question and didn't attempt).</div>`;
-    }
-  }
-
-  document.getElementById('kpiRow').innerHTML = `
-    <div class="kpi-card" style="animation-delay:0.05s;">
-      <p class="kpi-label">Latest score</p>
-      <p class="kpi-value">${latest.score}<small> / ${latest.maxScore}</small></p>
-      <p class="kpi-delta">${percent.toFixed(1)}% overall</p>
-    </div>
-    <div class="kpi-card" style="animation-delay:0.1s;">
-      <p class="kpi-label">Accuracy</p>
-      <p class="kpi-value">${latest.accuracy.toFixed(1)}%</p>
-      <p class="kpi-delta">${latest.correct} correct of ${latest.correct + latest.wrong} attempted</p>
-    </div>
-    <div class="kpi-card" style="animation-delay:0.15s;">
-      <p class="kpi-label">Strongest subject</p>
-      <p class="kpi-value" style="color:${subjColorsK[strongest[0]]};">${subjLabelsK[strongest[0]]}</p>
-      <p class="kpi-delta">${strongest[1].score} / ${strongest[1].maxScore}</p>
-    </div>
-    <div class="kpi-card" style="animation-delay:0.2s;">
-      <p class="kpi-label">Weakest subject</p>
-      <p class="kpi-value" style="color:${subjColorsK[weakest[0]]};">${subjLabelsK[weakest[0]]}</p>
-      <p class="kpi-delta">${weakest[1].score} / ${weakest[1].maxScore}</p>
-    </div>
-  `;
-
-  const subjColors = { physics: '#6fcf97', chemistry: '#3b9dff', maths: '#ef8b7c' };
-  const subjLabels = { physics: 'Physics', chemistry: 'Chemistry', maths: 'Maths' };
-  const bars = document.getElementById('subjBars');
-  Object.keys(latest.subjects).forEach((key, i) => {
-    const s = latest.subjects[key];
-    const pct = (s.score / s.maxScore) * 100;
-    const outside = pct < 18;
-    const row = document.createElement('div');
-    row.className = 'subj-bar-row';
-    row.innerHTML = `
-      <div class="subj-label">${subjLabels[key]}</div>
-      <div class="subj-track"><div class="subj-fill${outside ? ' label-outside' : ''}" style="background:${subjColors[key]};" data-w="${pct}"><span>${s.score}/${s.maxScore}</span></div></div>
-    `;
-    bars.appendChild(row);
-  });
-  setTimeout(() => {
-    document.querySelectorAll('.subj-fill').forEach(el => { el.style.width = el.getAttribute('data-w') + '%'; });
-  }, 400);
-
-  const trendLegend = document.getElementById('trendLegend');
-  trendLegend.innerHTML = Object.keys(subjColors).map(k =>
-    `<div class="legend-item"><span class="legend-dot" style="background:${subjColors[k]};"></span>${subjLabels[k]}</div>`
-  ).join('');
-
-  const trendEl = document.getElementById('trendChart');
-  if (DATA.length < 2) {
-    trendEl.innerHTML = `<div class="empty-msg">Trend needs at least two tests &mdash; will build up as more are logged.</div>`;
-  } else {
-    const W = 700, H = 440, padL = 46, padR = 20, padT = 20, padB = 34;
-    const n = DATA.length;
-    const xFor = i => padL + (n === 1 ? 0 : i * ((W - padL - padR) / (n - 1)));
-    const yFor = v => (H - padB) - (v / 100) * (H - padB - padT);
-
-    let gridLines = '';
-    [0, 25, 50, 75, 100].forEach(v => {
-      const y = yFor(v);
-      gridLines += `<line class="trend-grid" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"></line>`;
-      gridLines += `<text class="trend-axis" x="8" y="${y + 4}">${v}</text>`;
-    });
-
-    let xLabels = '';
-    DATA.forEach((d, i) => {
-      xLabels += `<text class="trend-axis" x="${xFor(i) - 18}" y="${H - 10}">${d.label}</text>`;
-    });
-
-    let lines = '';
-    Object.keys(subjColors).forEach(key => {
-      const color = subjColors[key];
-      const pts = DATA.map((d, i) => ({ x: xFor(i), y: yFor(d.subjects[key].score), v: d.subjects[key].score }));
-      const pathD = pts.map((p, i) => (i === 0 ? 'M' : 'L') + ' ' + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-      lines += `<path d="${pathD}" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="800" stroke-dashoffset="800" style="animation: drawLine 1.2s ease forwards;"></path>`;
-      pts.forEach((p, i) => {
-        lines += `<circle cx="${p.x}" cy="${p.y}" r="7" fill="#141414" stroke="${color}" stroke-width="3.5" style="opacity:0; animation: popIn 0.3s ease ${0.9 + i * 0.15}s forwards;"></circle>`;
-        lines += `<text class="trend-val" fill="${color}" x="${p.x - 9}" y="${p.y - 12}" style="opacity:0; animation: popIn 0.3s ease ${0.9 + i * 0.15}s forwards;">${p.v}</text>`;
-      });
-    });
-
-    trendEl.innerHTML = `
-      <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;">
-        <style>
-          @keyframes drawLine { to { stroke-dashoffset: 0; } }
-          @keyframes popIn { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
-        </style>
-        ${gridLines}
-        <line class="trend-grid" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"></line>
-        ${lines}
-        ${xLabels}
-      </svg>
-    `;
-  }
-
-  const tbody = document.getElementById('histBody');
-  if (DATA.length < 2) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#6b6b6b;padding:20px;">First tracked Combine test &mdash; trend graph will build up as more are logged.</td></tr>`;
-  } else {
-    tbody.innerHTML = DATA.slice().reverse().map(d => `
-      <tr>
-        <td>${d.label} '26</td>
-        <td>${d.score} / ${d.maxScore}</td>
-        <td>${d.accuracy.toFixed(1)}%</td>
-        <td>${d.subjects.physics.score}/100</td>
-        <td>${d.subjects.chemistry.score}/100</td>
-        <td>${d.subjects.maths.score}/100</td>
-      </tr>
-    `).join('');
-  }
-</script>
 </body>
 </html>
