@@ -14,29 +14,46 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background: radial-gradient(circle at 20% -10%, #1c332c 0%, var(--paper) 55%);
+    background-size: 200% 200%;
+    animation: bgDrift 12s ease-in-out infinite;
     color: var(--text);
     min-height: 100vh; min-height: 100dvh;
     padding: 24px 16px 32px;
     display: flex; align-items: center; justify-content: center;
   }
+  @keyframes bgDrift { 0%,100% { background-position: 0% 0%; } 50% { background-position: 20% 15%; } }
   .wrap { max-width: 420px; width: 100%; }
-  .logo-wrap { display: flex; justify-content: center; margin-bottom: 14px; }
-  .logo-wrap img { width: 64px; height: 64px; filter: drop-shadow(0 0 14px #2bb3a055); }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .logo-wrap { display: flex; justify-content: center; margin-bottom: 14px; opacity: 0; animation: fadeInUp 0.55s ease forwards; }
+  .logo-wrap img { width: 64px; height: 64px; filter: drop-shadow(0 0 14px #2bb3a055); animation: logoPulse 3.2s ease-in-out infinite 0.6s; }
+  @keyframes logoPulse { 0%,100% { filter: drop-shadow(0 0 14px #2bb3a055); transform: scale(1); } 50% { filter: drop-shadow(0 0 22px #2bb3a099); transform: scale(1.04); } }
   .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--teal); margin: 0 0 6px; text-align: center; }
-  h1 { font-size: clamp(19px, 5.5vw, 22px); margin: 0 0 4px; font-weight: 700; text-align: center; }
-  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; text-align: center; }
+    text-transform: uppercase; color: var(--teal); margin: 0 0 6px; text-align: center;
+    opacity: 0; animation: fadeInUp 0.5s ease forwards 0.1s; }
+  h1 { font-size: clamp(19px, 5.5vw, 22px); margin: 0 0 4px; font-weight: 700; text-align: center;
+    opacity: 0; animation: fadeInUp 0.5s ease forwards 0.18s; }
+  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; text-align: center;
+    opacity: 0; animation: fadeInUp 0.5s ease forwards 0.26s; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   a.card {
     display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
     min-height: 88px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
     border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
-    text-decoration: none; transition: transform 0.12s, border-color 0.12s;
+    text-decoration: none; transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     -webkit-tap-highlight-color: transparent;
+    opacity: 0; transform: translateY(14px); animation: cardIn 0.45s cubic-bezier(.2,.8,.3,1) forwards;
   }
-  a.card:active { transform: scale(0.97); }
-  a.card .icon { font-size: 20px; margin-bottom: 6px; }
-  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
+  a.card:nth-child(1) { animation-delay: 0.34s; }
+  a.card:nth-child(2) { animation-delay: 0.4s; }
+  a.card:nth-child(3) { animation-delay: 0.46s; }
+  a.card:nth-child(4) { animation-delay: 0.52s; }
+  @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+  a.card:hover { border-color: var(--teal); box-shadow: 0 4px 18px rgba(43,179,160,0.18); transform: translateY(-2px); }
+  a.card:active { transform: scale(0.96); }
+  a.card .icon { font-size: 20px; margin-bottom: 6px; display: inline-block; transition: transform 0.25s ease; }
+  a.card:hover .icon { transform: scale(1.15) rotate(-4deg); }
+  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center;
+    opacity: 0; animation: fadeInUp 0.6s ease forwards 0.7s; }
 
   @media (max-width: 380px) {
     .grid { gap: 10px; }
