@@ -231,12 +231,12 @@ function softTick(freq, duration, vol) {
   } catch(e) {}
 }
 const sfx = {
-  key: () => softTick(340, 0.05, 0.035),
-  type: () => softTick(480, 0.045, 0.03),
-  error: () => { beep(220, 0.22, 'sine', 0.045); setTimeout(() => beep(165, 0.28, 'sine', 0.04), 160); },
-  success: () => { beep(660, 0.09, 'sine', 0.04); setTimeout(() => beep(880, 0.12, 'sine', 0.04), 110); setTimeout(() => beep(1175, 0.2, 'sine', 0.035), 230); },
-  boot: () => softTick(300, 0.05, 0.03),
-  welcome: () => { beep(523, 0.18, 'sine', 0.045); setTimeout(() => beep(784, 0.18, 'sine', 0.045), 160); setTimeout(() => beep(1047, 0.35, 'sine', 0.04), 330); }
+  key: () => softTick(340, 0.05, 0.07),
+  type: () => softTick(480, 0.045, 0.06),
+  error: () => { beep(220, 0.22, 'sine', 0.09); setTimeout(() => beep(165, 0.28, 'sine', 0.08), 160); },
+  success: () => { beep(660, 0.09, 'sine', 0.08); setTimeout(() => beep(880, 0.12, 'sine', 0.08), 110); setTimeout(() => beep(1175, 0.2, 'sine', 0.07), 230); },
+  boot: () => softTick(300, 0.05, 0.06),
+  welcome: () => { beep(523, 0.18, 'sine', 0.09); setTimeout(() => beep(784, 0.18, 'sine', 0.09), 160); setTimeout(() => beep(1047, 0.35, 'sine', 0.08), 330); }
 };
 
 document.getElementById('pwInput').addEventListener('input', sfx.key);
