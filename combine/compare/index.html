@@ -6,65 +6,119 @@
 <title>Combine - Compare Tests</title>
 <style>
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #f2f5f3; padding: 24px 20px 80px; }
-  .wrap { max-width: 860px; margin: 0 auto; }
+  body {
+    margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at 20% 0%, #16101f 0%, #000 45%), #000;
+    color: #f2f5f3; padding: 28px 18px 90px; min-height: 100vh;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
   .home-pill{display:inline-flex;background:#1a2420;border:1px solid #2a3a33;color:#f2f5f3;
-    font-size:12.5px;padding:7px 12px;border-radius:20px;text-decoration:none;align-items:center;gap:5px;margin-bottom:14px;}
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #a78bfa; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
-  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; opacity:0; animation: fadeInUp 0.5s ease 0.05s forwards; }
-  .sub { color: #949494; font-size: 13.5px; margin: 0 0 22px; opacity:0; animation: fadeInUp 0.5s ease 0.1s forwards; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    font-size:12.5px;padding:7px 12px;border-radius:20px;text-decoration:none;align-items:center;gap:5px;margin-bottom:16px;}
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes glow { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes shine { 0% { transform: translateX(-100%); } 100% { transform: translateX(220%); } }
 
-  .head-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    background: linear-gradient(90deg,#c9a4ff,#7c5cf9); -webkit-background-clip: text; background-clip: text; color: transparent;
+    margin: 0 0 8px; opacity:0; animation: fadeInUp 0.6s ease forwards; font-weight: 700; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 800; letter-spacing: -0.5px; opacity:0; animation: fadeInUp 0.6s ease 0.05s forwards; }
+  .sub { color: #8a8a95; font-size: 14px; margin: 0 0 26px; opacity:0; animation: fadeInUp 0.6s ease 0.1s forwards; }
+
+  .insight-banner {
+    background: linear-gradient(135deg, #1c1530 0%, #120e1f 100%); border: 1px solid #7c5cf94a; border-radius: 18px;
+    padding: 16px 20px; margin-bottom: 24px; font-size: 14px; color: #e4d9ff; display: flex; align-items: center; gap: 12px;
+    opacity:0; animation: fadeInUp 0.6s ease 0.12s forwards; position: relative; overflow: hidden;
+  }
+  .insight-banner .spark { font-size: 20px; flex-shrink: 0; }
+  .insight-banner b { color: #c9a4ff; }
+
+  .head-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; margin-bottom: 20px; }
   @media (max-width: 560px) { .head-row { grid-template-columns: 1fr; } .vs-mark { display: none; } }
-  .test-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 16px; padding: 18px 20px; opacity:0; animation: fadeInUp 0.5s ease forwards; position: relative; overflow: hidden; }
-  .test-card.current { border-color: #7c5cf9; box-shadow: 0 0 0 1px #7c5cf933, 0 8px 24px -12px #7c5cf955; }
-  .test-card.current::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #7c5cf9, #a78bfa); }
-  .test-label { font-family: 'Courier New', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #7a7a7a; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
-  .test-label .dot { width: 6px; height: 6px; border-radius: 50%; background: #4a4a4a; }
-  .test-card.current .test-label .dot { background: #a78bfa; }
-  .test-score { font-size: 30px; font-weight: 700; font-family: 'Courier New', monospace; margin: 0; letter-spacing: -0.5px; }
-  .test-score small { font-size: 13px; color: #7a7a7a; font-weight: 400; }
-  .test-acc { font-size: 12.5px; color: #8a8a8a; margin-top: 10px; }
-  .vs-mark { width: 34px; height: 34px; border-radius: 50%; background: #141414; border: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; color: #6b6b6b; font-size: 11px; font-weight: 700; }
+  .test-card {
+    background: linear-gradient(160deg, #151018 0%, #0d0a10 100%); border: 1px solid #2a2632; border-radius: 20px;
+    padding: 20px 22px; opacity:0; animation: fadeInUp 0.6s ease forwards; position: relative; overflow: hidden;
+  }
+  .test-card.current {
+    border-color: #7c5cf9aa; box-shadow: 0 0 0 1px #7c5cf933, 0 16px 40px -16px #7c5cf988;
+  }
+  .test-card.current::before {
+    content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 1px;
+    background: linear-gradient(135deg, #c9a4ff, #7c5cf9, transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+  }
+  .test-card.current::after {
+    content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, #ffffff12, transparent);
+    animation: shine 3.2s ease-in-out infinite; animation-delay: 1s;
+  }
+  .test-label { font-family: 'Courier New', monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.12em; color: #7a7a85; margin: 0 0 10px; display: flex; align-items: center; gap: 7px; }
+  .test-label .dot { width: 7px; height: 7px; border-radius: 50%; background: #4a4a52; }
+  .test-card.current .test-label .dot { background: #c9a4ff; box-shadow: 0 0 8px #c9a4ffaa; animation: glow 2s ease-in-out infinite; }
+  .test-card.current .test-label { color: #c9a4ff; }
+  .test-score { font-size: 34px; font-weight: 800; font-family: 'Courier New', monospace; margin: 0; letter-spacing: -1px; }
+  .test-score small { font-size: 13px; color: #7a7a85; font-weight: 400; }
+  .test-acc { font-size: 12.5px; color: #9a9aa5; margin-top: 12px; display: flex; align-items: center; gap: 6px; }
+  .ring { width: 26px; height: 26px; flex-shrink: 0; }
+  .vs-mark {
+    width: 40px; height: 40px; border-radius: 50%; background: #0d0a10; border: 1px solid #2a2632;
+    display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace;
+    color: #7c5cf9; font-size: 11px; font-weight: 800; box-shadow: 0 0 20px -6px #7c5cf988;
+  }
 
-  .delta-pill { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 700; font-family: 'Courier New', monospace; padding: 1px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
-  .delta-pill.up { color: #6fcf97; background: #6fcf9718; }
-  .delta-pill.down { color: #e2665c; background: #e2665c18; }
-  .delta-pill.flat { color: #8a8a8a; background: #8a8a8a18; }
+  .delta-pill { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 800; font-family: 'Courier New', monospace; padding: 2px 10px; border-radius: 20px; margin-left: 9px; vertical-align: middle; }
+  .delta-pill.up { color: #7ee2a8; background: #7ee2a81c; box-shadow: inset 0 0 0 1px #7ee2a833; }
+  .delta-pill.down { color: #ff8a80; background: #ff8a801c; box-shadow: inset 0 0 0 1px #ff8a8033; }
+  .delta-pill.flat { color: #9a9aa5; background: #9a9aa51c; }
 
-  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a78bfa; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 16px; }
-  .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 16px; padding: 20px 20px 6px; }
+  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #a78bfa; border-bottom: 1px solid #211d29; padding-bottom: 8px; margin: 34px 0 16px; }
 
-  .cmp-row { display: grid; grid-template-columns: 92px 1fr 56px; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid #1e1e1e; }
+  .summary-strip { display: flex; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+  .summary-chip {
+    flex: 1; min-width: 150px; background: linear-gradient(160deg, #14111a 0%, #0d0a10 100%); border: 1px solid #211d29;
+    border-radius: 16px; padding: 14px 16px; opacity:0; animation: fadeInUp 0.6s ease forwards; position: relative;
+  }
+  .summary-chip .icon { font-size: 18px; margin-bottom: 6px; display: block; }
+  .summary-chip .l { font-size: 10.5px; color: #7a7a85; text-transform: uppercase; letter-spacing: 0.08em; font-family: 'Courier New', monospace; margin: 0 0 5px; }
+  .summary-chip .v { font-size: 17px; font-weight: 800; letter-spacing: -0.3px; }
+
+  .chart-card {
+    background: linear-gradient(160deg, #131018 0%, #0c0a0f 100%); border: 1px solid #211d29; border-radius: 20px;
+    padding: 22px 22px 8px;
+  }
+  .legend { display: flex; gap: 22px; margin-bottom: 8px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-family: 'Courier New', monospace; font-size: 11.5px; color: #9a9aa5; }
+  .legend-swatch { width: 16px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .legend-swatch.prev { opacity: 0.32; background: #6b6b75; }
+  .legend-swatch.cur { background: #a78bfa; box-shadow: 0 0 8px #a78bfa88; }
+
+  .cmp-row { display: grid; grid-template-columns: 106px 1fr 64px; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid #1a1720; }
   .cmp-row:last-child { border-bottom: none; }
-  .cmp-subj { font-family: 'Courier New', monospace; font-size: 13px; }
-  .cmp-subj .star { color: #d8a24a; }
-  .cmp-bars { display: flex; flex-direction: column; gap: 6px; }
-  .cmp-bar-line { display: flex; align-items: center; gap: 8px; }
-  .cmp-bar-track { flex: 1; height: 16px; background: #1e1e1e; border-radius: 5px; overflow: hidden; }
-  .cmp-bar-fill { height: 100%; border-radius: 5px; width: 0; transition: width 1s cubic-bezier(.2,.7,.3,1); }
-  .cmp-bar-fill.prev { opacity: 0.38; }
-  .cmp-bar-val { width: 44px; text-align: right; font-family: 'Courier New', monospace; font-size: 11px; color: #7a7a7a; flex-shrink: 0; }
-  .cmp-delta { text-align: right; font-family: 'Courier New', monospace; font-size: 15px; font-weight: 700; }
-  .cmp-delta.up { color: #6fcf97; }
-  .cmp-delta.down { color: #e2665c; }
-  .cmp-delta.flat { color: #6b6b6b; }
+  .cmp-subj { font-family: 'Courier New', monospace; font-size: 13.5px; display: flex; align-items: center; gap: 7px; font-weight: 600; }
+  .cmp-subj .icon { font-size: 15px; }
+  .cmp-subj .star { color: #ffb84d; font-size: 12px; }
+  .cmp-bars { display: flex; flex-direction: column; gap: 7px; }
+  .cmp-bar-line { display: flex; align-items: center; gap: 9px; }
+  .cmp-bar-track { flex: 1; height: 15px; background: #17141d; border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 3px #00000066; }
+  .cmp-bar-fill { height: 100%; border-radius: 6px; width: 0; transition: width 1.1s cubic-bezier(.16,1,.3,1); position: relative; }
+  .cmp-bar-fill.prev { opacity: 0.32; }
+  .cmp-bar-fill:not(.prev)::after {
+    content: ''; position: absolute; inset: 0; border-radius: 6px;
+    background: linear-gradient(180deg, #ffffff33, transparent 60%);
+  }
+  .cmp-bar-val { width: 46px; text-align: right; font-family: 'Courier New', monospace; font-size: 11px; color: #7a7a85; flex-shrink: 0; }
+  .cmp-delta { text-align: right; font-family: 'Courier New', monospace; font-size: 16px; font-weight: 800; }
+  .cmp-delta.up { color: #7ee2a8; }
+  .cmp-delta.down { color: #ff8a80; }
+  .cmp-delta.flat { color: #6b6b75; }
   .cmp-delta .arrow { font-size: 12px; }
 
-  .legend { display: flex; gap: 20px; margin-bottom: 6px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-family: 'Courier New', monospace; font-size: 11.5px; color: #9a9a9a; }
-  .legend-swatch { width: 14px; height: 8px; border-radius: 3px; flex-shrink: 0; }
-  .legend-swatch.prev { opacity: 0.38; background: #6b6b6b; }
-  .legend-swatch.cur { background: #a78bfa; }
-
-  .summary-strip { display: flex; gap: 10px; margin-bottom: 22px; flex-wrap: wrap; }
-  .summary-chip { flex: 1; min-width: 140px; background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 12px 14px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
-  .summary-chip .l { font-size: 10.5px; color: #7a7a7a; text-transform: uppercase; letter-spacing: 0.06em; font-family: 'Courier New', monospace; margin: 0 0 4px; }
-  .summary-chip .v { font-size: 15px; font-weight: 700; }
-
-  .note { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: #d8a24a; background: #2b1a0f; border: 1px solid #ffb84d33; border-radius: 10px; padding: 10px 12px; margin: 16px 0 20px; line-height: 1.5; }
-  .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
+  .note {
+    display: flex; align-items: flex-start; gap: 9px; font-size: 12.5px; color: #f0c674;
+    background: linear-gradient(135deg, #2a1c0d, #1f150a); border: 1px solid #ffb84d3a; border-radius: 14px;
+    padding: 12px 14px; margin: 18px 0 22px; line-height: 1.55;
+  }
+  .footer-note { margin-top: 34px; font-size: 12px; color: #4a4a55; text-align: center; }
 </style>
 </head>
 <body>
@@ -73,6 +127,8 @@
   <p class="eyebrow">Combine &middot; Compare tests</p>
   <h1>Last test vs this one</h1>
   <p class="sub">Side-by-side comparison of your two most recent combine tests.</p>
+
+  <div class="insight-banner" id="insightBanner"></div>
 
   <div class="head-row" id="headRow"></div>
 
@@ -113,23 +169,30 @@
   const current = DATA[DATA.length - 1];
   const prev = DATA[DATA.length - 2];
   const subjColors = { physics: '#6fcf97', chemistry: '#3b9dff', maths: '#ef8b7c' };
+  const subjIcons = { physics: '&#9889;', chemistry: '&#129514;', maths: '&#8721;' };
   const subjLabels = { physics: 'Physics', chemistry: 'Chemistry', maths: 'Maths' };
 
   const scoreDelta = current.score - prev.score;
   const scoreDeltaStr = (scoreDelta > 0 ? '+' : '') + scoreDelta;
   const scoreDeltaClass = scoreDelta > 0 ? 'up' : (scoreDelta < 0 ? 'down' : 'flat');
 
+  function ring(pct, color) {
+    const r = 10, c = 2 * Math.PI * r;
+    const off = c - (Math.min(pct,100) / 100) * c;
+    return `<svg class="ring" viewBox="0 0 26 26"><circle cx="13" cy="13" r="${r}" fill="none" stroke="#26232e" stroke-width="3"></circle><circle cx="13" cy="13" r="${r}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 13 13)"></circle></svg>`;
+  }
+
   document.getElementById('headRow').innerHTML = `
-    <div class="test-card" style="animation-delay:0.05s;">
+    <div class="test-card" style="animation-delay:0.15s;">
       <p class="test-label"><span class="dot"></span>Last &middot; ${prev.label} '26</p>
       <p class="test-score">${prev.score}<small> / ${prev.maxScore}</small></p>
-      <p class="test-acc">${prev.accuracy.toFixed(1)}% accuracy</p>
+      <p class="test-acc">${ring(prev.accuracy, '#8a8a95')} ${prev.accuracy.toFixed(1)}% accuracy</p>
     </div>
     <div class="vs-mark">VS</div>
-    <div class="test-card current" style="animation-delay:0.1s;">
+    <div class="test-card current" style="animation-delay:0.22s;">
       <p class="test-label"><span class="dot"></span>This test &middot; ${current.label} '26</p>
       <p class="test-score">${current.score}<small> / ${current.maxScore}</small><span class="delta-pill ${scoreDeltaClass}">${scoreDeltaStr}</span></p>
-      <p class="test-acc">${current.accuracy.toFixed(1)}% accuracy${current.partialData ? ' *' : ''}</p>
+      <p class="test-acc">${ring(current.accuracy, '#c9a4ff')} ${current.accuracy.toFixed(1)}% accuracy${current.partialData ? ' *' : ''}</p>
     </div>
   `;
 
@@ -154,7 +217,7 @@
     const row = document.createElement('div');
     row.className = 'cmp-row';
     row.innerHTML = `
-      <div class="cmp-subj">${subjLabels[key]}${c.estimated ? ' <span class="star">*</span>' : ''}</div>
+      <div class="cmp-subj"><span class="icon">${subjIcons[key]}</span>${subjLabels[key]}${c.estimated ? ' <span class="star">&#9733;</span>' : ''}</div>
       <div class="cmp-bars">
         <div class="cmp-bar-line"><div class="cmp-bar-track"><div class="cmp-bar-fill prev" style="background:${subjColors[key]};" data-w="${p.score}"></div></div><div class="cmp-bar-val">${p.score}/${p.maxScore}</div></div>
         <div class="cmp-bar-line"><div class="cmp-bar-track"><div class="cmp-bar-fill" style="background:${subjColors[key]};" data-w="${c.score}"></div></div><div class="cmp-bar-val">${c.score}/${c.maxScore}</div></div>
@@ -165,27 +228,43 @@
   });
   setTimeout(() => {
     document.querySelectorAll('.cmp-bar-fill').forEach(el => { el.style.width = el.getAttribute('data-w') + '%'; });
-  }, 300);
+  }, 350);
 
   document.getElementById('summaryStrip').innerHTML = `
-    <div class="summary-chip" style="animation-delay:0.15s;">
+    <div class="summary-chip" style="animation-delay:0.28s;">
+      <span class="icon">&#128200;</span>
       <p class="l">Improved in</p>
-      <p class="v" style="color:#6fcf97;">${improved} of 3 subjects</p>
+      <p class="v" style="color:#7ee2a8;">${improved} of 3 subjects</p>
     </div>
-    <div class="summary-chip" style="animation-delay:0.2s;">
+    <div class="summary-chip" style="animation-delay:0.33s;">
+      <span class="icon">&#127942;</span>
       <p class="l">Biggest gain</p>
       <p class="v" style="color:${subjColors[biggestKey]};">${subjLabels[biggestKey]} ${biggestVal >= 0 ? '+' : ''}${biggestVal}</p>
     </div>
-    <div class="summary-chip" style="animation-delay:0.25s;">
+    <div class="summary-chip" style="animation-delay:0.38s;">
+      <span class="icon">&#9878;&#65039;</span>
       <p class="l">Overall change</p>
-      <p class="v" style="color:${scoreDelta >= 0 ? '#6fcf97' : '#e2665c'};">${scoreDeltaStr} pts</p>
+      <p class="v" style="color:${scoreDelta >= 0 ? '#7ee2a8' : '#ff8a80'};">${scoreDeltaStr} pts</p>
     </div>
   `;
+
+  const bannerEl = document.getElementById('insightBanner');
+  let insightMsg;
+  if (scoreDelta > 0 && improved >= 2) {
+    insightMsg = `<b>Strong jump</b> &mdash; up ${scoreDeltaStr} points with gains in ${improved} of 3 subjects. ${subjLabels[biggestKey]} led the improvement.`;
+  } else if (scoreDelta > 0) {
+    insightMsg = `<b>Net improvement</b> of ${scoreDeltaStr} points, though ${declined} subject${declined>1?'s':''} slipped &mdash; worth a closer look.`;
+  } else if (scoreDelta < 0) {
+    insightMsg = `<b>Down ${Math.abs(scoreDelta)} points</b> overall vs the last test &mdash; check which subject dragged it down.`;
+  } else {
+    insightMsg = `<b>Flat</b> vs the last test &mdash; same total score.`;
+  }
+  bannerEl.innerHTML = `<span class="spark">&#10024;</span><span>${insightMsg}</span>`;
 
   if (hasEstimated) {
     const noteEl = document.getElementById('cmpNote');
     noteEl.style.display = 'flex';
-    noteEl.innerHTML = '&#9888;&nbsp;<span>Subjects marked with <b>*</b> are user-reported totals for this test, not scored question-by-question.</span>';
+    noteEl.innerHTML = '&#9888;&nbsp;<span>Subjects marked with <b>&#9733;</b> are user-reported totals for this test, not scored question-by-question.</span>';
   }
 </script>
 </body>
