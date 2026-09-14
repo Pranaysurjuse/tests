@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combine - Compare Tests</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #f2f5f3; padding: 24px 20px 80px; }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  .home-pill{display:inline-flex;background:#1a2420;border:1px solid #2a3a33;color:#f2f5f3;
+    font-size:12.5px;padding:7px 12px;border-radius:20px;text-decoration:none;align-items:center;gap:5px;margin-bottom:14px;}
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #a78bfa; margin: 0 0 6px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
+  h1 { font-size: 24px; margin: 0 0 4px; font-weight: 700; opacity:0; animation: fadeInUp 0.5s ease 0.05s forwards; }
+  .sub { color: #949494; font-size: 13.5px; margin: 0 0 24px; opacity:0; animation: fadeInUp 0.5s ease 0.1s forwards; }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .head-row { display: flex; gap: 10px; margin-bottom: 24px; }
+  @media (max-width: 480px) { .head-row { flex-direction: column; } }
+  .test-card { flex: 1; background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px; opacity:0; animation: fadeInUp 0.5s ease forwards; }
+  .test-card.current { border-color: #a78bfa55; }
+  .test-label { font-family: 'Courier New', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #949494; margin: 0 0 6px; }
+  .test-score { font-size: 26px; font-weight: 700; font-family: 'Courier New', monospace; margin: 0; }
+  .test-score small { font-size: 13px; color: #949494; font-weight: 400; }
+  .vs-mark { align-self: center; font-family: 'Courier New', monospace; color: #6b6b6b; font-size: 13px; padding: 0 4px; }
+
+  .section-label { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #a78bfa; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin: 30px 0 18px; }
+  .chart-card { background: #141414; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px 18px; }
+
+  .cmp-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #1e1e1e; }
+  .cmp-row:last-child { border-bottom: none; }
+  .cmp-subj { width: 82px; font-family: 'Courier New', monospace; font-size: 13px; flex-shrink: 0; }
+  .cmp-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .cmp-bar-track { height: 14px; background: #232323; border-radius: 4px; overflow: hidden; position: relative; }
+  .cmp-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+  .cmp-bar-fill.prev { opacity: 0.45; }
+  .cmp-delta { width: 64px; text-align: right; font-family: 'Courier New', monospace; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .cmp-delta.up { color: #6fcf97; }
+  .cmp-delta.down { color: #e2665c; }
+  .cmp-delta.flat { color: #8a8a8a; }
+
+  .legend { display: flex; gap: 18px; margin-bottom: 14px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-family: 'Courier New', monospace; font-size: 12px; color: #d8d8d8; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  .note { font-size: 12px; color: #d8a24a; margin-top: 16px; }
+  .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
+</style>
+</head>
+<body>
+<a href="../../dashboard.html" class="home-pill">&#8592; Home</a>
+<div class="wrap">
+  <p class="eyebrow">Combine &middot; Compare tests</p>
+  <h1>Last test vs this one</h1>
+  <p class="sub">Side-by-side comparison of your two most recent combine tests.</p>
+
+  <div class="head-row" id="headRow"></div>
+
+  <div class="section-label">Subject-by-subject change</div>
+  <div class="chart-card">
+    <div class="legend" id="cmpLegend"></div>
+    <div id="cmpRows"></div>
+    <div class="note" id="cmpNote" style="display:none;"></div>
+  </div>
+
+  <p class="footer-note">Live &middot; Cognition Test Tracker &middot; Combine</p>
+</div>
+
+<script>
+  const DATA = [
+    {date: "2026-08-08", label: "08 Aug", score: 143, maxScore: 300, accuracy: 62.5, correct: 40, wrong: 24, skipped: 11,
+     subjects: {
+       physics: {score: 57, maxScore: 100, correct: 16, wrong: 9, skipped: 0},
+       chemistry: {score: 61, maxScore: 100, correct: 17, wrong: 8, skipped: 0},
+       maths: {score: 25, maxScore: 100, correct: 7, wrong: 7, skipped: 11}
+     }},
+    {date: "2026-08-23", label: "23 Aug", score: 95, maxScore: 300, accuracy: 56.0, correct: 28, wrong: 22, skipped: 25,
+     subjects: {
+       physics: {score: 33, maxScore: 100, correct: 10, wrong: 10, skipped: 5},
+       chemistry: {score: 54, maxScore: 100, correct: 15, wrong: 8, skipped: 2},
+       maths: {score: 8, maxScore: 100, correct: 3, wrong: 4, skipped: 18}
+     }},
+    {date: "2026-09-12", label: "12 Sep", score: 146, maxScore: 300, accuracy: 85.7, correct: 12, wrong: 2, skipped: 11, partialData: true,
+     subjects: {
+       physics: {score: 29, maxScore: 100, estimated: true},
+       chemistry: {score: 71, maxScore: 100, estimated: true},
+       maths: {score: 46, maxScore: 100, correct: 12, wrong: 2, skipped: 11}
+     }}
+  ];
+
+  const current = DATA[DATA.length - 1];
+  const prev = DATA[DATA.length - 2];
+  const subjColors = { physics: '#6fcf97', chemistry: '#3b9dff', maths: '#ef8b7c' };
+  const subjLabels = { physics: 'Physics', chemistry: 'Chemistry', maths: 'Maths' };
+
+  const scoreDelta = current.score - prev.score;
+  const scoreDeltaStr = (scoreDelta > 0 ? '+' : '') + scoreDelta;
+  const scoreDeltaClass = scoreDelta > 0 ? 'up' : (scoreDelta < 0 ? 'down' : 'flat');
+
+  document.getElementById('headRow').innerHTML = `
+    <div class="test-card" style="animation-delay:0.05s;">
+      <p class="test-label">Last &middot; ${prev.label} '26</p>
+      <p class="test-score">${prev.score}<small> / ${prev.maxScore}</small></p>
+      <p class="test-label" style="margin-top:8px;color:#6b6b6b;">${prev.accuracy.toFixed(1)}% accuracy</p>
+    </div>
+    <div class="vs-mark">vs</div>
+    <div class="test-card current" style="animation-delay:0.1s;">
+      <p class="test-label">This test &middot; ${current.label} '26</p>
+      <p class="test-score">${current.score}<small> / ${current.maxScore}</small> <span class="cmp-delta ${scoreDeltaClass}" style="font-size:14px;">${scoreDeltaStr}</span></p>
+      <p class="test-label" style="margin-top:8px;color:#6b6b6b;">${current.accuracy.toFixed(1)}% accuracy${current.partialData ? ' *' : ''}</p>
+    </div>
+  `;
+
+  document.getElementById('cmpLegend').innerHTML = `
+    <div class="legend-item"><span class="legend-dot" style="background:#6b6b6b;opacity:0.6;"></span>Last test</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#a78bfa;"></span>This test</div>
+  `;
+
+  const rowsEl = document.getElementById('cmpRows');
+  let hasEstimated = false;
+  Object.keys(current.subjects).forEach(key => {
+    const c = current.subjects[key];
+    const p = prev.subjects[key];
+    const delta = c.score - p.score;
+    const deltaStr = (delta > 0 ? '+' : '') + delta;
+    const deltaClass = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+    if (c.estimated) hasEstimated = true;
+    const row = document.createElement('div');
+    row.className = 'cmp-row';
+    row.innerHTML = `
+      <div class="cmp-subj">${subjLabels[key]}${c.estimated ? ' *' : ''}</div>
+      <div class="cmp-bars">
+        <div class="cmp-bar-track"><div class="cmp-bar-fill prev" style="background:${subjColors[key]};" data-w="${p.score}"></div></div>
+        <div class="cmp-bar-track"><div class="cmp-bar-fill" style="background:${subjColors[key]};" data-w="${c.score}"></div></div>
+      </div>
+      <div class="cmp-delta ${deltaClass}">${deltaStr}</div>
+    `;
+    rowsEl.appendChild(row);
+  });
+  setTimeout(() => {
+    document.querySelectorAll('.cmp-bar-fill').forEach(el => { el.style.width = el.getAttribute('data-w') + '%'; });
+  }, 300);
+
+  if (hasEstimated) {
+    const noteEl = document.getElementById('cmpNote');
+    noteEl.style.display = 'block';
+    noteEl.innerHTML = '&#9888; Subjects marked with * are user-reported totals for this test, not scored question-by-question.';
+  }
+</script>
+</body>
+</html>
