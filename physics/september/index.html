@@ -142,7 +142,7 @@
 </style>
 </head>
 <body>
-<a href="../../dashboard.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><a href="../june/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">June</a><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">July</span><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../september/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">September</a><a href="../overview/index.html" style="background:transparent;color:#6b9fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-left:6px;text-decoration:none;border:1px solid #6b9fff55;">All months &rarr;</a></div>
+<a href="../../dashboard.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><a href="../june/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">June</a><a href="../july/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">July</a><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">September</span><a href="../overview/index.html" style="background:transparent;color:#6b9fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-left:6px;text-decoration:none;border:1px solid #6b9fff55;">All months &rarr;</a></div>
 <div class="bg-grid"></div>
 <div class="bg-signature">
   <svg viewBox="0 0 200 200">
@@ -156,6 +156,10 @@
   <p class="eyebrow">Live tracking &middot; Cognition Academy</p>
   <h1>Physics — Signal Log</h1>
   <p class="sub">// Class-test score trace, XI PCM</p>
+
+  <div style="background:#1a140a;border:1px solid #ffb45444;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-family:var(--mono);font-size:12.5px;color:#d8d8d8;line-height:1.6;">
+    <b style="color:var(--amber);">88.9% accuracy</b> on attempted questions (16 of 18) &mdash; best hit-rate logged so far. Score capped at 63/100 because 7 of 25 questions were left unattempted, costing up to 28 marks. Both misses were FBD/setup slips: sign convention on the two-block tension problem, and an arithmetic slip on the lift apparent-weight question.
+  </div>
 
   <div class="channels">
     <button class="ch-btn active" id="btnScore"><b>CH1</b>Score</button>
@@ -176,7 +180,7 @@
 
 <script>
   const DATA = [
-    {date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38},
+    {date:"2026-09-26", label:"26 SEP", score:63, accuracy:88.9, rank:null, classSize:null}
   ];
   const colorFor = i => [ 'var(--blue)', 'var(--cyan)', 'var(--amber)' ][i % 3];
   let mode = 'score';
