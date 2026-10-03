@@ -6,18 +6,18 @@
 <title>PHYS · Signal Log</title>
 <style>
   :root{
-    --bg:#080b10;
-    --panel:#0e131b;
-    --panel-2:#11171f;
-    --grid:#1c2530;
-    --line:#212b38;
-    --blue:#4da6ff;
-    --blue-dim:#4da6ff33;
-    --cyan:#5be8ff;
+    --bg:#070d0a;
+    --panel:#0d1511;
+    --panel-2:#111b16;
+    --grid:#17241e;
+    --line:#1f2e26;
+    --blue:#34d399;
+    --blue-dim:#34d39933;
+    --cyan:#5eead4;
     --amber:#ffb454;
     --red:#ff6b6b;
     --text:#e6edf5;
-    --muted:#5c6c80;
+    --muted:#5f7d6e;
     --mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
     --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
@@ -133,16 +133,18 @@
   .log-score{font-size:15px; font-weight:700; text-align:right;}
   .log-bar-wrap{height:4px; background:var(--grid); border-radius:2px; margin-top:6px; overflow:hidden;}
   .log-bar{height:100%; border-radius:2px;}
-  .log-dash{color:#3a4655;}
+  .log-dash{color:#3a5547;}
 
-  .foot{margin-top:26px; text-align:center; font-family:var(--mono); font-size:10.5px; color:#3a4655; letter-spacing:.05em;}
-  .home-pill{position:static;display:inline-flex;background:#11171f;border:1px solid #212b38;color:#e6edf5;
+  .foot{margin-top:26px; text-align:center; font-family:var(--mono); font-size:10.5px; color:#3a5547; letter-spacing:.05em;}
+  .home-pill{position:static;display:inline-flex;background:#111b16;border:1px solid #1f2e26;color:#e6edf5;
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12.5px;padding:7px 12px;border-radius:20px;
     text-decoration:none;align-items:center;gap:5px;margin-bottom:14px;}
 </style>
+<style id="ui2">body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(620px 400px at 88% -6%,rgba(52,211,153,.16),transparent 70%)}
+h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;background-clip:text;color:transparent !important;letter-spacing:-.02em}</style>
 </head>
 <body>
-<a href="../../dashboard.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">June</span><a href="../july/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">July</a><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../september/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">September</a><a href="../overview/index.html" style="background:transparent;color:#6b9fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-left:6px;text-decoration:none;border:1px solid #6b9fff55;">All months &rarr;</a></div>
+<a href="../../dashboard.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">June</span><a href="../july/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">July</a><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../september/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">September</a><a href="../overview/index.html" style="background:transparent;color:#6ee7b7;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-left:6px;text-decoration:none;border:1px solid #6ee7b755;">All months &rarr;</a></div>
 <div class="bg-grid"></div>
 <div class="bg-signature">
   <svg viewBox="0 0 200 200">
