@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Combine</title>
+<style>
+  :root { --paper: #0a0a0a; --card: #141414; --card-border: #2a2a2a; --accent: #a78bfa; --text: #f2f5f3; --muted: #8a8a8a; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--paper); color: var(--text);
+    min-height: 100vh; min-height: 100dvh; padding: 24px 16px 40px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .wrap { max-width: 420px; width: 100%; }
+  .home-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--card-border); color: var(--text);
+    font-size: 12.5px; padding: 7px 12px; border-radius: 20px; text-decoration: none; margin-bottom: 18px; }
+  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
+  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  a.card {
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    min-height: 84px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
+    text-decoration: none; transition: transform 0.12s;
+  }
+  a.card:active { transform: scale(0.97); }
+  a.card .icon { font-size: 20px; margin-bottom: 6px; }
+  a.card.overview { grid-column: 1 / -1; background: linear-gradient(135deg, var(--card), #1a1a1a); border-color: var(--accent); }
+  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="dashboard.html" class="home-pill">&#8592; Home</a>
+  <p class="eyebrow">combine &middot; Choose a type</p>
+  <h1>Combine</h1>
+  <p class="sub">Pick regular combined tests or JEE Advanced tests.</p>
+  <div class="grid">
+    <a class="card" href="combine.html"><span class="icon">&#128218;</span>Combine</a>
+    <a class="card" href="adv.html"><span class="icon">&#127919;</span>Adv</a>
+  </div>
+  <p class="footer-note">Cognition Test Tracker &middot; combine</p>
+</div>
+</body>
+</html>
