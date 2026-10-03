@@ -1,49 +1,36 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Combine</title>
-<style>
-  :root { --paper: #0a0a0a; --card: #141414; --card-border: #2a2a2a; --accent: #a78bfa; --text: #f2f5f3; --muted: #8a8a8a; }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--paper); color: var(--text);
-    min-height: 100vh; min-height: 100dvh; padding: 24px 16px 40px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .wrap { max-width: 420px; width: 100%; }
-  .home-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--card-border); color: var(--text);
-    font-size: 12.5px; padding: 7px 12px; border-radius: 20px; text-decoration: none; margin-bottom: 18px; }
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
-  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
-  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  a.card {
-    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
-    min-height: 84px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
-    text-decoration: none; transition: transform 0.12s;
-  }
-  a.card:active { transform: scale(0.97); }
-  a.card .icon { font-size: 20px; margin-bottom: 6px; }
-  a.card.overview { grid-column: 1 / -1; background: linear-gradient(135deg, var(--card), #1a1a1a); border-color: var(--accent); }
-  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <a href="dashboard.html" class="home-pill">&#8592; Home</a>
-  <p class="eyebrow">combine &middot; Choose a type</p>
-  <h1>Combine</h1>
-  <p class="sub">Pick regular combined tests or JEE Advanced tests.</p>
-  <div class="grid">
-    <a class="card" href="combine.html"><span class="icon">&#128218;</span>Combine</a>
-    <a class="card" href="adv.html"><span class="icon">&#127919;</span>Adv</a>
-  </div>
-  <p class="footer-note">Cognition Test Tracker &middot; combine</p>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Combine</title>
+<style>*{box-sizing:border-box}html,body{margin:0}
+:root{--bg:#07070a;--card:rgba(255,255,255,.045);--bd:rgba(255,255,255,.09);--a:#a78bfa;--t:#f4f1ea;--m:#8d8a84}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;min-height:100dvh;padding:22px 16px 50px;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(600px 380px at 85% -5%,rgba(167,139,250,.17),transparent 70%),radial-gradient(500px 340px at -10% 105%,rgba(167,139,250,.08),transparent 70%)}
+.wrap{position:relative;max-width:460px;margin:0 auto}
+.back{display:inline-flex;gap:6px;color:var(--t);text-decoration:none;font-size:12.5px;padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--bd);margin-bottom:22px}
+.back:active{transform:scale(.96)}
+.eyebrow{display:flex;align-items:center;gap:8px;font:600 11px 'Courier New',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--a);margin:0 0 10px}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--a);animation:p 2s infinite}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(167,139,250,.6)}70%,100%{box-shadow:0 0 0 8px rgba(167,139,250,0)}}
+h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--m);font-size:14px;line-height:1.5;margin:0 0 24px}
+.fade{opacity:0;transform:translateY(12px);animation:u .6s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes u{to{opacity:1;transform:none}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{display:flex;flex-direction:column;justify-content:space-between;min-height:118px;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--bd);color:var(--t);text-decoration:none;transition:.25s}
+.tile:hover{transform:translateY(-3px);border-color:rgba(167,139,250,.5)}
+.tile:active{transform:scale(.97)}
+.ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(167,139,250,.13);color:var(--a)}
+.ic svg{width:20px;height:20px}
+.tile b{font-size:16px;margin-top:14px;display:block}
+.tile.wide{grid-column:1/-1;min-height:96px;background:linear-gradient(135deg,rgba(167,139,250,.17),rgba(167,139,250,.04));border-color:rgba(167,139,250,.38)}
+.foot{margin-top:30px;text-align:center;font-size:11.5px;color:#5c5a56}</style></head>
+<body><div class="wrap">
+<a class="back" href="dashboard.html">&#8592; Home</a>
+<p class="eyebrow fade"><i></i>Combine &middot; Choose a type</p>
+<h1 class="fade" style="animation-delay:.05s">Combine</h1>
+<p class="sub fade" style="animation-delay:.09s">Regular combined tests or JEE Advanced tests.</p>
+<div class="grid">
+<a class="tile fade" style="animation-delay:0.12s" href="combine.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/></svg></div><b>Combine</b></a>
+<a class="tile fade" style="animation-delay:0.18s" href="adv.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div><b>Adv</b></a>
 </div>
-</body>
-</html>
+<p class="foot">Cognition Test Tracker &middot; Combine</p>
+</div></body></html>
