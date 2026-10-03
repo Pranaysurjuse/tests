@@ -1,50 +1,16 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Adv</title>
-<style>
-  :root { --paper: #0a0a0a; --card: #141414; --card-border: #2a2a2a; --accent: #a78bfa; --text: #f2f5f3; --muted: #8a8a8a; }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--paper); color: var(--text);
-    min-height: 100vh; min-height: 100dvh; padding: 24px 16px 40px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .wrap { max-width: 420px; width: 100%; }
-  .home-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--card-border); color: var(--text);
-    font-size: 12.5px; padding: 7px 12px; border-radius: 20px; text-decoration: none; margin-bottom: 18px; }
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
-  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
-  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  a.card {
-    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
-    min-height: 84px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
-    text-decoration: none; transition: transform 0.12s;
-  }
-  a.card:active { transform: scale(0.97); }
-  a.card .icon { font-size: 20px; margin-bottom: 6px; }
-  a.card.overview { grid-column: 1 / -1; background: linear-gradient(135deg, var(--card), #1a1a1a); border-color: var(--accent); }
-  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <a href="combine-menu.html" class="home-pill">&#8592; Back</a>
-  <p class="eyebrow">adv &middot; Choose a month</p>
-  <h1>Adv Dashboards</h1>
-  <p class="sub">JEE Advanced tests. Pick a month, or view the full trend across all months.</p>
-  <div class="grid">
-    <a class="card" href="adv/september/index.html"><span class="icon">&#128293;</span>September</a>
-    <a class="card" href="adv/october/index.html"><span class="icon">&#128293;</span>October</a>
-    <a class="card overview" href="adv/overview/index.html"><span class="icon">&#128200;</span>All months</a>
-  </div>
-  <p class="footer-note">Cognition Test Tracker &middot; adv</p>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Adv</title><link rel="stylesheet" href="adv/style.css"></head>
+<body><div class="wrap">
+<a class="back" href="combine-menu.html">&#8592; Back</a>
+<p class="eyebrow fade"><i></i>JEE Advanced</p>
+<h1 class="fade" style="animation-delay:.05s">Adv dashboards</h1>
+<p class="sub fade" style="animation-delay:.1s">Full-length Advanced papers, tracked separately from your regular tests. Pick a month or see the whole trend.</p>
+<div class="stats" id="hubStats"></div>
+<div class="grid">
+<a class="tile fade" style="animation-delay:.15s" href="adv/september/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><div><b>September</b><span class="n" data-month="2026-09"></span></div></a>
+<a class="tile fade" style="animation-delay:.2s" href="adv/october/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><div><b>October</b><span class="n" data-month="2026-10"></span></div></a>
+<a class="tile wide fade" style="animation-delay:.25s" href="adv/overview/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><div><b>All months</b><span class="n">Full trend and history</span></div></a>
 </div>
-</body>
-</html>
+<p class="foot">Cognition Test Tracker &middot; Adv</p>
+</div>
+<script src="adv/data.js"></script><script src="adv/app.js"></script></body></html>
