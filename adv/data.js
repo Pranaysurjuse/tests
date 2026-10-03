@@ -1,0 +1,2 @@
+window.ADV_DATA=[
+];
