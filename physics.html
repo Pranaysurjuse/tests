@@ -1,31 +1,39 @@
 <!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><title>Physics</title>
 <style>*{box-sizing:border-box}html,body{margin:0}
-:root{--bg:#07070a;--card:rgba(255,255,255,.045);--bd:rgba(255,255,255,.09);--a:#4da6ff;--t:#f4f1ea;--m:#8d8a84}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;min-height:100dvh;padding:22px 16px 50px;-webkit-tap-highlight-color:transparent}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(600px 380px at 85% -5%,rgba(77,166,255,.17),transparent 70%),radial-gradient(500px 340px at -10% 105%,rgba(77,166,255,.08),transparent 70%)}
+:root{--a:#34d399;--t:#f4f1ea;--m:#8d8a84;--card:rgba(255,255,255,.045);--bd:rgba(255,255,255,.09)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#070d0a;color:var(--t);min-height:100vh;min-height:100dvh;padding:22px 16px 50px;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+.deco{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.deco svg{position:absolute}
+.glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(600px 380px at 85% -5%,rgba(52,211,153,.18),transparent 70%),radial-gradient(500px 340px at -10% 105%,rgba(52,211,153,.08),transparent 70%)}
 .wrap{position:relative;max-width:460px;margin:0 auto}
-.back{display:inline-flex;gap:6px;color:var(--t);text-decoration:none;font-size:12.5px;padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--bd);margin-bottom:22px}
+.back{display:inline-flex;gap:6px;color:var(--t);text-decoration:none;font-size:12.5px;padding:8px 14px;background:var(--card);border:1px solid var(--bd);margin-bottom:22px}
 .back:active{transform:scale(.96)}
 .eyebrow{display:flex;align-items:center;gap:8px;font:600 11px 'Courier New',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--a);margin:0 0 10px}
-.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--a);animation:p 2s infinite}
-@keyframes p{0%{box-shadow:0 0 0 0 rgba(77,166,255,.6)}70%,100%{box-shadow:0 0 0 8px rgba(77,166,255,0)}}
-h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{color:var(--m);font-size:14px;line-height:1.5;margin:0 0 24px}
 .fade{opacity:0;transform:translateY(12px);animation:u .6s cubic-bezier(.2,.7,.2,1) forwards}
 @keyframes u{to{opacity:1;transform:none}}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.tile{display:flex;flex-direction:column;justify-content:space-between;min-height:118px;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--bd);color:var(--t);text-decoration:none;transition:.25s}
-.tile:hover{transform:translateY(-3px);border-color:rgba(77,166,255,.5)}
+.tile{display:flex;flex-direction:column;justify-content:space-between;min-height:118px;padding:16px;background:var(--card);border:1px solid var(--bd);color:var(--t);text-decoration:none;transition:.25s}
+.tile:hover{border-color:rgba(52,211,153,.55);box-shadow:0 10px 30px -12px rgba(52,211,153,.4)}
 .tile:active{transform:scale(.97)}
-.ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(77,166,255,.13);color:var(--a)}
+.ic{width:38px;height:38px;display:grid;place-items:center;background:rgba(52,211,153,.14);color:var(--a)}
 .ic svg{width:20px;height:20px}
 .tile b{font-size:16px;margin-top:14px;display:block}
-.tile.wide{grid-column:1/-1;min-height:96px;background:linear-gradient(135deg,rgba(77,166,255,.17),rgba(77,166,255,.04));border-color:rgba(77,166,255,.38)}
-.foot{margin-top:30px;text-align:center;font-size:11.5px;color:#5c5a56}</style></head>
-<body><div class="wrap">
+.tile.wide{grid-column:1/-1;min-height:96px;background:linear-gradient(135deg,rgba(52,211,153,.18),rgba(52,211,153,.04));border-color:rgba(52,211,153,.4)}
+.foot{margin-top:30px;text-align:center;font-size:11.5px;color:#5c5a56}
+.back,.tile{border-radius:6px}.ic{border-radius:4px}.tile{border-left:3px solid var(--a)}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--a);box-shadow:0 0 10px var(--a);animation:pl 2s ease-in-out infinite}
+@keyframes pl{50%{opacity:.3}}
+h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
+.deco svg{top:-12%;right:-18%;width:80vmin;height:80vmin;opacity:.55}
+.ring{fill:none;stroke:#34d399;stroke-width:1;animation:ex 6s ease-out infinite}.r2{animation-delay:2s}.r3{animation-delay:4s}
+@keyframes ex{0%{r:15;opacity:.7}100%{r:140;opacity:0}}
+.gridbg{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(52,211,153,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,.05) 1px,transparent 1px);background-size:28px 28px}</style></head>
+<body><div class="glow"></div><div class="gridbg"></div><div class="deco"><svg viewBox="0 0 300 300"><circle class="ring" cx="150" cy="150"/><circle class="ring r2" cx="150" cy="150"/><circle class="ring r3" cx="150" cy="150"/><circle cx="150" cy="150" r="5" fill="#34d399"/></svg></div><div class="wrap">
 <a class="back" href="dashboard.html">&#8592; Home</a>
-<p class="eyebrow fade"><i></i>Physics &middot; Choose a month</p>
+<p class="eyebrow fade">Physics &middot; Choose a month</p>
 <h1 class="fade" style="animation-delay:.05s">Physics dashboards</h1>
 <p class="sub fade" style="animation-delay:.09s">Pick a month to see that month's tests, or view the full trend across all months.</p>
 <div class="grid">
@@ -33,7 +41,7 @@ h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
 <a class="tile fade" style="animation-delay:0.18s" href="physics/july/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>July</b></a>
 <a class="tile fade" style="animation-delay:0.24s" href="physics/august/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>August</b></a>
 <a class="tile fade" style="animation-delay:0.30s" href="physics/september/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>September</b></a>
-<a class="tile wide fade" style="animation-delay:0.36s" href="physics/overview/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><b>All months</b></a>
+<a class="tile wide fade" style="animation-delay:.4s" href="physics/overview/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><b>All months</b></a>
 </div>
 <p class="foot">Cognition Test Tracker &middot; Physics</p>
 </div></body></html>
