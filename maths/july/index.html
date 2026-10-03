@@ -85,6 +85,24 @@
 
   .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
 </style>
+<style id="ui2">
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(620px 400px at 88% -6%,rgba(239,139,124,.18),transparent 70%),radial-gradient(520px 360px at -12% 108%,rgba(239,139,124,.09),transparent 70%)}
+h1{background:linear-gradient(90deg,#fff,#ef8b7c);-webkit-background-clip:text;background-clip:text;color:transparent !important;font-weight:800 !important;letter-spacing:-.02em;font-size:28px !important}
+.home-pill{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;backdrop-filter:blur(8px)}
+.kpi-card,.chart-card,.note-box{background:rgba(255,255,255,.045) !important;border:1px solid rgba(255,255,255,.09) !important;backdrop-filter:blur(8px);transition:border-color .25s,box-shadow .25s}
+.kpi-card:hover,.chart-card:hover{border-color:rgba(239,139,124,.55) !important;box-shadow:0 0 0 1px rgba(239,139,124,.15),0 10px 30px -12px rgba(239,139,124,.35)}
+.kpi-value{color:#ef8b7c}
+.section-label{color:#ef8b7c !important;border-bottom:1px solid rgba(255,255,255,.09) !important}
+.toggle-btn{background:rgba(255,255,255,.045) !important;border:1px solid rgba(255,255,255,.1) !important;color:#b5b2ab !important}
+.toggle-btn.active{background:linear-gradient(90deg,#ef8b7c,#f6b3a6) !important;color:#0a0a0a !important;border-color:transparent !important}
+table.hist td,table.hist th{border-bottom-color:rgba(255,255,255,.07) !important}
+
+h1{font-family:Georgia,'Times New Roman',serif !important;font-style:italic;font-weight:700 !important}
+.kpi-card,.chart-card,.note-box{border-radius:6px !important;border-left:3px solid #ef8b7c !important}
+.toggle-btn{border-radius:4px !important}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(239,139,124,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(239,139,124,.06) 1px,transparent 1px);background-size:32px 32px}
+.section-label::before{content:"\2211  "}
+</style>
 </head>
 <body>
 <a href="../../dashboard.html" class="home-pill">&#8592; Home</a><div style="margin:12px 0 4px;"><a href="../june/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">June</a><span style="background:#232323;color:#fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;">July</span><a href="../august/index.html" style="background:transparent;color:#8a8a8a;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-right:6px;text-decoration:none;border:1px solid #2a2a2a;">August</a><a href="../overview/index.html" style="background:transparent;color:#6b9fff;font-family:monospace;font-size:12px;padding:6px 12px;border-radius:14px;margin-left:6px;text-decoration:none;border:1px solid #6b9fff55;">All months &rarr;</a></div>
