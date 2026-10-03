@@ -85,6 +85,23 @@
 
   .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
 </style>
+<style id="ui2">
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(620px 400px at 88% -6%,rgba(59,157,255,.18),transparent 70%),radial-gradient(520px 360px at -12% 108%,rgba(59,157,255,.09),transparent 70%)}
+h1{background:linear-gradient(90deg,#fff,#3b9dff);-webkit-background-clip:text;background-clip:text;color:transparent !important;font-weight:800 !important;letter-spacing:-.02em;font-size:28px !important}
+.home-pill{background:rgba(255,255,255,.05) !important;border:1px solid rgba(255,255,255,.1) !important;backdrop-filter:blur(8px)}
+.kpi-card,.chart-card,.note-box{background:rgba(255,255,255,.045) !important;border:1px solid rgba(255,255,255,.09) !important;backdrop-filter:blur(8px);transition:border-color .25s,box-shadow .25s}
+.kpi-card:hover,.chart-card:hover{border-color:rgba(59,157,255,.55) !important;box-shadow:0 0 0 1px rgba(59,157,255,.15),0 10px 30px -12px rgba(59,157,255,.35)}
+.kpi-value{color:#3b9dff}
+.section-label{color:#3b9dff !important;border-bottom:1px solid rgba(255,255,255,.09) !important}
+.toggle-btn{background:rgba(255,255,255,.045) !important;border:1px solid rgba(255,255,255,.1) !important;color:#b5b2ab !important}
+.toggle-btn.active{background:linear-gradient(90deg,#3b9dff,#7cc4ff) !important;color:#0a0a0a !important;border-color:transparent !important}
+table.hist td,table.hist th{border-bottom-color:rgba(255,255,255,.07) !important}
+
+.kpi-card,.chart-card,.note-box{border-radius:20px !important}
+.toggle-btn{border-radius:999px !important}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='98' viewBox='0 0 56 98'%3E%3Cpath d='M28 2l26 15v30L28 62 2 47V17zM28 62v34M2 47v32M54 47v32' fill='none' stroke='%233b9dff' stroke-opacity='.1'/%3E%3C/svg%3E")}
+.eyebrow::before{content:"";display:inline-block;width:9px;height:9px;margin-right:8px;background:#3b9dff;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);vertical-align:middle}
+</style>
 </head>
 <body>
 <a href="../../dashboard.html" class="home-pill">&#8592; Home</a>
