@@ -1,0 +1,55 @@
+:root{--bg:#07070a;--card:rgba(255,255,255,.045);--bd:rgba(255,255,255,.09);--a:#ffb547;--a2:#ff7a45;--t:#f4f1ea;--m:#8d8a84}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;min-height:100dvh;padding:22px 16px 60px;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(600px 380px at 85% -5%,rgba(255,181,71,.16),transparent 70%),radial-gradient(500px 340px at -10% 105%,rgba(255,122,69,.10),transparent 70%)}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--t);text-decoration:none;font-size:12.5px;padding:8px 14px;border-radius:999px;background:var(--card);border:1px solid var(--bd);margin-bottom:22px;transition:.2s}
+.back:active{transform:scale(.96)}
+.eyebrow{display:flex;align-items:center;gap:8px;font:600 11px 'Courier New',monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--a);margin:0 0 10px}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--a);box-shadow:0 0 0 0 rgba(255,181,71,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(255,181,71,0)}100%{box-shadow:0 0 0 0 rgba(255,181,71,0)}}
+h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#fff,var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--m);font-size:14px;line-height:1.5;margin:0 0 24px;max-width:520px}
+.fade{opacity:0;transform:translateY(12px);animation:up .6s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes up{to{opacity:1;transform:none}}
+.stats,.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+.kpis{grid-template-columns:repeat(4,1fr)}
+.stat,.kpi{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;backdrop-filter:blur(8px)}
+.stat p,.kpi p{margin:0}
+.lbl{font-size:11px;color:var(--m);letter-spacing:.04em;margin-bottom:6px!important}
+.val{font:700 22px 'Courier New',monospace}
+.val small{font-size:12px;color:var(--m);font-weight:400}
+.d{font-size:11px;color:var(--m);margin-top:5px!important}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;min-height:132px;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--bd);color:var(--t);text-decoration:none;transition:.25s}
+.tile:hover{transform:translateY(-3px);border-color:rgba(255,181,71,.5)}
+.tile:active{transform:scale(.97)}
+.tile .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(255,181,71,.12);color:var(--a)}
+.tile .ic svg{width:20px;height:20px}
+.tile b{font-size:17px;display:block;margin-top:14px}
+.tile span.n{font-size:12px;color:var(--m)}
+.tile.wide{grid-column:1/-1;min-height:104px;background:linear-gradient(135deg,rgba(255,181,71,.16),rgba(255,122,69,.06));border-color:rgba(255,181,71,.35)}
+.tabs{display:flex;gap:8px;margin:0 0 22px;overflow-x:auto;padding-bottom:2px}
+.tabs a{white-space:nowrap;font:12px 'Courier New',monospace;padding:8px 14px;border-radius:999px;text-decoration:none;color:var(--m);border:1px solid var(--bd);background:var(--card)}
+.tabs a.on{color:#1a1000;background:linear-gradient(90deg,var(--a),var(--a2));border-color:transparent;font-weight:700}
+.sec{font:600 11px 'Courier New',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--a);margin:30px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:20px 16px}
+.bar{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.bar:last-child{margin-bottom:0}
+.bar .n{width:82px;font:13px 'Courier New',monospace;flex-shrink:0}
+.bar .tr{flex:1;height:22px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden}
+.bar .f{height:100%;width:0;border-radius:8px;transition:width 1.2s cubic-bezier(.2,.7,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:8px}
+.bar .f span{font:700 11px 'Courier New',monospace;color:#08110c}
+.empty{text-align:center;padding:46px 20px;border:1.5px dashed rgba(255,181,71,.3);border-radius:22px;background:rgba(255,181,71,.04)}
+.empty .ic{width:54px;height:54px;margin:0 auto 14px;border-radius:16px;display:grid;place-items:center;background:rgba(255,181,71,.12);color:var(--a)}
+.empty .ic svg{width:26px;height:26px}
+.empty h3{margin:0 0 6px;font-size:18px}
+.empty p{margin:0;color:var(--m);font-size:13.5px;line-height:1.5}
+.ts{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:460px}
+th{font:11px 'Courier New',monospace;color:var(--m);text-align:left;padding:8px 6px;font-weight:400;border-bottom:1px solid var(--bd)}
+td{padding:11px 6px;border-bottom:1px solid rgba(255,255,255,.05);font-family:'Courier New',monospace}
+.foot{margin-top:34px;text-align:center;font-size:11.5px;color:#5c5a56}
+svg.tr text{fill:var(--m);font:10px 'Courier New',monospace}
+@media(max-width:480px){h1{font-size:25px}.kpis{grid-template-columns:repeat(2,1fr)}.bar .n{width:70px;font-size:12px}}
