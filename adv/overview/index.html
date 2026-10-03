@@ -1,45 +1,18 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Adv - All months</title>
-<style>
-  :root { --paper: #0a0a0a; --card: #141414; --card-border: #2a2a2a; --accent: #a78bfa; --text: #f2f5f3; --muted: #8a8a8a; }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--paper); color: var(--text);
-    min-height: 100vh; min-height: 100dvh; padding: 24px 16px 40px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .wrap { max-width: 420px; width: 100%; }
-  .home-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--card); border: 1px solid var(--card-border); color: var(--text);
-    font-size: 12.5px; padding: 7px 12px; border-radius: 20px; text-decoration: none; margin-bottom: 18px; }
-  .eyebrow { font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; }
-  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 700; }
-  p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 24px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  a.card {
-    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
-    min-height: 84px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 14px; color: var(--text); font-size: 15px; font-weight: 600;
-    text-decoration: none; transition: transform 0.12s;
-  }
-  a.card:active { transform: scale(0.97); }
-  a.card .icon { font-size: 20px; margin-bottom: 6px; }
-  a.card.overview { grid-column: 1 / -1; background: linear-gradient(135deg, var(--card), #1a1a1a); border-color: var(--accent); }
-  .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <a href="../../adv.html" class="home-pill">&#8592; Adv</a>
-  <p class="eyebrow">adv &middot; All months</p>
-  <h1>All months</h1>
-  <p class="sub">No Adv tests logged yet. Marks will show up here after the next test.</p>
-  <p class="footer-note">Cognition Test Tracker &middot; adv</p>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Adv - All months</title><link rel="stylesheet" href="../style.css"></head>
+<body><div class="wrap">
+<a class="back" href="../../adv.html">&#8592; Adv</a>
+<div class="tabs"><a href="../september/index.html" class="">September</a><a href="../october/index.html" class="">October</a><a href="../overview/index.html" class="on">All months</a></div>
+<p class="eyebrow fade"><i></i>Adv &middot; All months</p>
+<h1 class="fade" style="animation-delay:.05s">Score by subject</h1>
+<p class="sub fade" style="animation-delay:.1s">Physics, Chemistry and Maths in one Advanced paper.</p>
+<div class="kpis" id="kpis"></div>
+<div class="empty fade" id="empty" style="animation-delay:.2s" hidden><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><h3>No Adv tests logged yet</h3><p>Your first Advanced paper will show up here with a subject breakdown, trend and history.</p></div>
+<div id="dash" hidden>
+<div class="sec">Latest test &middot; subject breakdown</div><div class="card" id="bars"></div>
+<div class="sec">Score trend</div><div class="card" id="trend"></div>
+<div class="sec">Test history</div><div class="card"><div class="ts"><table><thead><tr><th>Date</th><th>Total</th><th>Acc.</th><th>Phy</th><th>Chem</th><th>Maths</th></tr></thead><tbody id="hist"></tbody></table></div></div>
 </div>
-</body>
-</html>
+<p class="foot">Cognition Test Tracker &middot; Adv</p>
+</div>
+<script>window.ADV_MONTH=null;</script><script src="../data.js"></script><script src="../app.js"></script></body></html>
