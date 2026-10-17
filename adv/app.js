@@ -25,6 +25,10 @@ kp.innerHTML=kpi('Latest score','—','no test yet')+kpi('Accuracy','—','no te
 $('empty').hidden=false;$('dash').hidden=true;return}
 $('empty').hidden=true;$('dash').hidden=false;
 var L=R[R.length-1],ks=Object.keys(L.subjects||{});
+if(!ks.length){
+kp.innerHTML=kpi('Latest score',L.score+'<small> / '+L.maxScore+'</small>',pc(L).toFixed(1)+'% overall')+kpi('Accuracy','—','not logged')+kpi('Strongest','—','split not logged')+kpi('Weakest','—','split not logged');
+$('bars').innerHTML='<p style="color:#8d8a84;font-size:13px;text-align:center;margin:10px 0">Subject split not logged for this test.</p>';
+}else{
 var sp=function(k){return L.subjects[k].score/L.subjects[k].maxScore};
 var s=ks.slice().sort(function(a,b){return sp(b)-sp(a)});
 var a=acc(L);
@@ -32,6 +36,7 @@ kp.innerHTML=kpi('Latest score',L.score+'<small> / '+L.maxScore+'</small>',pc(L)
 $('bars').innerHTML=ks.map(function(k){var x=L.subjects[k],p=Math.max(0,x.score/x.maxScore*100);
 return '<div class="bar"><div class="n">'+SL[k]+'</div><div class="tr"><div class="f" style="background:'+SC[k]+'" data-w="'+p+'"><span>'+x.score+'/'+x.maxScore+'</span></div></div></div>'}).join('');
 setTimeout(function(){document.querySelectorAll('.f').forEach(function(e){e.style.width=e.getAttribute('data-w')+'%'})},300);
+}
 var T=$('trend');
 if(R.length<2){T.innerHTML='<p style="color:#8d8a84;font-size:13px;text-align:center;margin:10px 0">Trend shows up after two tests.</p>'}
 else{var W=700,H=240,pl=40,pr=16,pt=16,pb=30,n=R.length;
