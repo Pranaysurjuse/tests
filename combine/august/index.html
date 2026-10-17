@@ -152,8 +152,8 @@
     </div>
     <div class="kpi-card" style="animation-delay:0.1s;">
       <p class="kpi-label">Accuracy</p>
-      <p class="kpi-value">${latest.accuracy.toFixed(1)}%</p>
-      <p class="kpi-delta">${latest.correct} correct of ${latest.correct + latest.wrong} attempted</p>
+      <p class="kpi-value">${latest.accuracy==null?'—':latest.accuracy.toFixed(1)+'%'}</p>
+      <p class="kpi-delta">${latest.accuracy==null?'answer breakdown not logged':latest.correct+' correct of '+(latest.correct+latest.wrong)+' attempted'}</p>
     </div>
     <div class="kpi-card" style="animation-delay:0.15s;">
       <p class="kpi-label">Strongest subject</p>

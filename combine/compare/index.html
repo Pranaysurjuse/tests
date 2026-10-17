@@ -193,6 +193,12 @@
        physics: {score: 29, maxScore: 100, estimated: true},
        chemistry: {score: 71, maxScore: 100, estimated: true},
        maths: {score: 46, maxScore: 100, correct: 12, wrong: 2, skipped: 11}
+     }},
+    {date: "2026-10-17", label: "17 Oct", score: 108, maxScore: 300, accuracy: null, partialData: true, noBreakdown: true,
+     subjects: {
+       physics: {score: 64, maxScore: 100, estimated: true},
+       chemistry: {score: 22, maxScore: 100, estimated: true},
+       maths: {score: 22, maxScore: 100, estimated: true}
      }}
   ];
 
@@ -216,13 +222,13 @@
     <div class="test-card" style="animation-delay:0.15s;">
       <p class="test-label"><span class="dot"></span>Last &middot; ${prev.label} '26</p>
       <p class="test-score">${prev.score}<small> / ${prev.maxScore}</small></p>
-      <p class="test-acc">${ring(prev.accuracy, '#8a8a95')} ${prev.accuracy.toFixed(1)}% accuracy</p>
+      <p class="test-acc">${ring(prev.accuracy||0, '#8a8a95')} ${prev.accuracy==null?'accuracy not logged':prev.accuracy.toFixed(1)+'% accuracy'}</p>
     </div>
     <div class="vs-mark">VS</div>
     <div class="test-card current" style="animation-delay:0.22s;">
       <p class="test-label"><span class="dot"></span>This test &middot; ${current.label} '26</p>
       <p class="test-score">${current.score}<small> / ${current.maxScore}</small><span class="delta-pill ${scoreDeltaClass}">${scoreDeltaStr}</span></p>
-      <p class="test-acc">${ring(current.accuracy, '#c9a4ff')} ${current.accuracy.toFixed(1)}% accuracy${current.partialData ? ' *' : ''}</p>
+      <p class="test-acc">${ring(current.accuracy||0, '#c9a4ff')} ${current.accuracy==null?'accuracy not logged':current.accuracy.toFixed(1)+'% accuracy'}${current.partialData ? ' *' : ''}</p>
     </div>
   `;
 

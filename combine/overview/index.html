@@ -127,6 +127,12 @@
        physics: {score: 29, maxScore: 100, estimated: true},
        chemistry: {score: 71, maxScore: 100, estimated: true},
        maths: {score: 46, maxScore: 100, correct: 12, wrong: 2, skipped: 11}
+     }},
+    {date: "2026-10-17", label: "17 Oct", score: 108, maxScore: 300, accuracy: null, partialData: true, noBreakdown: true,
+     subjects: {
+       physics: {score: 64, maxScore: 100, estimated: true},
+       chemistry: {score: 22, maxScore: 100, estimated: true},
+       maths: {score: 22, maxScore: 100, estimated: true}
      }}
   ];
 
@@ -156,7 +162,7 @@
   }
 
   if (latest.partialData) {
-    document.getElementById('partialNote').innerHTML = `<p style="font-size:12px;color:#d8a24a;margin:-8px 0 20px;">&#9888; Physics and chemistry scores for the latest test are user-reported totals, not scored question-by-question &mdash; accuracy reflects maths only.</p>`;
+    document.getElementById('partialNote').innerHTML = latest.noBreakdown ? `<p style="font-size:12px;color:#d8a24a;margin:-8px 0 20px;">&#9888; Subject scores for this test are user-reported totals; correct, wrong and skipped counts weren't logged, so accuracy isn't shown.</p>` : `<p style="font-size:12px;color:#d8a24a;margin:-8px 0 20px;">&#9888; Physics and chemistry scores for the latest test are user-reported totals, not scored question-by-question &mdash; accuracy reflects maths only.</p>`;
   }
 
   document.getElementById('kpiRow').innerHTML = `
@@ -167,8 +173,8 @@
     </div>
     <div class="kpi-card" style="animation-delay:0.1s;">
       <p class="kpi-label">Accuracy${latest.partialData ? ' *' : ''}</p>
-      <p class="kpi-value">${latest.accuracy.toFixed(1)}%</p>
-      <p class="kpi-delta">${latest.correct} correct of ${latest.correct + latest.wrong} attempted</p>
+      <p class="kpi-value">${latest.accuracy==null?'—':latest.accuracy.toFixed(1)+'%'}</p>
+      <p class="kpi-delta">${latest.accuracy==null?'answer breakdown not logged':latest.correct+' correct of '+(latest.correct+latest.wrong)+' attempted'}</p>
     </div>
     <div class="kpi-card" style="animation-delay:0.15s;">
       <p class="kpi-label">Strongest subject</p>
@@ -261,7 +267,7 @@
       <tr>
         <td>${d.label} '26</td>
         <td>${d.score} / ${d.maxScore}</td>
-        <td>${d.accuracy.toFixed(1)}%${d.partialData ? ' *' : ''}</td>
+        <td>${d.accuracy==null?'—':d.accuracy.toFixed(1)+'%'}${d.partialData ? ' *' : ''}</td>
         <td>${d.subjects.physics.score}/100</td>
         <td>${d.subjects.chemistry.score}/100</td>
         <td>${d.subjects.maths.score}/100</td>
