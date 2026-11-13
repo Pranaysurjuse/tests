@@ -39,9 +39,9 @@ h1{font-size:28px;margin:0 0 4px;font-weight:800}
 </head>
 <body>
 <div class="wrap">
-<a class="home-pill" href="index.html">&larr; Home</a>
+<a class="home-pill" id="back" href="dashboard.html">&larr; Home</a>
 <p class="eyebrow">New start</p>
-<h1>After Diwali</h1>
+<h1 id="ttl">After Diwali</h1>
 <p class="sub">Fresh page, fresh tests. Only tests after Diwali show up here.</p>
 <div id="app"></div>
 </div>
@@ -52,15 +52,18 @@ h1{font-size:28px;margin:0 0 4px;font-weight:800}
 const TESTS = [
 ];
 
+const SUBJ=new URLSearchParams(location.search).get("subject");
+const VIEW=SUBJ?TESTS.filter(t=>t.subjects[SUBJ]).map(t=>({...t,subjects:{[SUBJ]:t.subjects[SUBJ]}})):TESTS;
+if(SUBJ){document.getElementById("ttl").textContent=SUBJ+" \u00b7 After Diwali";const b=document.getElementById("back");b.href=SUBJ.toLowerCase()+".html";b.innerHTML="&larr; "+SUBJ}
 const COL={Physics:'#6fcf97',Chemistry:'#3b9dff',Maths:'#ef8b7c',Adv:'#f5c451'};
 const fmt=d=>new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
 const app=document.getElementById("app");
 const tot=t=>{let s=0,m=0;for(const k in t.subjects){s+=t.subjects[k].score;m+=t.subjects[k].max}return{s,m,p:m?s/m*100:0}};
 
-if(!TESTS.length){
+if(!VIEW.length){
   app.innerHTML=`<div class="empty"><b>No tests yet</b><span>Your first test after Diwali (16 Nov) will show up here once the marks are added.</span></div>`;
 }else{
-  const T=TESTS.map(t=>({...t,...tot(t)}));
+  const T=VIEW.map(t=>({...t,...tot(t)}));
   const best=T.reduce((a,b)=>b.p>a.p?b:a),last=T[T.length-1];
   const avg=T.reduce((a,b)=>a+b.p,0)/T.length;
   let h=`<div class="kpis">
