@@ -29,6 +29,7 @@ h1{font-size:28px;margin:0 0 4px;font-weight:800}
 .bar{flex:1;height:10px;background:#232323;border-radius:5px;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:5px}
 .sv{width:84px;text-align:right;font-family:'Courier New',monospace;flex-shrink:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}.chip{font-family:'Courier New',monospace;font-size:12px;padding:6px 13px;border-radius:16px;border:1px solid #2a2a2a;color:#8a8a8a;text-decoration:none}.chip.on{color:#c9a4ff;border-color:#7c5cf9;background:#1c1530}
 .empty{text-align:center;padding:48px 20px;border:1px dashed #7c5cf9;border-radius:18px;color:#c9a4ff;background:#120e1f}
 .empty b{display:block;font-size:18px;margin-bottom:6px;color:#f2f5f3}
 .empty span{font-size:13.5px;color:#8a8a95}
@@ -43,10 +44,12 @@ h1{font-size:28px;margin:0 0 4px;font-weight:800}
 <p class="eyebrow">New start</p>
 <h1 id="ttl">After Diwali</h1>
 <p class="sub">Fresh page, fresh tests. Only tests after Diwali show up here.</p>
+<div class="chips" id="chips"></div>
 <div id="app"></div>
 </div>
 <script>
 // ADD NEW TESTS HERE (newest last). Subjects are optional, include only the ones in that test.
+// Adv test (one total): {date:"2026-11-22", name:"Adv Test 1", subjects:{Adv:{score:150,max:229}}}
 // Example:
 // {date:"2026-11-16", name:"Test 1", subjects:{Physics:{score:60,max:100}, Chemistry:{score:70,max:100}, Maths:{score:40,max:100}}}
 const TESTS = [
@@ -55,6 +58,7 @@ const TESTS = [
 const SUBJ=new URLSearchParams(location.search).get("subject");
 const VIEW=SUBJ?TESTS.filter(t=>t.subjects[SUBJ]).map(t=>({...t,subjects:{[SUBJ]:t.subjects[SUBJ]}})):TESTS;
 if(SUBJ){document.getElementById("ttl").textContent=SUBJ+" \u00b7 After Diwali";const b=document.getElementById("back");b.href=SUBJ.toLowerCase()+".html";b.innerHTML="&larr; "+SUBJ}
+document.getElementById("chips").innerHTML=[["All",""],["Physics","Physics"],["Chemistry","Chemistry"],["Maths","Maths"],["Adv","Adv"]].map(([n,v])=>`<a class="chip${(SUBJ||"")===v?" on":""}" href="afterdiwali.html${v?"?subject="+v:""}">${n}</a>`).join("");
 const COL={Physics:'#6fcf97',Chemistry:'#3b9dff',Maths:'#ef8b7c',Adv:'#f5c451'};
 const fmt=d=>new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
 const app=document.getElementById("app");
