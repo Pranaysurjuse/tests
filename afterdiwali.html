@@ -59,7 +59,7 @@ const TESTS = [
 const SUBJ=new URLSearchParams(location.search).get("subject");
 const VIEW=SUBJ?TESTS.filter(t=>t.subjects[SUBJ]).map(t=>({...t,subjects:{[SUBJ]:t.subjects[SUBJ]}})):TESTS;
 if(SUBJ){document.getElementById("ttl").textContent=SUBJ+" \u00b7 After Diwali";const b=document.getElementById("back");b.href=SUBJ.toLowerCase()+".html";b.innerHTML="&larr; "+SUBJ}
-document.getElementById("chips").innerHTML=[["All",""],["Physics","Physics"],["Chemistry","Chemistry"],["Maths","Maths"],["Adv","Adv"]].map(([n,v])=>`<a class="chip${(SUBJ||"")===v?" on":""}" href="afterdiwali.html${v?"?subject="+v:""}">${n}</a>`).join("");
+document.getElementById("chips").innerHTML=[["All",""],["Physics","Physics"],["Chemistry","Chemistry"],["Maths","Maths"]].map(([n,v])=>`<a class="chip${(SUBJ||"")===v?" on":""}" href="afterdiwali.html${v?"?subject="+v:""}">${n}</a>`).join("");
 const COL={Physics:'#6fcf97',Chemistry:'#3b9dff',Maths:'#ef8b7c',Adv:'#f5c451'};
 const fmt=d=>new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
 const app=document.getElementById("app");
