@@ -11,7 +11,7 @@ function apply(){R.setAttribute('data-mood',S.mood||'void');
 apply();
 /* subject from URL */
 var p=location.pathname.toLowerCase(),subj='';
-['physics','chemistry','maths','combine','adv','akiva'].forEach(function(s){if(p.indexOf('/'+s)>-1||p.indexOf(s+'.html')>-1)subj=s});
+['physics','chemistry','maths','combine','adv'].forEach(function(s){if(p.indexOf('/'+s)>-1)subj=s});
 if(/\/afterdiwali/.test(p)){var q=new URLSearchParams(location.search).get('subject');if(q)subj=q.toLowerCase().slice(0,5)==='chemi'?'chemistry':q.toLowerCase()}
 if(subj)R.setAttribute('data-subject',subj);
 var home=/dashboard\.html$/.test(p)||/\/$/.test(p);
@@ -26,13 +26,12 @@ ready(function(){
   /* nav */
   var ic={
    home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
-   akiva:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
    physics:'<circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/>',
    chemistry:'<path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7.5 15h9"/>',
    maths:'<path d="M18 5H7l6 7-6 7h11"/>',
    combine:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
    theme:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16" cy="10" r="1.2"/><path d="M12 21c-1.5 0-2-1.5-1-2.5s0-2.5-1.5-2.5"/>'};
-  var items=[['home','Home','dashboard.html'],['akiva','Akiva','akiva.html'],['physics','Phy','physics.html'],['chemistry','Chem','chemistry.html'],['maths','Maths','maths.html'],['combine','All','combine-menu.html']];
+  var items=[['home','Home','dashboard.html'],['physics','Phy','physics.html'],['chemistry','Chem','chemistry.html'],['maths','Maths','maths.html'],['combine','All','combine-menu.html']];
   var nav=D.createElement('nav');nav.className='t-nav';
   nav.innerHTML=items.map(function(i){
     var on=(i[0]==='home'&&home&&!subj)||(i[0]===subj)||(i[0]==='combine'&&subj==='adv');

@@ -23,7 +23,6 @@ html[data-subject=chemistry]{--acc:#3b9dff}
 html[data-subject=maths]{--acc:#ef8b7c}
 html[data-subject=combine]{--acc:#a78bfa}
 html[data-subject=adv]{--acc:#ff6b6b}
-html[data-subject=akiva]{--acc:#10b981}
 
 @media screen{
 html{background:var(--bg0)!important;color-scheme:dark;scroll-behavior:smooth}
