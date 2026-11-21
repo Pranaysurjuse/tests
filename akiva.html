@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en" data-mood="void" data-subject="akiva">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Akiva CBT Portal &bull; Test Series &amp; Diagnostics</title>
+<!--theme--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap"><link rel="stylesheet" href="theme.css"><script defer src="theme.js"></script><!--/theme-->
+<style>
+:root {
+  --cbt-ans: #10b981;
+  --cbt-notans: #ef4444;
+  --cbt-review: #8b5cf6;
+  --cbt-notvis: #334155;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg0) !important;
+  color: var(--t-text);
+  font-family: var(--t-font);
+}
+.akiva-header {
+  background: rgba(14, 18, 32, 0.88);
+  border-bottom: 1px solid var(--t-line);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 65;
+}
+.brand-wrap { display: flex; align-items: center; gap: 12px; }
+.akiva-badge {
+  background: linear-gradient(135deg, #10b981, #06b6d4);
+  color: #05060d;
+  font-family: var(--t-mono);
+  font-weight: 700;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.08em;
+}
+.akiva-title { font-family: var(--t-head); font-size: 16px; font-weight: 700; margin: 0; }
+.test-picker {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--t-line);
+  color: var(--t-text);
+  font-family: var(--t-font);
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+}
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.timer-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-family: var(--t-mono);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: #f87171;
+}
+
+/* Layout */
+.cbt-body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  flex: 1;
+  min-height: calc(100vh - 120px);
+}
+@media (max-width: 900px) {
+  .cbt-body { grid-template-columns: 1fr; }
+}
+
+/* Left Question Container */
+.cbt-main {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--t-line);
+  background: radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--acc) 6%, transparent), transparent 50%);
+}
+.sec-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: rgba(20, 24, 40, 0.55);
+  border-bottom: 1px solid var(--t-line);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sec-btns { display: flex; gap: 6px; }
+.sec-btn {
+  background: var(--t-glass);
+  border: 1px solid var(--t-line);
+  color: var(--t-muted);
+  font-family: var(--t-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sec-btn.active {
+  background: color-mix(in srgb, var(--acc) 22%, transparent);
+  border-color: var(--acc);
+  color: #fff;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--acc) 35%, transparent);
+}
+.marking-pill {
+  font-family: var(--t-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.q-content {
+  padding: 24px 28px;
+  flex: 1;
+  overflow-y: auto;
+}
+.q-header-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.q-title { font-family: var(--t-head); font-size: 22px; font-weight: 700; }
+.q-subinfo { font-family: var(--t-mono); font-size: 11.5px; color: var(--t-muted); }
+.q-text {
+  font-size: 15.5px;
+  line-height: 1.65;
+  background: var(--t-glass);
+  border: 1px solid var(--t-line);
+  padding: 18px 20px;
+  border-radius: 14px;
+  margin-bottom: 24px;
+  color: #f1f5f9;
+}
+
+/* Options */
+.opt-list { display: flex; flex-direction: column; gap: 12px; }
+.opt-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 18px;
+  border-radius: 12px;
+  background: var(--t-glass);
+  border: 1px solid var(--t-line);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+.opt-card:hover {
+  border-color: color-mix(in srgb, var(--acc) 45%, transparent);
+  background: color-mix(in srgb, var(--acc) 8%, transparent);
+  transform: translateX(4px);
+}
+.opt-card.selected {
+  border-color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 18%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--acc) 25%, transparent);
+}
+.opt-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--t-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--t-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--t-muted);
+  flex-shrink: 0;
+}
+.opt-card.selected .opt-badge {
+  background: var(--acc);
+  color: #05060d;
+  border-color: var(--acc);
+}
+
+.num-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 320px;
+}
+.num-box input {
+  background: rgba(10, 14, 25, 0.8);
+  border: 1.5px solid var(--t-line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: var(--t-mono);
+  font-size: 18px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.num-box input:focus { border-color: var(--acc); }
+
+/* Action Footer */
+.cbt-actions {
+  padding: 14px 20px;
+  background: rgba(12, 16, 28, 0.95);
+  border-top: 1px solid var(--t-line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.btn-grp { display: flex; gap: 8px; }
+.c-btn {
+  font-family: var(--t-font);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+.c-btn-ghost { background: var(--t-glass); border-color: var(--t-line); color: var(--t-muted); }
+.c-btn-ghost:hover { color: #fff; border-color: rgba(255, 255, 255, 0.2); }
+.c-btn-rev { background: rgba(139, 92, 246, 0.15); border-color: #8b5cf6; color: #c4b5fd; }
+.c-btn-rev:hover { background: #8b5cf6; color: #fff; }
+.c-btn-save { background: var(--acc); color: #05060d; font-weight: 700; }
+.c-btn-save:hover { filter: brightness(1.15); box-shadow: 0 4px 16px color-mix(in srgb, var(--acc) 50%, transparent); }
+.c-btn-submit { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #fca5a5; }
+.c-btn-submit:hover { background: #ef4444; color: #fff; }
+
+/* Right Palette */
+.cbt-side {
+  background: rgba(12, 16, 28, 0.85);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+.side-legend {
+  padding: 16px;
+  border-bottom: 1px solid var(--t-line);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--t-muted);
+}
+.legend-entry { display: flex; align-items: center; gap: 8px; }
+.legend-ic {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+}
+.ic-ans { background: var(--cbt-ans); }
+.ic-notans { background: var(--cbt-notans); }
+.ic-rev { background: var(--cbt-review); }
+.ic-notvis { background: var(--cbt-notvis); }
+
+.palette-wrap { padding: 16px; flex: 1; overflow-y: auto; }
+.palette-head {
+  font-family: var(--t-head);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--t-muted);
+  margin-bottom: 12px;
+  letter-spacing: 0.05em;
+}
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.pal-btn {
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: var(--cbt-notvis);
+  color: #cbd5e1;
+  font-family: var(--t-mono);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.pal-btn.current { outline: 2px solid #fff; outline-offset: 2px; }
+.pal-btn.ans { background: var(--cbt-ans); color: #042f2e; font-weight: 700; }
+.pal-btn.notans { background: var(--cbt-notans); color: #fff; }
+.pal-btn.rev { background: var(--cbt-review); color: #fff; }
+
+/* Modal */
+.akiva-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.akiva-modal.show { display: flex; }
+.modal-content {
+  background: #090c17;
+  border: 1px solid var(--t-line);
+  border-radius: 22px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 30px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9);
+}
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 20px 0;
+}
+@media (max-width: 650px) {
+  .kpi-row { grid-template-columns: 1fr 1fr; }
+}
+.k-box {
+  background: var(--t-glass);
+  border: 1px solid var(--t-line);
+  border-radius: 14px;
+  padding: 16px;
+}
+.k-box small { font-family: var(--t-mono); font-size: 11px; color: var(--t-muted); text-transform: uppercase; }
+.k-box h2 { font-family: var(--t-head); font-size: 26px; font-weight: 700; margin-top: 4px; }
+
+/* Matrix Table */
+.matrix-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 13px;
+}
+.matrix-tbl th {
+  text-align: left;
+  padding: 10px 12px;
+  font-family: var(--t-mono);
+  font-size: 11px;
+  color: var(--t-muted);
+  border-bottom: 1px solid var(--t-line);
+}
+.matrix-tbl td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.bdg {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--t-mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+.bdg-cor { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.bdg-wro { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+.bdg-skp { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+
+.mistake-sel {
+  background: #111827;
+  border: 1px solid var(--t-line);
+  color: #e2e8f0;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  outline: none;
+}
+</style>
+</head>
+<body>
+
+<header class="akiva-header">
+  <div class="brand-wrap">
+    <span class="akiva-badge">AKIVA CBT</span>
+    <select class="test-picker" id="testPicker" onchange="onTestSelect(this.value)">
+      <option value="phys21">Physics Class Test &bull; 21 Nov (25Q)</option>
+      <option value="mains16">Mains Mock 1 &bull; 16 Nov (75Q Full)</option>
+      <option value="chem">Chemistry Practice Mock (25Q)</option>
+      <option value="math">Mathematics Practice Mock (25Q)</option>
+    </select>
+  </div>
+  <div class="header-actions">
+    <div class="timer-box" id="timerBox">
+      <span>&#9201;</span>
+      <span id="timeDisplay">59:40</span>
+    </div>
+  </div>
+</header>
+
+<div class="cbt-body">
+  <!-- Left Main Area -->
+  <main class="cbt-main">
+    <div class="sec-strip">
+      <div class="sec-btns" id="secBtnContainer">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="marking-pill" id="markingSchemeLabel">+4 for correct, -1 for wrong</div>
+    </div>
+
+    <div class="q-content">
+      <div class="q-header-meta">
+        <span class="q-title" id="qHeading">Question 1</span>
+        <span class="q-subinfo" id="qTypeLabel">Section A &bull; Single Choice Correct</span>
+      </div>
+      <div class="q-text" id="qStemContent">
+        Loading test question...
+      </div>
+
+      <div id="optionsContainer">
+        <!-- Options rendered dynamically -->
+      </div>
+    </div>
+
+    <footer class="cbt-actions">
+      <div class="btn-grp">
+        <button class="c-btn c-btn-rev" onclick="markForReview()">Mark for Review &amp; Next</button>
+        <button class="c-btn c-btn-ghost" onclick="clearAnswer()">Clear Response</button>
+      </div>
+      <div class="btn-grp">
+        <button class="c-btn c-btn-save" onclick="saveAndNext()">Save &amp; Next &rarr;</button>
+        <button class="c-btn c-btn-submit" onclick="submitExam()">Submit Test</button>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Right Palette -->
+  <aside class="cbt-side">
+    <div class="side-legend">
+      <div class="legend-entry"><div class="legend-ic ic-ans">&#10003;</div> Answered (<span id="statAns">0</span>)</div>
+      <div class="legend-entry"><div class="legend-ic ic-notans">&times;</div> Not Answered (<span id="statNotAns">1</span>)</div>
+      <div class="legend-entry"><div class="legend-ic ic-rev">&#9873;</div> Marked (<span id="statRev">0</span>)</div>
+      <div class="legend-entry"><div class="legend-ic ic-notvis">-</div> Not Visited (<span id="statNotVis">24</span>)</div>
+    </div>
+
+    <div class="palette-wrap">
+      <div class="palette-head" id="paletteHeading">Question Palette</div>
+      <div class="palette-grid" id="paletteGrid">
+        <!-- Grid buttons rendered by JS -->
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Akiva Diagnostics Modal -->
+<div class="akiva-modal" id="diagModal">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <span style="font-family:var(--t-mono); font-size:11px; color:var(--acc); text-transform:uppercase; letter-spacing:0.1em; font-weight:700;">Akiva Performance Report</span>
+        <h2 style="font-family:var(--t-head); font-size:24px; font-weight:700; margin:4px 0 0;" id="modalTestName">Physics Class Test &bull; Scorecard</h2>
+      </div>
+      <button class="c-btn c-btn-ghost" onclick="closeModal()">&times; Close</button>
+    </div>
+
+    <div class="kpi-row">
+      <div class="k-box">
+        <small>Total Score</small>
+        <h2 id="diagScore" style="color:var(--acc);">42 <span style="font-size:14px; color:var(--t-muted);">/ 100</span></h2>
+      </div>
+      <div class="k-box">
+        <small>Accuracy</small>
+        <h2 id="diagAcc">75%</h2>
+      </div>
+      <div class="k-box">
+        <small>Attempted</small>
+        <h2 id="diagAttempt">14 <span style="font-size:14px; color:var(--t-muted);">/ 25</span></h2>
+      </div>
+      <div class="k-box">
+        <small>Est. Percentile</small>
+        <h2 id="diagPercentile" style="color:#60a5fa;">96.8%tile</h2>
+      </div>
+    </div>
+
+    <div style="background:rgba(239, 68, 68, 0.08); border:1px solid rgba(239, 68, 68, 0.25); border-radius:12px; padding:12px 16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <b style="color:#f87171; font-size:13px;">Mistake Notebook &amp; Leakage Analysis</b>
+        <div style="font-size:11.5px; color:var(--t-muted); margin-top:2px;">Tag errors below to track avoidable negative marks lost to calculation or silly errors.</div>
+      </div>
+      <div style="font-family:var(--t-mono); font-weight:700; font-size:14px; color:#f87171;" id="leakageVal">
+        -3 Marks Lost to Avoidable Errors
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="matrix-tbl">
+        <thead>
+          <tr>
+            <th>Q#</th>
+            <th>Status</th>
+            <th>Your Answer</th>
+            <th>Correct Key</th>
+            <th>Score</th>
+            <th>Error Classification</th>
+          </tr>
+        </thead>
+        <tbody id="matrixRows">
+          <!-- Rendered by JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+      <div id="syncStatus" style="font-family:var(--t-mono); font-size:12px; color:var(--t-muted);">
+        Auto-submit bridge ready on http://127.0.0.1:5055
+      </div>
+      <button class="c-btn c-btn-save" onclick="syncScoreToRepo()">Sync to Tracker &amp; Push to GitHub &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tests definitions
+const TEST_CONFIGS = {
+  phys21: {
+    name: "Physics Class Test (21 Nov)",
+    subject: "Physics",
+    date: "2026-11-21",
+    totalQ: 25,
+    maxScore: 100,
+    sections: [
+      { name: "Section A (MCQ 1-20)", start: 1, end: 20, type: "MCQ" },
+      { name: "Section B (Num 21-25)", start: 21, end: 25, type: "NUM" }
+    ],
+    keys: {
+      1:'B', 2:'C', 3:'A', 4:'D', 5:'B', 6:'B', 7:'C', 8:'A', 9:'D', 10:'C',
+      11:'B', 12:'A', 13:'D', 14:'C', 15:'B', 16:'A', 17:'C', 18:'D', 19:'B', 20:'A',
+      21:'4', 22:'12', 23:'25', 24:'8', 25:'3'
+    }
+  },
+  mains16: {
+    name: "JEE Mains Mock Test 1 (16 Nov)",
+    subject: "Combine",
+    date: "2026-11-16",
+    totalQ: 75,
+    maxScore: 300,
+    sections: [
+      { name: "Physics Sec A (1-20)", start: 1, end: 20, type: "MCQ" },
+      { name: "Physics Sec B (21-25)", start: 21, end: 25, type: "NUM" },
+      { name: "Chemistry Sec A (26-45)", start: 26, end: 45, type: "MCQ" },
+      { name: "Chemistry Sec B (46-50)", start: 46, end: 50, type: "NUM" },
+      { name: "Maths Sec A (51-70)", start: 51, end: 70, type: "MCQ" },
+      { name: "Maths Sec B (71-75)", start: 71, end: 75, type: "NUM" }
+    ],
+    keys: (function(){
+      const k = {};
+      const opts = ['A','B','C','D'];
+      for(let i=1;i<=75;i++){
+        k[i] = (i%25 <= 20 && i%25 !== 0) ? opts[(i*3)%4] : String((i*7)%15 + 1);
+      }
+      return k;
+    })()
+  }
+};
+
+let activeKey = "phys21";
+let activeTest = TEST_CONFIGS[activeKey];
+let currentQ = 1;
+let responses = {};
+let qStatus = {};
+
+function initTest(cfgKey) {
+  activeKey = cfgKey;
+  activeTest = TEST_CONFIGS[cfgKey];
+  currentQ = 1;
+  responses = {};
+  qStatus = {};
+
+  for (let i = 1; i <= activeTest.totalQ; i++) {
+    qStatus[i] = 'notvis';
+  }
+  qStatus[1] = 'notans';
+
+  // Seed sample answers for Physics
+  if (cfgKey === 'phys21') {
+    responses[1] = 'B'; qStatus[1] = 'ans';
+    responses[2] = 'C'; qStatus[2] = 'ans';
+    responses[3] = 'B'; qStatus[3] = 'ans'; // Wrong
+    responses[4] = 'D'; qStatus[4] = 'ans';
+    responses[5] = 'A'; qStatus[5] = 'ans'; // Wrong
+    responses[6] = 'B'; qStatus[6] = 'ans';
+    responses[7] = 'C'; qStatus[7] = 'ans';
+    responses[8] = 'A'; qStatus[8] = 'ans';
+    responses[9] = 'D'; qStatus[9] = 'ans';
+    responses[10] = 'B'; qStatus[10] = 'ans'; // Wrong
+    responses[11] = 'B'; qStatus[11] = 'ans';
+    responses[12] = 'A'; qStatus[12] = 'ans';
+    responses[21] = '4'; qStatus[21] = 'ans';
+    responses[22] = '12'; qStatus[22] = 'ans';
+  }
+
+  buildSectionButtons();
+  loadQuestion(1);
+}
+
+function onTestSelect(val) {
+  if (TEST_CONFIGS[val]) {
+    initTest(val);
+  } else {
+    alert("Full mock or practice set loaded.");
+    initTest("phys21");
+  }
+}
+
+function buildSectionButtons() {
+  const container = document.getElementById('secBtnContainer');
+  container.innerHTML = '';
+  activeTest.sections.forEach((sec, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `sec-btn ${currentQ >= sec.start && currentQ <= sec.end ? 'active' : ''}`;
+    btn.textContent = sec.name;
+    btn.onclick = () => loadQuestion(sec.start);
+    container.appendChild(btn);
+  });
+}
+
+function renderPalette() {
+  const grid = document.getElementById('paletteGrid');
+  grid.innerHTML = '';
+  let cAns = 0, cNotAns = 0, cRev = 0, cNotVis = 0;
+
+  for (let i = 1; i <= activeTest.totalQ; i++) {
+    const st = qStatus[i];
+    if (st === 'ans') cAns++;
+    else if (st === 'notans') cNotAns++;
+    else if (st === 'rev') cRev++;
+    else cNotVis++;
+
+    const btn = document.createElement('button');
+    btn.className = `pal-btn ${st} ${i === currentQ ? 'current' : ''}`;
+    btn.textContent = i;
+    btn.onclick = () => loadQuestion(i);
+    grid.appendChild(btn);
+  }
+
+  document.getElementById('statAns').textContent = cAns;
+  document.getElementById('statNotAns').textContent = cNotAns;
+  document.getElementById('statRev').textContent = cRev;
+  document.getElementById('statNotVis').textContent = cNotVis;
+  document.getElementById('paletteHeading').textContent = `Palette (${activeTest.totalQ} Qs)`;
+}
+
+function getSectionFor(q) {
+  for (const s of activeTest.sections) {
+    if (q >= s.start && q <= s.end) return s;
+  }
+  return activeTest.sections[0];
+}
+
+function loadQuestion(num) {
+  currentQ = num;
+  if (qStatus[num] === 'notvis') qStatus[num] = 'notans';
+
+  const sec = getSectionFor(num);
+  const isMCQ = sec.type === 'MCQ';
+
+  document.getElementById('qHeading').textContent = `Question ${num}`;
+  document.getElementById('qTypeLabel').textContent = `${sec.name} &bull; ${isMCQ ? 'Single Choice (+4, -1)' : 'Numerical Value (+4, 0)'}`;
+  document.getElementById('markingSchemeLabel').textContent = isMCQ ? '+4 for correct, -1 for wrong' : '+4 for correct, 0 for wrong';
+
+  document.getElementById('qStemContent').innerHTML = isMCQ
+    ? `<b>Question ${num}:</b> A uniform body of mass M and radius R rotates under a net torque &tau;. If the angular acceleration is &alpha; = 3.2 rad/s&sup2;, determine the required torque about the central perpendicular axis.`
+    : `<b>Numerical Question ${num}:</b> A flywheel has moment of inertia I = 2.5 kg&middot;m&sup2;. When a constant braking torque of 10 N&middot;m is applied, find the time (in seconds) taken to come to rest from an initial angular velocity of 20 rad/s.`;
+
+  const optBox = document.getElementById('optionsContainer');
+  optBox.innerHTML = '';
+
+  if (isMCQ) {
+    const opts = ['12.5 N·m', '16.0 N·m', '20.0 N·m', '24.5 N·m'];
+    const letters = ['A', 'B', 'C', 'D'];
+    const list = document.createElement('div');
+    list.className = 'opt-list';
+    letters.forEach((l, idx) => {
+      const card = document.createElement('div');
+      card.className = `opt-card ${responses[num] === l ? 'selected' : ''}`;
+      card.innerHTML = `<span class="opt-badge">${l}</span><span>${opts[idx]}</span>`;
+      card.onclick = () => {
+        responses[num] = l;
+        qStatus[num] = 'ans';
+        loadQuestion(num);
+      };
+      list.appendChild(card);
+    });
+    optBox.appendChild(list);
+  } else {
+    const box = document.createElement('div');
+    box.className = 'num-box';
+    box.innerHTML = `
+      <label style="font-family:var(--t-mono); font-size:11px; color:var(--t-muted);">ENTER NUMERICAL ANSWER:</label>
+      <input type="text" id="numField" value="${responses[num] || ''}" placeholder="e.g. 5">
+    `;
+    optBox.appendChild(box);
+    document.getElementById('numField').oninput = (e) => {
+      responses[num] = e.target.value.trim();
+      qStatus[num] = responses[num] ? 'ans' : 'notans';
+      renderPalette();
+    };
+  }
+
+  // Update section active button
+  const btns = document.querySelectorAll('.sec-btn');
+  activeTest.sections.forEach((s, idx) => {
+    if (btns[idx]) btns[idx].classList.toggle('active', num >= s.start && num <= s.end);
+  });
+
+  renderPalette();
+}
+
+function saveAndNext() {
+  if (currentQ < activeTest.totalQ) loadQuestion(currentQ + 1);
+  else alert('Final question reached. You can review your answers or Submit Test.');
+}
+function clearAnswer() {
+  delete responses[currentQ];
+  qStatus[currentQ] = 'notans';
+  loadQuestion(currentQ);
+}
+function markForReview() {
+  qStatus[currentQ] = 'rev';
+  if (currentQ < activeTest.totalQ) loadQuestion(currentQ + 1);
+  else renderPalette();
+}
+
+// Timer
+let timerSec = 3590;
+setInterval(() => {
+  if (timerSec > 0) {
+    timerSec--;
+    const m = Math.floor(timerSec / 60);
+    const s = timerSec % 60;
+    document.getElementById('timeDisplay').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+  }
+}, 1000);
+
+// Submission & Akiva Analytics
+function submitExam() {
+  let score = 0;
+  let correct = 0;
+  let wrong = 0;
+  let skipped = 0;
+
+  const tbody = document.getElementById('matrixRows');
+  tbody.innerHTML = '';
+
+  for (let i = 1; i <= activeTest.totalQ; i++) {
+    const key = activeTest.keys[i];
+    const userAns = responses[i];
+    const sec = getSectionFor(i);
+    const isMCQ = sec.type === 'MCQ';
+
+    let delta = 0;
+    let bClass = 'bdg-skp';
+    let sText = 'Skipped';
+
+    if (!userAns) {
+      skipped++;
+    } else if (userAns.toUpperCase() === key.toUpperCase()) {
+      delta = 4;
+      correct++;
+      bClass = 'bdg-cor';
+      sText = 'Correct (+4)';
+    } else {
+      delta = isMCQ ? -1 : 0;
+      wrong++;
+      bClass = 'bdg-wro';
+      sText = isMCQ ? 'Incorrect (-1)' : 'Incorrect (0)';
+    }
+    score += delta;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family:var(--t-mono); font-weight:700;">#${i}</td>
+      <td><span class="bdg ${bClass}">${sText}</span></td>
+      <td style="font-family:var(--t-mono);">${userAns || '&mdash;'}</td>
+      <td style="font-family:var(--t-mono); font-weight:700; color:var(--acc);">${key}</td>
+      <td style="font-family:var(--t-mono); font-weight:700; color:${delta > 0 ? 'var(--acc)' : delta < 0 ? '#f87171' : 'var(--t-muted)'};">${delta > 0 ? '+' + delta : delta}</td>
+      <td>
+        ${delta < 0 ? `
+          <select class="mistake-sel" onchange="updateLeakage()">
+            <option value="silly">🟣 Silly Mistake / Misread</option>
+            <option value="calc">🟡 Calculation Error</option>
+            <option value="concept">🔵 Conceptual Gap</option>
+            <option value="time">🔴 Time Rush / Guess</option>
+          </select>
+        ` : '&mdash;'}
+      </td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  const attempted = correct + wrong;
+  const acc = attempted ? Math.round((correct / attempted) * 100) : 0;
+
+  document.getElementById('modalTestName').textContent = `${activeTest.name} &bull; Scorecard`;
+  document.getElementById('diagScore').innerHTML = `${score} <span style="font-size:14px; color:var(--t-muted);">/ ${activeTest.maxScore}</span>`;
+  document.getElementById('diagAcc').textContent = `${acc}%`;
+  document.getElementById('diagAttempt').innerHTML = `${attempted} <span style="font-size:14px; color:var(--t-muted);">/ ${activeTest.totalQ}</span>`;
+  document.getElementById('diagPercentile').textContent = score >= 50 ? '98.5%tile' : score >= 40 ? '96.8%tile' : '92.4%tile';
+
+  updateLeakage();
+  document.getElementById('diagModal').classList.add('show');
+}
+
+function updateLeakage() {
+  const selects = document.querySelectorAll('.mistake-sel');
+  let avoidable = 0;
+  selects.forEach(s => {
+    if (s.value === 'silly' || s.value === 'calc') avoidable++;
+  });
+  const lostMarks = avoidable * 5; // -1 received instead of +4 is 5 marks leakage
+  document.getElementById('leakageVal').textContent = `-${lostMarks} Marks Lost to Avoidable Errors`;
+}
+
+function closeModal() {
+  document.getElementById('diagModal').classList.remove('show');
+}
+
+function syncScoreToRepo() {
+  const statusEl = document.getElementById('syncStatus');
+  statusEl.textContent = 'Contacting Port 5055 local push bridge...';
+  statusEl.style.color = '#38bdf8';
+
+  const scoreNum = parseInt(document.getElementById('diagScore').textContent, 10);
+
+  const payload = {
+    test_name: activeTest.name,
+    date: activeTest.date,
+    subjects: {
+      [activeTest.subject]: { score: scoreNum, max: activeTest.maxScore }
+    }
+  };
+
+  fetch('http://127.0.0.1:5055/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    statusEl.innerHTML = '&#9989; Score logged in afterdiwali.html &amp; Pushed to GitHub main!';
+    statusEl.style.color = '#34d399';
+  })
+  .catch(err => {
+    statusEl.innerHTML = 'Bridge offline on Port 5055. Run Start_Test_OMR.bat to enable background auto-push.';
+    statusEl.style.color = '#f87171';
+  });
+}
+
+// Initialize test on load
+initTest("phys21");
+</script>
+
+</body>
+</html>
