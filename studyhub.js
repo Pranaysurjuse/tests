@@ -862,62 +862,84 @@
     .ak-day-num { font-size: 15px; font-weight: 800; font-family: monospace; color: #fff; }
     .ak-day-txt { font-size: 10px; font-weight: 700; color: var(--ak-muted); text-transform: uppercase; }
 
-    /* Screen 4: Personal Assistant (AI Mentor & Study Companion) */
-    .ak-assistant-hero {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.18) 0%, rgba(6, 182, 212, 0.12) 100%);
-      border: 1px solid rgba(139, 92, 246, 0.35);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
-    }
-    .ak-assistant-hero::before {
-      content: '';
-      position: absolute;
-      top: -30px; right: -30px;
-      width: 100px; height: 100px;
-      background: radial-gradient(circle, rgba(139, 92, 246, 0.35), transparent 70%);
-      pointer-events: none;
-    }
-    .ak-assistant-top {
+    /* Screen 4: Personal Assistant (Simplified & Focused) */
+    .ak-mini-hero {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.16) 0%, rgba(6, 182, 212, 0.1) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 8px;
     }
-    .ak-fox-avatar-glow {
-      width: 44px;
-      height: 44px;
+    .ak-compact-rec {
+      background: #12162a;
+      border: 1px solid var(--ak-border);
       border-radius: 14px;
+      padding: 11px 13px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .ak-compact-rec:hover {
+      border-color: rgba(139, 92, 246, 0.45);
+      background: #151a30;
+      transform: translateY(-1px);
+    }
+    .ak-compact-rec.subj-Physics { border-color: rgba(56, 189, 248, 0.35); }
+    .ak-compact-rec.subj-Chemistry { border-color: rgba(52, 211, 153, 0.35); }
+    .ak-compact-rec.subj-Mathematics { border-color: rgba(192, 132, 252, 0.35); }
+    .ak-rec-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+    .ak-rec-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ak-rec-icon-phy { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .ak-rec-icon-chem { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+    .ak-rec-icon-math { background: rgba(192, 132, 252, 0.15); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
+    .ak-rec-main { overflow: hidden; min-width: 0; }
+    .ak-rec-title { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ak-rec-sub { font-size: 10.5px; color: var(--ak-muted); margin-top: 2px; }
+    .ak-compact-add-btn {
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      color: #fff;
+      border: none;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: opacity 0.2s;
+    }
+    .ak-compact-add-btn:hover { opacity: 0.88; }
+    .ak-fox-avatar-glow {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
       background: linear-gradient(135deg, #e07a2c, #f59e0b);
       display: grid;
       place-items: center;
-      box-shadow: 0 0 16px rgba(224, 122, 44, 0.45);
-      font-size: 22px;
+      box-shadow: 0 0 14px rgba(224, 122, 44, 0.45);
+      font-size: 18px;
       flex-shrink: 0;
-    }
-    .ak-assistant-h { font-size: 16px; font-weight: 800; color: #fff; margin: 0; }
-    .ak-assistant-status {
-      font-size: 10.5px;
-      color: #34d399;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 2px;
-    }
-    .ak-assistant-status::before {
-      content: '';
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #34d399;
-      box-shadow: 0 0 8px #34d399;
-    }
-    .ak-assistant-desc {
-      font-size: 12px;
-      color: #cbd5e1;
-      line-height: 1.45;
-      margin: 0;
     }
 
     /* Prompt Chips */
@@ -1436,6 +1458,12 @@
   let addTopicSelectedChapter = null;
   let addTopicMode = 'L';
   let selectedFutureDay = shiftDateStr(1);
+  let assistantTab = 'recommend';
+
+  window.akSetAssistantTab = function(tab) {
+    assistantTab = tab;
+    renderAssistantScreen();
+  };
 
   // Toggle Sidebar collapse
   edgeToggle.onclick = () => {
@@ -1946,163 +1974,198 @@
   ];
 
   function renderAssistantScreen() {
-    topTitle.textContent = "Personal Assistant";
+    topTitle.textContent = "AI Mentor";
 
     const qIdx = (state.quizIndex || 0) % QUIZ_BANK.length;
     const currentQ = QUIZ_BANK[qIdx];
 
-    let chatHtml = (state.chatMessages || []).map(m => `
-      <div class="ak-chat-bubble ${m.sender}">
-        ${m.text}
-      </div>
-    `).join('');
+    let bodyContent = '';
 
-    screenContent.innerHTML = `
-      <!-- Hero Card -->
-      <div class="ak-assistant-hero">
-        <div class="ak-assistant-top">
+    if (assistantTab === 'recommend') {
+      bodyContent = `
+        <!-- Minimal Non-Intrusive Banner -->
+        <div class="ak-mini-hero">
           <div class="ak-fox-avatar-glow">🦊</div>
-          <div>
-            <h3 class="ak-assistant-h">Fox AI &bull; JEE Companion</h3>
-            <div class="ak-assistant-status">Online &amp; Ready to assist</div>
+          <div style="flex:1;">
+            <div style="font-size:13.5px; font-weight:700; color:#fff;">Fox AI &bull; JEE High-Yield Picks</div>
+            <div style="font-size:11px; color:#34d399; font-weight:600;">● 3 topics prioritized for maximum score boost</div>
           </div>
         </div>
-        <p class="ak-assistant-desc">Your personal study companion. Tap any prompt below to get 1-click topic recommendations, practice quizzes, or formula sheets!</p>
-      </div>
 
-      <!-- Quick Action Prompt Chips -->
-      <div class="ak-prompt-row">
-        <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('recommend')">⚡ Recommend Next Topic</button>
-        <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('quiz')">❓ Practice Quiz</button>
-        <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('formulas')">📑 Formula Cards</button>
-        <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('backlogs')">⏳ Clear Backlogs</button>
-        <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('plan')">📋 Plan Today</button>
-      </div>
-
-      <!-- Smart Recommendations Section -->
-      <div style="margin-bottom:18px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <b style="font-size:13.5px; color:#fff;">🎯 High-Yield Topic Recommendations</b>
-          <span style="font-size:10.5px; color:var(--ak-muted);">Auto-prioritized</span>
+        <div style="font-size:11.5px; font-weight:700; color:var(--ak-muted); margin: 4px 0 10px; text-transform:uppercase; letter-spacing:0.04em;">
+          Prioritized For Today
         </div>
 
-        <!-- Recommendation 1: Physics -->
-        <div class="ak-rec-card">
-          <div class="ak-rec-head">
-            <span class="ak-rec-title">Rotational Motion &amp; Moment of Inertia</span>
-            <span class="ak-rec-tag phy">Physics &bull; 8% Weight</span>
-          </div>
-          <div class="ak-rec-reason">High-frequency JEE Advanced topic. Recommended mode: Practice (P).</div>
-          <button class="ak-rec-btn" onclick="window.akAddRecommendedTask('Rotational Motion & Inertia', 'Physics', 'Mechanics')">
-            <span>+</span> Add to Today's Tasks
-          </button>
-        </div>
-
-        <!-- Recommendation 2: Chemistry -->
-        <div class="ak-rec-card">
-          <div class="ak-rec-head">
-            <span class="ak-rec-title">Coordination Compounds</span>
-            <span class="ak-rec-tag chem">Chemistry &bull; 10% Weight</span>
-          </div>
-          <div class="ak-rec-reason">Guaranteed 2-3 questions in JEE Mains. CFT, isomerism &amp; magnetic moments.</div>
-          <button class="ak-rec-btn" onclick="window.akAddRecommendedTask('Coordination Compounds', 'Chemistry', 'Inorganic Chemistry')">
-            <span>+</span> Add to Today's Tasks
-          </button>
-        </div>
-
-        <!-- Recommendation 3: Mathematics -->
-        <div class="ak-rec-card">
-          <div class="ak-rec-head">
-            <span class="ak-rec-title">Definite Integration &amp; AUC</span>
-            <span class="ak-rec-tag math">Maths &bull; 12% Weight</span>
-          </div>
-          <div class="ak-rec-reason">Master King's property and Leibniz theorem to boost your math percentile.</div>
-          <button class="ak-rec-btn" onclick="window.akAddRecommendedTask('Definite Integration', 'Mathematics', 'Calculus')">
-            <span>+</span> Add to Today's Tasks
-          </button>
-        </div>
-      </div>
-
-      <!-- Interactive Rapid Quiz Section -->
-      <div class="ak-quiz-card">
-        <div class="ak-quiz-meta">
-          <span>⚡ Rapid Drill (${qIdx + 1}/${QUIZ_BANK.length})</span>
-          <span>${currentQ.subject} &bull; ${currentQ.topic}</span>
-        </div>
-        <div class="ak-quiz-question">${currentQ.question}</div>
-
-        <div class="ak-quiz-options" id="akQuizOptions">
-          ${currentQ.options.map((opt, i) => `
-            <button class="ak-quiz-opt" onclick="window.akAnswerQuiz(${i})">
-              <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
-              <span class="ak-opt-icon"></span>
-            </button>
-          `).join('')}
-        </div>
-
-        <div class="ak-quiz-feedback" id="akQuizFeedback">
-          <div id="akQuizFeedbackText"></div>
-          <button class="ak-pill-btn" onclick="window.akNextQuiz()" style="margin-top:8px; padding:6px 14px; font-size:11px;">
-            Next Question &rarr;
-          </button>
-        </div>
-      </div>
-
-      <!-- High Yield Formula Flashcards -->
-      <div style="background:#131728; border:1px solid var(--ak-border); border-radius:18px; padding:14px; margin-bottom:16px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <b style="font-size:13px; color:#fff;">📑 High-Yield Formula Flashcards</b>
-          <span style="font-size:10px; color:#38bdf8;">1-Click Copy</span>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div style="background:#181e35; border:1px solid rgba(56,189,248,0.25); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:11px; color:#38bdf8; font-weight:700;">Physics &bull; Carnot Efficiency</div>
-              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">η = 1 - (Tc / Th) = W / Qh</code>
+        <!-- 3 Sleek Compact Recommendation Cards -->
+        <!-- Physics -->
+        <div class="ak-compact-rec subj-Physics">
+          <div class="ak-rec-left">
+            <div class="ak-rec-icon-badge ak-rec-icon-phy">⚡</div>
+            <div class="ak-rec-main">
+              <div class="ak-rec-title">Rotational Motion &amp; Inertia</div>
+              <div class="ak-rec-sub">Physics &bull; Mechanics &bull; 8% Weight</div>
             </div>
-            <button class="ak-pill-btn" onclick="window.akCopyFormula('η = 1 - (Tc / Th) = W / Qh')" style="padding:4px 8px; font-size:10px;">Copy</button>
           </div>
-
-          <div style="background:#181e35; border:1px solid rgba(52,211,153,0.25); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:11px; color:#34d399; font-weight:700;">Chemistry &bull; Arrhenius Equation</div>
-              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">k = A · e^(-Ea / RT)</code>
-            </div>
-            <button class="ak-pill-btn" onclick="window.akCopyFormula('k = A · e^(-Ea / RT)')" style="padding:4px 8px; font-size:10px;">Copy</button>
-          </div>
-
-          <div style="background:#181e35; border:1px solid rgba(192,132,252,0.25); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:11px; color:#c084fc; font-weight:700;">Maths &bull; Leibniz Integral Rule</div>
-              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">d/dx ∫[u(x) to v(x)] f(t)dt = f(v)v\' - f(u)u\'</code>
-            </div>
-            <button class="ak-pill-btn" onclick="window.akCopyFormula('d/dx ∫[u(x) to v(x)] f(t)dt = f(v)v\' - f(u)u\'')" style="padding:4px 8px; font-size:10px;">Copy</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live Chat Stream -->
-      <div style="background:#111526; border:1px solid var(--ak-border); border-radius:18px; padding:14px;">
-        <div style="font-size:13px; font-weight:700; color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
-          <span>💬 Ask Fox AI</span>
+          <button class="ak-compact-add-btn" onclick="window.akAddRecommendedTask('Rotational Motion & Inertia', 'Physics', 'Mechanics')">
+            + Add
+          </button>
         </div>
 
-        <div class="ak-chat-stream" id="akChatStream">
+        <!-- Chemistry -->
+        <div class="ak-compact-rec subj-Chemistry">
+          <div class="ak-rec-left">
+            <div class="ak-rec-icon-badge ak-rec-icon-chem">🧪</div>
+            <div class="ak-rec-main">
+              <div class="ak-rec-title">Coordination Compounds</div>
+              <div class="ak-rec-sub">Chemistry &bull; Inorganic &bull; 10% Weight</div>
+            </div>
+          </div>
+          <button class="ak-compact-add-btn" onclick="window.akAddRecommendedTask('Coordination Compounds', 'Chemistry', 'Inorganic Chemistry')">
+            + Add
+          </button>
+        </div>
+
+        <!-- Mathematics -->
+        <div class="ak-compact-rec subj-Mathematics">
+          <div class="ak-rec-left">
+            <div class="ak-rec-icon-badge ak-rec-icon-math">∑</div>
+            <div class="ak-rec-main">
+              <div class="ak-rec-title">Definite Integration &amp; AUC</div>
+              <div class="ak-rec-sub">Maths &bull; Calculus &bull; 12% Weight</div>
+            </div>
+          </div>
+          <button class="ak-compact-add-btn" onclick="window.akAddRecommendedTask('Definite Integration', 'Mathematics', 'Calculus')">
+            + Add
+          </button>
+        </div>
+
+        <!-- 1-Click Plan All 3 Button -->
+        <button class="ak-act-btn ak-btn-orange" onclick="window.akAddAllRecommendations()" style="margin-top:14px; width:100%; padding:12px; font-size:13px;">
+          ⚡ Add All 3 Topics to Today's Tasks
+        </button>
+      `;
+    } else if (assistantTab === 'chat') {
+      let chatHtml = (state.chatMessages || []).map(m => `
+        <div class="ak-chat-bubble ${m.sender}">
+          ${m.text}
+        </div>
+      `).join('');
+
+      bodyContent = `
+        <div class="ak-prompt-row" style="margin-bottom:12px;">
+          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('recommend')">⚡ Topic Picks</button>
+          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('quiz')">❓ Quiz Drill</button>
+          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('formulas')">📑 Formulas</button>
+          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('backlogs')">⏳ Backlogs</button>
+        </div>
+
+        <div class="ak-chat-stream" id="akChatStream" style="max-height:360px;">
           ${chatHtml}
         </div>
 
         <form class="ak-chat-input-row" onsubmit="window.akHandleChatSubmit(event)">
-          <input type="text" class="ak-chat-input" id="akChatQuery" placeholder="Ask Fox AI (e.g. formula, quiz, add task...)" autocomplete="off"/>
+          <input type="text" class="ak-chat-input" id="akChatQuery" placeholder="Ask Fox AI (e.g. formula, quiz, revision tip...)" autocomplete="off"/>
           <button type="submit" class="ak-chat-send">Send</button>
         </form>
+      `;
+    } else if (assistantTab === 'quiz') {
+      bodyContent = `
+        <div class="ak-quiz-card">
+          <div class="ak-quiz-meta">
+            <span>⚡ Drill (${qIdx + 1}/${QUIZ_BANK.length})</span>
+            <span>${currentQ.subject} &bull; ${currentQ.topic}</span>
+          </div>
+          <div class="ak-quiz-question">${currentQ.question}</div>
+
+          <div class="ak-quiz-options" id="akQuizOptions">
+            ${currentQ.options.map((opt, i) => `
+              <button class="ak-quiz-opt" onclick="window.akAnswerQuiz(${i})">
+                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="ak-quiz-feedback" id="akQuizFeedback">
+            <div id="akQuizFeedbackText"></div>
+            <button class="ak-pill-btn" onclick="window.akNextQuiz()" style="margin-top:10px; padding:6px 14px; font-size:11px;">
+              Next Question &rarr;
+            </button>
+          </div>
+        </div>
+      `;
+    } else if (assistantTab === 'formulas') {
+      bodyContent = `
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div style="background:#181e35; border:1px solid rgba(56,189,248,0.25); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:11px; color:#38bdf8; font-weight:700;">Physics &bull; Carnot Efficiency</div>
+              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">η = 1 - (Tc / Th) = W / Qh</code>
+            </div>
+            <button class="ak-pill-btn" onclick="window.akCopyFormula('η = 1 - (Tc / Th) = W / Qh')" style="padding:5px 10px; font-size:10.5px;">Copy</button>
+          </div>
+
+          <div style="background:#181e35; border:1px solid rgba(52,211,153,0.25); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:11px; color:#34d399; font-weight:700;">Chemistry &bull; Arrhenius Equation</div>
+              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">k = A · e^(-Ea / RT)</code>
+            </div>
+            <button class="ak-pill-btn" onclick="window.akCopyFormula('k = A · e^(-Ea / RT)')" style="padding:5px 10px; font-size:10.5px;">Copy</button>
+          </div>
+
+          <div style="background:#181e35; border:1px solid rgba(192,132,252,0.25); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:11px; color:#c084fc; font-weight:700;">Maths &bull; Leibniz Integral Rule</div>
+              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">d/dx ∫[u(x) to v(x)] f(t)dt = f(v)v\' - f(u)u\'</code>
+            </div>
+            <button class="ak-pill-btn" onclick="window.akCopyFormula('d/dx ∫[u(x) to v(x)] f(t)dt = f(v)v\' - f(u)u\'')" style="padding:5px 10px; font-size:10.5px;">Copy</button>
+          </div>
+        </div>
+      `;
+    }
+
+    screenContent.innerHTML = `
+      <!-- Clean Subtab Selector Strip -->
+      <div class="ak-subtab-strip" style="margin-bottom:14px;">
+        <button class="ak-subtab ${assistantTab === 'recommend' ? 'active' : ''}" onclick="window.akSetAssistantTab('recommend')">⚡ Picks</button>
+        <button class="ak-subtab ${assistantTab === 'chat' ? 'active' : ''}" onclick="window.akSetAssistantTab('chat')">💬 Ask AI</button>
+        <button class="ak-subtab ${assistantTab === 'quiz' ? 'active' : ''}" onclick="window.akSetAssistantTab('quiz')">❓ Quiz</button>
+        <button class="ak-subtab ${assistantTab === 'formulas' ? 'active' : ''}" onclick="window.akSetAssistantTab('formulas')">📑 Formulas</button>
       </div>
+
+      ${bodyContent}
     `;
 
-    setTimeout(() => {
-      const stream = document.getElementById('akChatStream');
-      if (stream) stream.scrollTop = stream.scrollHeight;
-    }, 50);
+    if (assistantTab === 'chat') {
+      setTimeout(() => {
+        const stream = document.getElementById('akChatStream');
+        if (stream) stream.scrollTop = stream.scrollHeight;
+      }, 50);
+    }
   }
+
+  window.akAddAllRecommendations = function() {
+    const recs = [
+      { title: 'Rotational Motion & Inertia', subject: 'Physics', branch: 'Mechanics' },
+      { title: 'Coordination Compounds', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+      { title: 'Definite Integration', subject: 'Mathematics', branch: 'Calculus' }
+    ];
+    recs.forEach(r => {
+      state.tasks.push({
+        id: 'rec_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        title: r.title,
+        subject: r.subject,
+        branch: r.branch,
+        mode: 'P',
+        level: 'JEE Mains + Advanced',
+        date: todayStr(),
+        hoursLeft: 24,
+        done: false
+      });
+    });
+    saveState(state);
+    showToast('All 3 high-yield topics added to Today! 🚀');
+    updateBadges();
+  };
 
   window.akAddRecommendedTask = function(title, subject, branch) {
     state.tasks.push({
