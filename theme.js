@@ -43,7 +43,14 @@ ready(function(){
   if(trk){
     trk.addEventListener('click',function(e){
       e.preventDefault();
-      if(window.akOpenScreen)window.akOpenScreen('today');
+      if(window.akOpenScreen){
+        window.akOpenScreen('today');
+      } else {
+        var s=D.createElement('script');
+        s.src=BASE+'studyhub.js?v=4';
+        s.onload=function(){ if(window.akOpenScreen) window.akOpenScreen('today'); };
+        D.body.appendChild(s);
+      }
     });
   }
   /* theme panel */

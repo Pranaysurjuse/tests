@@ -57,9 +57,31 @@
   .footer-note { margin-top: 26px; font-size: 11.5px; color: #56685f; text-align: center;
     opacity: 0; animation: fadeInUp 0.6s ease forwards 0.7s; }
 
+  /* Enhanced Modern Card Icons & Dynamic Subject Colors */
+  .card-icon-wrap {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: grid; place-items: center; margin-bottom: 8px;
+    transition: transform 0.25s ease, filter 0.25s ease;
+  }
+  a.card:hover .card-icon-wrap { transform: scale(1.15) translateY(-2px); }
+
+  .icon-phy { background: rgba(56, 189, 248, 0.12); filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.35)); }
+  .icon-chem { background: rgba(52, 211, 153, 0.12); filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.35)); }
+  .icon-math { background: rgba(192, 132, 252, 0.12); filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.35)); }
+  .icon-comb { background: rgba(245, 158, 11, 0.12); filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.35)); }
+  .icon-diwali { background: rgba(43, 179, 160, 0.15); filter: drop-shadow(0 0 10px rgba(43, 179, 160, 0.4)); }
+
+  a.card.card-phy:hover { border-color: #38bdf8; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.22); }
+  a.card.card-chem:hover { border-color: #34d399; box-shadow: 0 4px 20px rgba(52, 211, 153, 0.22); }
+  a.card.card-math:hover { border-color: #c084fc; box-shadow: 0 4px 20px rgba(192, 132, 252, 0.22); }
+  a.card.card-comb:hover { border-color: #f59e0b; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.22); }
+
   @media (max-width: 380px) {
     .grid { gap: 10px; }
     a.card { min-height: 80px; padding: 12px; font-size: 14px; }
+  }
+  @media (min-width: 800px) {
+    body { padding-left: 90px; }
   }
 </style>
 <!--theme--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap"><link rel="stylesheet" href="theme.css"><script defer src="theme.js?v=3"></script><!--/theme--></head>
@@ -71,17 +93,71 @@
   <p class="sub">Welcome, Pranay &mdash; here's your progress.</p>
   <div class="grid">
     <a class="card card-wide" href="afterdiwali.html">
-      <div>
-        <span class="icon" style="margin: 0 8px 0 0; vertical-align: middle;">🚀</span>
-        <span style="vertical-align: middle;">After Diwali &bull; Live Tracker</span>
-        <div style="font-size: 11.5px; color: var(--muted); font-weight: normal; margin-top: 3px;">Active score logs, trends &amp; analytics</div>
+      <div style="display:flex; align-items:center;">
+        <div class="card-icon-wrap icon-diwali">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="#2bb3a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="rgba(43, 179, 160, 0.2)"/></svg>
+        </div>
+        <div>
+          <span style="font-weight:700; color:#fff;">After Diwali &bull; Live Tracker</span>
+          <div style="font-size: 11.5px; color: var(--muted); font-weight: normal; margin-top: 2px;">Active score logs, trends &amp; analytics</div>
+        </div>
       </div>
-      <span style="font-size: 18px; color: var(--teal);">&rarr;</span>
+      <span style="font-size: 18px; color: var(--teal); font-weight:bold;">&rarr;</span>
     </a>
-    <a class="card" href="physics.html"><span class="icon">&#9889;</span>Physics</a>
-    <a class="card" href="chemistry.html"><span class="icon">&#129514;</span>Chemistry</a>
-    <a class="card" href="maths.html"><span class="icon">&#8721;</span>Maths</a>
-    <a class="card" href="combine-menu.html"><span class="icon">&#128218;</span>Combine</a>
+
+    <!-- Physics: Quantum Orbitals -->
+    <a class="card card-phy" href="physics.html">
+      <div class="card-icon-wrap icon-phy">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="3" fill="#38bdf8" />
+          <ellipse cx="12" cy="12" rx="9" ry="3.8" stroke="#38bdf8" stroke-width="1.6" transform="rotate(30 12 12)" />
+          <ellipse cx="12" cy="12" rx="9" ry="3.8" stroke="#38bdf8" stroke-width="1.6" transform="rotate(90 12 12)" />
+          <ellipse cx="12" cy="12" rx="9" ry="3.8" stroke="#38bdf8" stroke-width="1.6" transform="rotate(150 12 12)" />
+        </svg>
+      </div>
+      <span>Physics</span>
+    </a>
+
+    <!-- Chemistry: Molecular Benzene Lattice -->
+    <a class="card card-chem" href="chemistry.html">
+      <div class="card-icon-wrap icon-chem">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <polygon points="12,2.5 19.5,6.8 19.5,15.5 12,19.8 4.5,15.5 4.5,6.8" stroke="#34d399" stroke-width="1.8" fill="none"/>
+          <circle cx="12" cy="11.2" r="4.2" stroke="#34d399" stroke-width="1.5" stroke-dasharray="2.5 2"/>
+          <circle cx="12" cy="2.5" r="1.8" fill="#34d399"/>
+          <circle cx="19.5" cy="6.8" r="1.8" fill="#34d399"/>
+          <circle cx="19.5" cy="15.5" r="1.8" fill="#34d399"/>
+          <circle cx="12" cy="19.8" r="1.8" fill="#34d399"/>
+          <circle cx="4.5" cy="15.5" r="1.8" fill="#34d399"/>
+          <circle cx="4.5" cy="6.8" r="1.8" fill="#34d399"/>
+        </svg>
+      </div>
+      <span>Chemistry</span>
+    </a>
+
+    <!-- Mathematics: 3D Isometric Hypercube -->
+    <a class="card card-math" href="maths.html">
+      <div class="card-icon-wrap icon-math">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2.5L3.5 7.4v9.8L12 22.1l8.5-4.9V7.4L12 2.5z" stroke="#c084fc" stroke-width="1.8" fill="none"/>
+          <path d="M12 22.1V12.3m0 0L3.5 7.4m8.5 4.9l8.5-4.9" stroke="#c084fc" stroke-width="1.8"/>
+          <circle cx="12" cy="12.3" r="2" fill="#c084fc"/>
+        </svg>
+      </div>
+      <span>Maths</span>
+    </a>
+
+    <!-- Combine: Layered Crystalline Prism -->
+    <a class="card card-comb" href="combine-menu.html">
+      <div class="card-icon-wrap icon-comb">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <polygon points="12 2 2 7 12 12 22 7" stroke="#f59e0b" stroke-width="1.8" fill="rgba(245, 158, 11, 0.2)"/>
+          <polygon points="12 7.5 2 12.5 12 17.5 22 12.5" stroke="#f59e0b" stroke-width="1.8" fill="rgba(245, 158, 11, 0.12)"/>
+          <polygon points="12 13 2 18 12 23 22 18" stroke="#f59e0b" stroke-width="1.8" fill="rgba(245, 158, 11, 0.05)"/>
+        </svg>
+      </div>
+      <span>Combine</span>
+    </a>
   </div>
   <p class="footer-note">Cognition Test Tracker</p>
 </div>
