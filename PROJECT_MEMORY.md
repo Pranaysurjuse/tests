@@ -53,13 +53,10 @@
   4. **🗓️ Future Tasks:**
      - 7-day horizontal scrollable day calendar strip (`22 SUN`, `23 MON`...)
      - Scheduled task manager
-  5. **🦊 AI Mentor (Personal Assistant):**
-     - **Replaced the static "Progress Bar" screen**.
-     - **Simplified, non-intrusive layout** with 4 Akiva-style subtabs:
-       - **`[ ⚡ Picks ]`** *(Default)*: 3 slim, elegant high-yield topic recommendations (Physics, Chemistry, Maths) with quick `+ Add` buttons and a **`⚡ Add All 3 Topics to Today's Tasks`** 1-tap planner.
-       - **`[ 💬 Ask AI ]`**: Clean, spacious chat interface with Fox AI, prompt chips, and instant JEE advice.
-       - **`[ ❓ Quiz ]`**: Focused 3-question drill with instant green/red option feedback, score tracking, and detailed explanations.
-       - **`[ 📑 Formulas ]`**: High-yield formulas (Carnot, Arrhenius, Leibniz) with 1-click clipboard copy.
+  5. **📈 Progress Bar & 83 JEE Chapters Matrix:**
+     - Restored the authentic syllabus progress visualizer (completely removed the AI Mentor chatbot/quiz/picks per user preference).
+     - **Dual Circular Gauges:** JEE Mains and JEE Advanced syllabus coverage gauges with orbiting subject nodes for Chemistry, Physics, and Mathematics.
+     - **83 JEE Chapters Checklist:** Interactive checklist covering all 83 chapters across Physics (28), Chemistry (30), and Mathematics (25) with branch breakdown, completion checkmarks, live stats, and 1-tap `+ Plan` task scheduler.
 
 ### C. Multi-Color Subject & Category Theme System
 Eliminated the monotone black/amber UI in favor of vibrant, distinct colors:
@@ -69,7 +66,7 @@ Eliminated the monotone black/amber UI in favor of vibrant, distinct colors:
 - 📋 **Today's Tasks**: Vibrant Coral (`#f43f5e`)
 - 🗓️ **Future Tasks**: Royal Indigo (`#6366f1`)
 - ⏳ **Backlogs**: Warm Gold (`#f59e0b`)
-- 🦊 **AI Mentor**: Electric Violet & Cyan gradient (`#8b5cf6` + `#06b6d4`)
+- 📈 **Progress Bar**: Emerald & Cyan glow (`#10b981` + `#38bdf8`)
 
 ### D. `theme.js`
 - Floating macOS-style bottom dock with navigation items (`Home`, `Phy`, `Chem`, `Maths`, `All`, `Track`, `Theme`).

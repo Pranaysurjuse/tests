@@ -862,298 +862,31 @@
     .ak-day-num { font-size: 15px; font-weight: 800; font-family: monospace; color: #fff; }
     .ak-day-txt { font-size: 10px; font-weight: 700; color: var(--ak-muted); text-transform: uppercase; }
 
-    /* Screen 4: Personal Assistant (Simplified & Focused) */
-    .ak-mini-hero {
-      background: linear-gradient(135deg, rgba(139, 92, 246, 0.16) 0%, rgba(6, 182, 212, 0.1) 100%);
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      border-radius: 16px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .ak-compact-rec {
-      background: #12162a;
+    /* Screen 4: Progress Bar Visualizer (Dual Circular Gauges, 1:1 with Screenshot 9) */
+    .ak-prog-section {
+      background: #121626;
       border: 1px solid var(--ak-border);
-      border-radius: 14px;
-      padding: 11px 13px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      transition: all 0.2s;
-    }
-    .ak-compact-rec:hover {
-      border-color: rgba(139, 92, 246, 0.45);
-      background: #151a30;
-      transform: translateY(-1px);
-    }
-    .ak-compact-rec.subj-Physics { border-color: rgba(56, 189, 248, 0.35); }
-    .ak-compact-rec.subj-Chemistry { border-color: rgba(52, 211, 153, 0.35); }
-    .ak-compact-rec.subj-Mathematics { border-color: rgba(192, 132, 252, 0.35); }
-    .ak-rec-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      flex: 1;
-    }
-    .ak-rec-icon-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      font-size: 13px;
-      font-weight: 800;
-      flex-shrink: 0;
-    }
-    .ak-rec-icon-phy { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
-    .ak-rec-icon-chem { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
-    .ak-rec-icon-math { background: rgba(192, 132, 252, 0.15); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
-    .ak-rec-main { overflow: hidden; min-width: 0; }
-    .ak-rec-title { font-size: 13px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .ak-rec-sub { font-size: 10.5px; color: var(--ak-muted); margin-top: 2px; }
-    .ak-compact-add-btn {
-      padding: 6px 12px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-      color: #fff;
-      border: none;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: opacity 0.2s;
-    }
-    .ak-compact-add-btn:hover { opacity: 0.88; }
-    .ak-fox-avatar-glow {
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #e07a2c, #f59e0b);
-      display: grid;
-      place-items: center;
-      box-shadow: 0 0 14px rgba(224, 122, 44, 0.45);
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    /* Prompt Chips */
-    .ak-prompt-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
+      border-radius: 20px;
+      padding: 18px 16px;
       margin-bottom: 14px;
     }
-    .ak-prompt-pill {
-      padding: 8px 14px;
-      border-radius: 14px;
-      background: #14182b;
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      color: #e2e8f0;
-      font-size: 11.5px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-    .ak-prompt-pill:hover {
-      border-color: #c084fc;
-      background: rgba(139, 92, 246, 0.16);
-      transform: translateY(-1px);
-    }
-
-    /* Assistant Recommendation Cards */
-    .ak-rec-card {
-      background: #12162a;
-      border: 1px solid var(--ak-border);
-      border-radius: 16px;
-      padding: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: all 0.2s;
-    }
-    .ak-rec-card:hover {
-      border-color: rgba(139, 92, 246, 0.45);
-      box-shadow: 0 4px 18px rgba(139, 92, 246, 0.12);
-    }
-    .ak-rec-head {
+    .ak-sec-head {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-    }
-    .ak-rec-title { font-size: 13.5px; font-weight: 700; color: #fff; }
-    .ak-rec-tag {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 8px;
-    }
-    .ak-rec-tag.phy { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
-    .ak-rec-tag.chem { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
-    .ak-rec-tag.math { background: rgba(192, 132, 252, 0.15); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.3); }
-    .ak-rec-reason { font-size: 11.5px; color: var(--ak-muted); line-height: 1.4; }
-    .ak-rec-btn {
-      align-self: flex-end;
-      padding: 6px 14px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-      color: #fff;
-      border: none;
-      font-weight: 700;
-      font-size: 11.5px;
-      cursor: pointer;
-      display: flex;
       align-items: center;
-      gap: 6px;
-      transition: opacity 0.2s;
-    }
-    .ak-rec-btn:hover { opacity: 0.9; }
-
-    /* Interactive Quiz Box */
-    .ak-quiz-card {
-      background: #12162a;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      border-radius: 18px;
-      padding: 16px;
       margin-bottom: 14px;
     }
-    .ak-quiz-meta {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 700;
-      color: #38bdf8;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .ak-quiz-question {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      line-height: 1.45;
-      margin-bottom: 12px;
-    }
-    .ak-quiz-options {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .ak-quiz-opt {
-      padding: 10px 14px;
-      border-radius: 12px;
-      background: #181d33;
-      border: 1px solid var(--ak-border);
-      color: #cbd5e1;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s;
+    .ak-sec-title { font-weight: 700; font-size: 14px; color: #fff; }
+    .ak-sec-link { font-size: 11.5px; color: var(--ak-orange); cursor: pointer; font-weight: 600; }
+    .ak-orbit-wrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: space-around;
+      padding: 8px 0;
     }
-    .ak-quiz-opt:hover {
-      background: #1f2642;
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-    .ak-quiz-opt.correct {
-      background: rgba(52, 211, 153, 0.2) !important;
-      border-color: #34d399 !important;
-      color: #34d399 !important;
-      font-weight: 700;
-    }
-    .ak-quiz-opt.wrong {
-      background: rgba(239, 68, 68, 0.2) !important;
-      border-color: #ef4444 !important;
-      color: #f87171 !important;
-    }
-    .ak-quiz-feedback {
-      padding: 10px 12px;
-      border-radius: 10px;
-      background: rgba(52, 211, 153, 0.1);
-      border: 1px solid rgba(52, 211, 153, 0.25);
-      font-size: 11.5px;
-      color: #e2e8f0;
-      line-height: 1.4;
-      margin-bottom: 10px;
-      display: none;
-    }
-    .ak-quiz-feedback.show { display: block; }
-
-    /* Interactive Chat Stream & Input */
-    .ak-chat-stream {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 14px;
-      max-height: 240px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-    .ak-chat-bubble {
-      padding: 10px 14px;
-      border-radius: 16px;
-      font-size: 12px;
-      line-height: 1.45;
-      max-width: 88%;
-    }
-    .ak-chat-bubble.bot {
-      background: #14192d;
-      border: 1px solid rgba(139, 92, 246, 0.25);
-      color: #f1f5f9;
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
-    .ak-chat-bubble.user {
-      background: linear-gradient(135deg, #e07a2c, #f59e0b);
-      color: #0c0d14;
-      font-weight: 600;
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-    .ak-chat-input-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .ak-chat-input {
-      flex: 1;
-      background: #131728;
-      border: 1px solid var(--ak-border);
-      border-radius: 14px;
-      padding: 10px 14px;
-      color: #fff;
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .ak-chat-input:focus {
-      border-color: #8b5cf6;
-    }
-    .ak-chat-send {
-      padding: 0 16px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-      color: #fff;
-      border: none;
-      font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-    }
+    .ak-node-stack { display: flex; flex-direction: column; gap: 8px; }
+    .ak-node-item { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 600; color: #e2e8f0; }
+    .ak-node-icon { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; background: rgba(255,255,255,0.06); }
 
     /* Screen 5: Edit Task Modal Overlay */
     .ak-edit-modal-wrap {
@@ -1274,10 +1007,7 @@
         'Units & Dimensions': true,
         'Mole Concept & Stoichiometry': true,
         'Sets, Relations & Functions': true
-      },
-      chatMessages: [
-        { sender: 'bot', text: 'Hi Pranay! 👋 I am Fox AI, your personal JEE Study Assistant. How can I help you today? Try the quick buttons above for topic recommendations, quizzes, or formulas!' }
-      ]
+      }
     };
   }
 
@@ -1344,11 +1074,11 @@
             <div class="akiva-flyout">Backlog Recovery</div>
           </div>
 
-          <div class="akiva-nav-item" data-view="assistant">
-            <span class="akiva-icon">🦊</span>
-            <span class="akiva-item-label">AI Mentor</span>
-            <span class="akiva-badge" id="akBadgeAssistant" style="background:rgba(168,85,247,0.25); color:#c084fc;">AI</span>
-            <div class="akiva-flyout">Personal Assistant</div>
+          <div class="akiva-nav-item" data-view="progress">
+            <span class="akiva-icon">📈</span>
+            <span class="akiva-item-label">Progress Bar</span>
+            <span class="akiva-badge" id="akBadgeProgress">0%</span>
+            <div class="akiva-flyout">83 JEE Chapters</div>
           </div>
         </nav>
       </div>
@@ -1458,12 +1188,6 @@
   let addTopicSelectedChapter = null;
   let addTopicMode = 'L';
   let selectedFutureDay = shiftDateStr(1);
-  let assistantTab = 'recommend';
-
-  window.akSetAssistantTab = function(tab) {
-    assistantTab = tab;
-    renderAssistantScreen();
-  };
 
   // Toggle Sidebar collapse
   edgeToggle.onclick = () => {
@@ -1531,7 +1255,7 @@
     else if (v === 'add_future') renderAddTopicScreen('future');
     else if (v === 'backlog') renderBacklogScreen();
     else if (v === 'future') renderFutureScreen();
-    else if (v === 'assistant') renderAssistantScreen();
+    else if (v === 'progress') renderProgressScreen();
 
     updateBadges();
   }
@@ -1564,8 +1288,8 @@
     if (bFut) bFut.textContent = s.futureCount;
     const bBack = document.getElementById('akBadgeBacklog');
     if (bBack) bBack.textContent = s.backlogCount;
-    const bAss = document.getElementById('akBadgeAssistant');
-    if (bAss) bAss.textContent = 'AI';
+    const bProg = document.getElementById('akBadgeProgress');
+    if (bProg) bProg.textContent = `${s.overallPct}%`;
   }
 
   /* ==========================================================
@@ -1943,344 +1667,119 @@
   }
 
   /* ==========================================================
-     SCREEN 5: PERSONAL ASSISTANT (Fox AI JEE Mentor)
-     Replaces Progress Bar with an interactive study companion
+     SCREEN 5: PROGRESS BAR & SYLLABUS MATRIX (1:1 with Screenshot 9)
+     Dual Circular Gauges: JEE Mains Only & JEE Advanced Only
+     Complete 83 JEE Chapters Matrix with Subject Filters
      ========================================================== */
-  const QUIZ_BANK = [
-    {
-      subject: 'Physics',
-      topic: 'Mechanics (Pure Rolling)',
-      question: 'A solid cylinder rolls without slipping on a horizontal surface with CM velocity v. What is the instantaneous velocity of the contact point?',
-      options: ['0 (Zero velocity)', 'v (Same as CM)', '2v (Double)', 'v / √2'],
-      correct: 0,
-      explanation: 'In pure rolling without slipping, the instantaneous axis of rotation passes through the contact point, so its velocity with respect to ground is strictly zero.'
-    },
-    {
-      subject: 'Chemistry',
-      topic: 'Coordination Compounds',
-      question: 'Which of the following octahedral complexes is diamagnetic and low spin?',
-      options: ['[Co(NH3)6]3+', '[FeF6]3-', '[CoF6]3-', '[NiCl4]2-'],
-      correct: 0,
-      explanation: 'Co3+ has 3d6 configuration. NH3 is a strong field ligand causing full electron pairing in t2g orbital (t2g6 eg0, zero unpaired electrons), making it diamagnetic.'
-    },
-    {
-      subject: 'Mathematics',
-      topic: 'Definite Integration',
-      question: 'What is the value of ∫_{-π/2}^{π/2} (x^3 + x·cos(x) + tan^5(x) + 1) dx?',
-      options: ['π', '0', '2π', '1'],
-      correct: 0,
-      explanation: 'Notice that x^3, x·cos(x), and tan^5(x) are all odd functions whose integral over [-a, a] is zero. Thus, ∫_{-π/2}^{π/2} 1 dx = [x]_{-π/2}^{π/2} = π.'
-    }
-  ];
+  function renderProgressScreen() {
+    topTitle.textContent = "Progress Bar";
 
-  function renderAssistantScreen() {
-    topTitle.textContent = "AI Mentor";
+    // Calculate subject-wise completion
+    let phyDone = 0, chemDone = 0, mathDone = 0;
+    JEE_CHAPTERS.forEach(c => {
+      if (state.completedChapters[c.title]) {
+        if (c.subject === 'Physics') phyDone++;
+        else if (c.subject === 'Chemistry') chemDone++;
+        else if (c.subject === 'Mathematics') mathDone++;
+      }
+    });
 
-    const qIdx = (state.quizIndex || 0) % QUIZ_BANK.length;
-    const currentQ = QUIZ_BANK[qIdx];
-
-    let bodyContent = '';
-
-    if (assistantTab === 'recommend') {
-      bodyContent = `
-        <!-- Minimal Non-Intrusive Banner -->
-        <div class="ak-mini-hero">
-          <div class="ak-fox-avatar-glow">🦊</div>
-          <div style="flex:1;">
-            <div style="font-size:13.5px; font-weight:700; color:#fff;">Fox AI &bull; JEE High-Yield Picks</div>
-            <div style="font-size:11px; color:#34d399; font-weight:600;">● 3 topics prioritized for maximum score boost</div>
-          </div>
-        </div>
-
-        <div style="font-size:11.5px; font-weight:700; color:var(--ak-muted); margin: 4px 0 10px; text-transform:uppercase; letter-spacing:0.04em;">
-          Prioritized For Today
-        </div>
-
-        <!-- 3 Sleek Compact Recommendation Cards -->
-        <!-- Physics -->
-        <div class="ak-compact-rec subj-Physics">
-          <div class="ak-rec-left">
-            <div class="ak-rec-icon-badge ak-rec-icon-phy">⚡</div>
-            <div class="ak-rec-main">
-              <div class="ak-rec-title">Rotational Motion &amp; Inertia</div>
-              <div class="ak-rec-sub">Physics &bull; Mechanics &bull; 8% Weight</div>
-            </div>
-          </div>
-          <button class="ak-compact-add-btn" onclick="window.akAddRecommendedTask('Rotational Motion & Inertia', 'Physics', 'Mechanics')">
-            + Add
-          </button>
-        </div>
-
-        <!-- Chemistry -->
-        <div class="ak-compact-rec subj-Chemistry">
-          <div class="ak-rec-left">
-            <div class="ak-rec-icon-badge ak-rec-icon-chem">🧪</div>
-            <div class="ak-rec-main">
-              <div class="ak-rec-title">Coordination Compounds</div>
-              <div class="ak-rec-sub">Chemistry &bull; Inorganic &bull; 10% Weight</div>
-            </div>
-          </div>
-          <button class="ak-compact-add-btn" onclick="window.akAddRecommendedTask('Coordination Compounds', 'Chemistry', 'Inorganic Chemistry')">
-            + Add
-          </button>
-        </div>
-
-        <!-- Mathematics -->
-        <div class="ak-compact-rec subj-Mathematics">
-          <div class="ak-rec-left">
-            <div class="ak-rec-icon-badge ak-rec-icon-math">∑</div>
-            <div class="ak-rec-main">
-              <div class="ak-rec-title">Definite Integration &amp; AUC</div>
-              <div class="ak-rec-sub">Maths &bull; Calculus &bull; 12% Weight</div>
-            </div>
-          </div>
-          <button class="ak-compact-add-btn" onclick="window.akAddRecommendedTask('Definite Integration', 'Mathematics', 'Calculus')">
-            + Add
-          </button>
-        </div>
-
-        <!-- 1-Click Plan All 3 Button -->
-        <button class="ak-act-btn ak-btn-orange" onclick="window.akAddAllRecommendations()" style="margin-top:14px; width:100%; padding:12px; font-size:13px;">
-          ⚡ Add All 3 Topics to Today's Tasks
-        </button>
-      `;
-    } else if (assistantTab === 'chat') {
-      let chatHtml = (state.chatMessages || []).map(m => `
-        <div class="ak-chat-bubble ${m.sender}">
-          ${m.text}
-        </div>
-      `).join('');
-
-      bodyContent = `
-        <div class="ak-prompt-row" style="margin-bottom:12px;">
-          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('recommend')">⚡ Topic Picks</button>
-          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('quiz')">❓ Quiz Drill</button>
-          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('formulas')">📑 Formulas</button>
-          <button class="ak-prompt-pill" onclick="window.akAssistantPrompt('backlogs')">⏳ Backlogs</button>
-        </div>
-
-        <div class="ak-chat-stream" id="akChatStream" style="max-height:360px;">
-          ${chatHtml}
-        </div>
-
-        <form class="ak-chat-input-row" onsubmit="window.akHandleChatSubmit(event)">
-          <input type="text" class="ak-chat-input" id="akChatQuery" placeholder="Ask Fox AI (e.g. formula, quiz, revision tip...)" autocomplete="off"/>
-          <button type="submit" class="ak-chat-send">Send</button>
-        </form>
-      `;
-    } else if (assistantTab === 'quiz') {
-      bodyContent = `
-        <div class="ak-quiz-card">
-          <div class="ak-quiz-meta">
-            <span>⚡ Drill (${qIdx + 1}/${QUIZ_BANK.length})</span>
-            <span>${currentQ.subject} &bull; ${currentQ.topic}</span>
-          </div>
-          <div class="ak-quiz-question">${currentQ.question}</div>
-
-          <div class="ak-quiz-options" id="akQuizOptions">
-            ${currentQ.options.map((opt, i) => `
-              <button class="ak-quiz-opt" onclick="window.akAnswerQuiz(${i})">
-                <span><b>${String.fromCharCode(65 + i)}.</b> ${opt}</span>
-              </button>
-            `).join('')}
-          </div>
-
-          <div class="ak-quiz-feedback" id="akQuizFeedback">
-            <div id="akQuizFeedbackText"></div>
-            <button class="ak-pill-btn" onclick="window.akNextQuiz()" style="margin-top:10px; padding:6px 14px; font-size:11px;">
-              Next Question &rarr;
-            </button>
-          </div>
-        </div>
-      `;
-    } else if (assistantTab === 'formulas') {
-      bodyContent = `
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div style="background:#181e35; border:1px solid rgba(56,189,248,0.25); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:11px; color:#38bdf8; font-weight:700;">Physics &bull; Carnot Efficiency</div>
-              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">η = 1 - (Tc / Th) = W / Qh</code>
-            </div>
-            <button class="ak-pill-btn" onclick="window.akCopyFormula('η = 1 - (Tc / Th) = W / Qh')" style="padding:5px 10px; font-size:10.5px;">Copy</button>
-          </div>
-
-          <div style="background:#181e35; border:1px solid rgba(52,211,153,0.25); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:11px; color:#34d399; font-weight:700;">Chemistry &bull; Arrhenius Equation</div>
-              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">k = A · e^(-Ea / RT)</code>
-            </div>
-            <button class="ak-pill-btn" onclick="window.akCopyFormula('k = A · e^(-Ea / RT)')" style="padding:5px 10px; font-size:10.5px;">Copy</button>
-          </div>
-
-          <div style="background:#181e35; border:1px solid rgba(192,132,252,0.25); border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-size:11px; color:#c084fc; font-weight:700;">Maths &bull; Leibniz Integral Rule</div>
-              <code style="font-size:12.5px; color:#fff; font-family:monospace; display:block; margin-top:2px;">d/dx ∫[u(x) to v(x)] f(t)dt = f(v)v\' - f(u)u\'</code>
-            </div>
-            <button class="ak-pill-btn" onclick="window.akCopyFormula('d/dx ∫[u(x) to v(x)] f(t)dt = f(v)v\' - f(u)u\'')" style="padding:5px 10px; font-size:10.5px;">Copy</button>
-          </div>
-        </div>
-      `;
-    }
+    const phyPct = Math.round((phyDone / 28) * 100);
+    const chemPct = Math.round((chemDone / 30) * 100);
+    const mathPct = Math.round((mathDone / 25) * 100);
+    const overallPct = Math.round(((phyDone + chemDone + mathDone) / 83) * 100);
 
     screenContent.innerHTML = `
-      <!-- Clean Subtab Selector Strip -->
-      <div class="ak-subtab-strip" style="margin-bottom:14px;">
-        <button class="ak-subtab ${assistantTab === 'recommend' ? 'active' : ''}" onclick="window.akSetAssistantTab('recommend')">⚡ Picks</button>
-        <button class="ak-subtab ${assistantTab === 'chat' ? 'active' : ''}" onclick="window.akSetAssistantTab('chat')">💬 Ask AI</button>
-        <button class="ak-subtab ${assistantTab === 'quiz' ? 'active' : ''}" onclick="window.akSetAssistantTab('quiz')">❓ Quiz</button>
-        <button class="ak-subtab ${assistantTab === 'formulas' ? 'active' : ''}" onclick="window.akSetAssistantTab('formulas')">📑 Formulas</button>
+      <!-- Section 1: JEE Mains Only (Dual Circular Gauges) -->
+      <div class="ak-prog-section">
+        <div class="ak-sec-head">
+          <span class="ak-sec-title">JEE Mains Only</span>
+          <span class="ak-sec-link" onclick="window.akSetSubjFilter('All')">${phyDone + chemDone + mathDone}/83 Chapters &rarr;</span>
+        </div>
+
+        <div class="ak-orbit-wrap">
+          <!-- Circular Ring Gauge -->
+          <div style="width:110px; height:110px; position:relative; display:grid; place-items:center;">
+            <svg width="110" height="110" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" stroke-dasharray="190 50" transform="rotate(130 50 50)"/>
+              <circle cx="50" cy="50" r="38" stroke="var(--ak-orange)" stroke-width="8" fill="none" stroke-linecap="round"
+                stroke-dasharray="${(overallPct * 1.9)} 240" transform="rotate(130 50 50)"/>
+            </svg>
+            <div style="position:absolute; text-align:center;">
+              <div style="font-size:18px; font-weight:800; color:#fff;">${overallPct}%</div>
+              <div style="font-size:9.5px; color:var(--ak-muted);">complete</div>
+            </div>
+          </div>
+
+          <!-- Orbiting Subject Nodes -->
+          <div class="ak-node-stack">
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:var(--ak-orange);">🧪</div>
+              <span>${chemPct}% Chemistry (${chemDone}/30)</span>
+            </div>
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:var(--ak-blue);">⚛</div>
+              <span>${phyPct}% Physics (${phyDone}/28)</span>
+            </div>
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:#c084fc;">∑</div>
+              <span>${mathPct}% Mathematics (${mathDone}/25)</span>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; font-size:11px; color:var(--ak-muted); margin-top:8px;">Overall Syllabus Coverage</div>
       </div>
 
-      ${bodyContent}
-    `;
+      <!-- Section 2: Interactive 83 Chapter Completion Checklist -->
+      <div style="background:#121626; border:1px solid var(--ak-border); border-radius:20px; padding:16px;">
+        <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:10px;">83 JEE Chapters Matrix</div>
 
-    if (assistantTab === 'chat') {
-      setTimeout(() => {
-        const stream = document.getElementById('akChatStream');
-        if (stream) stream.scrollTop = stream.scrollHeight;
-      }, 50);
-    }
+        <div class="ak-subj-filter-row" style="margin-bottom:12px;">
+          <span class="ak-subj-pill ${activeSubjFilter === 'All' ? 'active' : ''}" onclick="window.akSetSubjFilter('All')">All (83)</span>
+          <span class="ak-subj-pill ${activeSubjFilter === 'Physics' ? 'active' : ''}" onclick="window.akSetSubjFilter('Physics')">Physics (${phyDone}/28)</span>
+          <span class="ak-subj-pill ${activeSubjFilter === 'Chemistry' ? 'active' : ''}" onclick="window.akSetSubjFilter('Chemistry')">Chem (${chemDone}/30)</span>
+          <span class="ak-subj-pill ${activeSubjFilter === 'Mathematics' ? 'active' : ''}" onclick="window.akSetSubjFilter('Mathematics')">Maths (${mathDone}/25)</span>
+        </div>
+
+        <div style="max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding-right:4px;">
+          ${JEE_CHAPTERS.filter(c => activeSubjFilter === 'All' || c.subject === activeSubjFilter).map(c => {
+            const isDone = !!state.completedChapters[c.title];
+            const subjCol = c.subject === 'Physics' ? '#38bdf8' : c.subject === 'Chemistry' ? '#34d399' : '#c084fc';
+            return `
+              <div style="display:flex; align-items:center; justify-content:space-between; background:#181d30; padding:9px 12px; border-radius:12px; border:1px solid var(--ak-border);">
+                <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                  <button class="ak-task-circle" onclick="window.akToggleChapterComplete('${c.title.replace(/'/g, "\\'")}')" style="${isDone ? 'background:var(--ak-green); border-color:var(--ak-green); color:#000;' : ''}">
+                    ${isDone ? '&#10003;' : ''}
+                  </button>
+                  <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    <div style="font-size:12.5px; font-weight:600; color:#fff; ${isDone ? 'text-decoration:line-through; opacity:0.7;' : ''}">${c.title}</div>
+                    <div style="font-size:10px; color:${subjCol}; font-weight:600;">${c.subject} &bull; ${c.branch}</div>
+                  </div>
+                </div>
+                <button class="ak-pill-btn" onclick="window.akPlanTaskForChapter('${c.title.replace(/'/g, "\\'")}', '${c.subject}')" style="padding:4px 10px; font-size:10px; flex-shrink:0; margin-left:8px;">
+                  + Plan
+                </button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
   }
 
-  window.akAddAllRecommendations = function() {
-    const recs = [
-      { title: 'Rotational Motion & Inertia', subject: 'Physics', branch: 'Mechanics' },
-      { title: 'Coordination Compounds', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
-      { title: 'Definite Integration', subject: 'Mathematics', branch: 'Calculus' }
-    ];
-    recs.forEach(r => {
-      state.tasks.push({
-        id: 'rec_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-        title: r.title,
-        subject: r.subject,
-        branch: r.branch,
-        mode: 'P',
-        level: 'JEE Mains + Advanced',
-        date: todayStr(),
-        hoursLeft: 24,
-        done: false
-      });
-    });
+  window.akToggleChapterComplete = function(chapTitle) {
+    state.completedChapters[chapTitle] = !state.completedChapters[chapTitle];
     saveState(state);
-    showToast('All 3 high-yield topics added to Today! 🚀');
+    renderProgressScreen();
     updateBadges();
   };
 
-  window.akAddRecommendedTask = function(title, subject, branch) {
-    state.tasks.push({
-      id: 'rec_' + Date.now().toString(36),
-      title: title,
-      subject: subject,
-      branch: branch,
-      mode: 'P',
-      level: 'JEE Mains + Advanced',
-      date: todayStr(),
-      hoursLeft: 24,
-      done: false
-    });
-    saveState(state);
-    showToast(`Added "${title}" to Today's Tasks! 🚀`);
-    updateBadges();
-  };
-
-  window.akAnswerQuiz = function(selectedIdx) {
-    const qIdx = (state.quizIndex || 0) % QUIZ_BANK.length;
-    const q = QUIZ_BANK[qIdx];
-    const opts = document.querySelectorAll('.ak-quiz-opt');
-    const fb = document.getElementById('akQuizFeedback');
-    const fbText = document.getElementById('akQuizFeedbackText');
-
-    opts.forEach((btn, idx) => {
-      btn.disabled = true;
-      if (idx === q.correct) btn.classList.add('correct');
-      else if (idx === selectedIdx) btn.classList.add('wrong');
-    });
-
-    if (fb && fbText) {
-      const isCorrect = (selectedIdx === q.correct);
-      fbText.innerHTML = `
-        <b style="color:${isCorrect ? '#34d399' : '#f87171'}; font-size:12.5px;">
-          ${isCorrect ? '🎉 Correct Answer!' : '❌ Not quite right.'}
-        </b>
-        <div style="margin-top:4px; color:#cbd5e1;">${q.explanation}</div>
-      `;
-      fb.classList.add('show');
-    }
-  };
-
-  window.akNextQuiz = function() {
-    state.quizIndex = ((state.quizIndex || 0) + 1) % QUIZ_BANK.length;
-    saveState(state);
-    renderAssistantScreen();
-  };
-
-  window.akCopyFormula = function(formula) {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(formula);
-      showToast('Formula copied to clipboard! 📋');
-    } else {
-      showToast(formula);
-    }
-  };
-
-  window.akAssistantPrompt = function(type) {
-    if (type === 'recommend') {
-      window.akAddChatMessage('user', 'Can you recommend high-yield topics for me?');
-      window.akAddChatMessage('bot', 'Based on JEE trend analytics, I recommend: 1. Rotational Motion (Physics), 2. Coordination Compounds (Chem), 3. Definite Integration (Maths). Tap "+ Add to Today\'s Tasks" on the cards above to schedule them right now!');
-    } else if (type === 'quiz') {
-      state.quizIndex = ((state.quizIndex || 0) + 1) % QUIZ_BANK.length;
-      saveState(state);
-      renderAssistantScreen();
-      showToast('Loaded next quiz question! ⚡');
-    } else if (type === 'formulas') {
-      window.akAddChatMessage('user', 'Show me high-yield formulas');
-      window.akAddChatMessage('bot', 'Check the Formula Flashcards above! Key formulas like Carnot Efficiency (Physics), Arrhenius Equation (Chem), and Leibniz Integral Rule (Maths) are ready for 1-click copying.');
-    } else if (type === 'backlogs') {
-      const s = getStats();
-      window.akAddChatMessage('user', 'How are my backlogs?');
-      window.akAddChatMessage('bot', `You have ${s.backlogCount} pending backlog task(s). Keep up your consistency! You can review them in the Backlog tab or click "⚡ Move to Today" to rescue them.`);
-    } else if (type === 'plan') {
-      openView('add_today');
-    }
-  };
-
-  window.akAddChatMessage = function(sender, text) {
-    if (!state.chatMessages) state.chatMessages = [];
-    state.chatMessages.push({ sender, text });
-    if (state.chatMessages.length > 20) state.chatMessages.shift();
-    saveState(state);
-    renderAssistantScreen();
-  };
-
-  window.akHandleChatSubmit = function(e) {
-    e.preventDefault();
-    const input = document.getElementById('akChatQuery');
-    if (!input) return;
-    const query = input.value.trim();
-    if (!query) return;
-    input.value = '';
-
-    window.akAddChatMessage('user', query);
-
-    const qLower = query.toLowerCase();
-    setTimeout(() => {
-      let reply = "I'm your JEE Fox AI! Ask me to recommend topics, run a quiz, or look up formulas for Physics, Chemistry, and Mathematics.";
-      if (qLower.includes('physics') || qLower.includes('mechanic')) {
-        reply = "⚡ Physics Tip: For Mechanics and Rotational Motion, always identify the instantaneous axis of rotation and apply conservation of angular momentum about a fixed point.";
-      } else if (qLower.includes('chem') || qLower.includes('organic')) {
-        reply = "🧪 Chemistry Tip: Coordination Compounds and Chemical Bonding yield up to 18-20% of the Chemistry score in JEE. Focus on CFT splitting, d-electron pairing, and IUPAC nomenclature.";
-      } else if (qLower.includes('math') || qLower.includes('calculus')) {
-        reply = "∑ Maths Tip: Definite Integration questions often simplify using King's Property: ∫_a^b f(x)dx = ∫_a^b f(a+b-x)dx. Try applying it whenever you see symmetric limits!";
-      } else if (qLower.includes('quiz')) {
-        state.quizIndex = ((state.quizIndex || 0) + 1) % QUIZ_BANK.length;
-        saveState(state);
-        reply = "I've loaded a fresh practice drill in the Quiz card above. Give it a shot!";
-      } else if (qLower.includes('formula')) {
-        reply = "📑 Key formula: de Broglie wavelength λ = h / p = h / √(2mE). Check out the Formula Cards section above for more 1-click formulas!";
-      }
-      window.akAddChatMessage('bot', reply);
-    }, 350);
+  window.akPlanTaskForChapter = function(chapTitle, subj) {
+    const ch = JEE_CHAPTERS.find(x => x.title === chapTitle);
+    addTopicSelectedChapter = ch || { title: chapTitle, subject: subj, branch: 'General' };
+    addTopicQuery = chapTitle;
+    addTopicSubject = subj;
+    openView('add_today');
   };
 
   /* ==========================================================
