@@ -2466,4 +2466,11 @@
 
   // Initial badge update
   updateBadges();
+
+  // Global Syllabus modal fallback
+  if (!window.toggleSyllabusModal) {
+    window.toggleSyllabusModal = () => {
+      if (window.akOpenScreen) window.akOpenScreen('today');
+    };
+  }
 })();

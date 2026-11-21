@@ -18,6 +18,12 @@
 
 ### A. `dashboard.html`
 - **Main Entrypoint:** Cards leading to After Diwali Live Tracker, Physics, Chemistry, Maths, and Combine menus.
+- **JEE Study Tracker Sidebar Component:** Integrated the exact dark-gradient sidebar component:
+  - Dynamic Time & Desk header (Morning/Afternoon/Evening/Night Desk)
+  - Active Streak badge (`🔥 14 Days`)
+  - Circular Gauge Target Card with dynamic SVG arc (`0 / 3 Done`, completion %, and countdown guidance)
+  - Coaching Lecture Revision list with PHY/CHEM/MATH subject badges, lecture notes, and one-tap completion toggle
+  - Dedicated `toggleSyllabusModal()` manager dialog for updating coaching revisions and one-click launch of the full Akiva Study Hub drawer.
 - **Upgraded Vector Badges:** Replaced boring text emojis with custom glowing SVGs:
   - ⚛️ **Physics**: Quantum Rutherford-Bohr Atom with electron orbital paths (Electric Cyan glow)
   - 🧪 **Chemistry**: Molecular Benzene Hexagonal Lattice with delocalized pi ring (Emerald Mint glow)
