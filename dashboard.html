@@ -35,6 +35,8 @@
   p.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; text-align: center;
     opacity: 0; animation: fadeInUp 0.5s ease forwards 0.26s; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  a.card.card-wide { grid-column: 1 / -1; min-height: 72px; flex-direction: row; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(167,139,250,0.16), rgba(43,179,160,0.08)); border-color: rgba(167,139,250,0.35); }
+  a.card.card-wide:hover { border-color: #a78bfa; box-shadow: 0 4px 20px rgba(167,139,250,0.22); }
   a.card {
     display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
     min-height: 88px; padding: 14px; background: var(--card); border: 1px solid var(--card-border);
@@ -68,6 +70,14 @@
   <h1>Pranay's Dashboard</h1>
   <p class="sub">Welcome, Pranay &mdash; here's your progress.</p>
   <div class="grid">
+    <a class="card card-wide" href="afterdiwali.html">
+      <div>
+        <span class="icon" style="margin: 0 8px 0 0; vertical-align: middle;">🚀</span>
+        <span style="vertical-align: middle;">After Diwali &bull; Live Tracker</span>
+        <div style="font-size: 11.5px; color: var(--muted); font-weight: normal; margin-top: 3px;">Active score logs, trends &amp; analytics</div>
+      </div>
+      <span style="font-size: 18px; color: var(--teal);">&rarr;</span>
+    </a>
     <a class="card" href="physics.html"><span class="icon">&#9889;</span>Physics</a>
     <a class="card" href="chemistry.html"><span class="icon">&#129514;</span>Chemistry</a>
     <a class="card" href="maths.html"><span class="icon">&#8721;</span>Maths</a>
