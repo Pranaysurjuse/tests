@@ -1,734 +1,977 @@
 /* ==========================================================================
-   Study Hub: macOS-Style Collapsible Sidebar & Complete JEE Chapter Hub
-   - 📋 To-do List: Today's checklist & daily task completion
-   - 🗓️ Future Tasks: Scheduled upcoming tasks with 1-click move to today
-   - ⏳ Backlogs: Overdue task detection, delay indicators & 1-click rescue
-   - 📈 Progress Bar: Full 83 JEE Chapters Matrix, search, filters & live stats
-   - 🎨 macOS Floating Design: Collapsible rail, traffic dots, flyouts, amber card
+   AKIVA JEE Study Hub & Track System
+   Exact 1:1 Implementation of the 14 Mobile App Reference Screens:
+   - 📋 Today's Progress: Speedo Dial (% meter), Planned & Completed Cards,
+                          Task items with [L][P][R] mode pills, level badges,
+                          24hr countdown timers, and Edit Task modal.
+   - ➕ Add Topics: Subject tabs (All, Chem, Maths, Phys), Live chapter search
+                    with branch hierarchy (e.g. Physics >> Mechanics),
+                    Topic selector, Mode (Lecture/Practice/Revision), and Add button.
+   - ⏳ Backlog Recovery: Missed self-study auto-detection, 7-day range tracking,
+                          Move to Today & Move to Future rescue actions.
+   - 🗓️ Future Tasks: 7-Day horizontal day calendar strip, scheduled task manager.
+   - 📈 Progress Bar: Dual Circular Gauges (JEE Mains & JEE Advanced) with
+                      orbiting Chem, Phys, Maths nodes + Complete 83 JEE Chapter Matrix.
+   - 🦊 Fox Mascot: Custom vector illustration for authentic empty states.
+   - 🎨 macOS Sidebar: Collapsible floating rail on left with hover flyouts.
    ========================================================================== */
 
 (function() {
-  if (document.querySelector('.sb-root')) return;
+  if (document.querySelector('.akiva-hub-root')) return;
 
-  // Master JEE Syllabus (83 Chapters across Physics, Chemistry, Maths)
-  const JEE_CHAPTERS = {
-    Physics: [
-      "Units & Dimensions",
-      "Kinematics: 1D Motion",
-      "Kinematics: 2D & Projectiles",
-      "Laws of Motion & Friction",
-      "Work, Power & Energy",
-      "Centre of Mass & Collisions",
-      "Rotational Motion & Inertia",
-      "Gravitation",
-      "Properties of Solids (Elasticity)",
-      "Fluid Mechanics & Viscosity",
-      "Thermal Properties & Calorimetry",
-      "Thermodynamics",
-      "Kinetic Theory of Gases (KTG)",
-      "Oscillations (SHM)",
-      "Waves & Sound",
-      "Electrostatics & Potential",
-      "Capacitance & Dielectrics",
-      "Current Electricity",
-      "Magnetic Effects of Current",
-      "Magnetism & Matter",
-      "Electromagnetic Induction (EMI)",
-      "Alternating Current (AC)",
-      "Electromagnetic Waves",
-      "Ray Optics & Optical Instruments",
-      "Wave Optics & Interference",
-      "Dual Nature & Photoelectric Effect",
-      "Atoms & Nuclei",
-      "Semiconductor Electronics"
-    ],
-    Chemistry: [
-      "Mole Concept & Stoichiometry",
-      "Atomic Structure",
-      "States of Matter (Gases & Liquids)",
-      "Thermodynamics & Thermochemistry",
-      "Chemical Equilibrium",
-      "Ionic Equilibrium",
-      "Redox Reactions",
-      "Solutions & Colligative Properties",
-      "Electrochemistry",
-      "Chemical Kinetics",
-      "Surface Chemistry",
-      "Periodic Table & Periodicity",
-      "Chemical Bonding & Molecular Structure",
-      "Hydrogen & s-Block Elements",
-      "p-Block Elements (Group 13-14)",
-      "p-Block Elements (Group 15-18)",
-      "d- & f-Block Elements",
-      "Coordination Compounds",
-      "Metallurgy & Principles of Extraction",
-      "IUPAC Nomenclature & GOC",
-      "Isomerism in Organic Compounds",
-      "Hydrocarbons (Alkanes, Alkenes, Alkynes)",
-      "Aromatic Compounds (Benzene)",
-      "Haloalkanes & Haloarenes",
-      "Alcohols, Phenols & Ethers",
-      "Aldehydes, Ketones & Carboxylic Acids",
-      "Amines & Diazonium Salts",
-      "Biomolecules",
-      "Polymers",
-      "Everyday Chemistry & Practical Chemistry"
-    ],
-    Maths: [
-      "Sets, Relations & Functions",
-      "Trigonometric Functions & Identities",
-      "Inverse Trigonometric Functions (ITF)",
-      "Complex Numbers",
-      "Quadratic Equations",
-      "Permutations & Combinations (P&C)",
-      "Binomial Theorem",
-      "Sequences & Series (AP, GP)",
-      "Straight Lines & Pair of Lines",
-      "Circles & System of Circles",
-      "Conic Sections: Parabola",
-      "Conic Sections: Ellipse & Hyperbola",
-      "Limits, Continuity & Differentiability",
-      "Methods of Differentiation (MOD)",
-      "Application of Derivatives (AOD)",
-      "Indefinite Integration",
-      "Definite Integration",
-      "Differential Equations (DE)",
-      "Area Under Curves (AUC)",
-      "Matrices & Determinants",
-      "Vector Algebra",
-      "Three Dimensional Geometry (3D)",
-      "Probability",
-      "Statistics",
-      "Mathematical Reasoning"
-    ]
-  };
+  // Master 83 JEE Chapters with Subject and Branch Classifications
+  const JEE_CHAPTERS = [
+    // Physics (28)
+    { id: 'p1', title: 'Units & Dimensions', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p2', title: 'Kinematics: 1D Motion', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p3', title: 'Kinematics: 2D & Projectiles', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p4', title: 'Laws of Motion & Friction', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p5', title: 'Work, Power & Energy', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p6', title: 'Centre of Mass & Collisions', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p7', title: 'Rotational Motion & Inertia', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p8', title: 'Gravitation', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p9', title: 'Mechanical Properties of Solids', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p10', title: 'Mechanical Properties of Fluids', subject: 'Physics', branch: 'Mechanics' },
+    { id: 'p11', title: 'Thermal Properties & Calorimetry', subject: 'Physics', branch: 'Thermal Physics' },
+    { id: 'p12', title: 'Thermodynamics', subject: 'Physics', branch: 'Thermal Physics' },
+    { id: 'p13', title: 'Kinetic Theory of Gases (KTG)', subject: 'Physics', branch: 'Thermal Physics' },
+    { id: 'p14', title: 'Oscillations (SHM)', subject: 'Physics', branch: 'Waves & Oscillations' },
+    { id: 'p15', title: 'Waves & Sound', subject: 'Physics', branch: 'Waves & Oscillations' },
+    { id: 'p16', title: 'Electrostatics & Potential', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p17', title: 'Capacitance & Dielectrics', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p18', title: 'Current Electricity', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p19', title: 'Magnetic Effects of Current', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p20', title: 'Magnetism & Matter', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p21', title: 'Electromagnetic Induction (EMI)', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p22', title: 'Alternating Current (AC)', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p23', title: 'Electromagnetic Waves', subject: 'Physics', branch: 'Electrodynamics' },
+    { id: 'p24', title: 'Ray Optics & Optical Instruments', subject: 'Physics', branch: 'Optics' },
+    { id: 'p25', title: 'Wave Optics & Interference', subject: 'Physics', branch: 'Optics' },
+    { id: 'p26', title: 'Dual Nature & Photoelectric Effect', subject: 'Physics', branch: 'Modern Physics' },
+    { id: 'p27', title: 'Atoms & Nuclei', subject: 'Physics', branch: 'Modern Physics' },
+    { id: 'p28', title: 'Semiconductor Electronics', subject: 'Physics', branch: 'Modern Physics' },
 
-  // SVGs for clean macOS iconography
-  const ICONS = {
-    todo: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
-    future: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>`,
-    backlog: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-    progress: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
-    plus: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`,
-    chevron: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`,
-    check: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
-    trash: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
-    bolt: `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`
-  };
+    // Chemistry (30)
+    { id: 'c1', title: 'Mole Concept & Stoichiometry', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c2', title: 'Atomic Structure', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c3', title: 'States of Matter (Gases & Liquids)', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c4', title: 'Thermodynamics & Thermochemistry', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c5', title: 'Chemical Equilibrium', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c6', title: 'Ionic Equilibrium', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c7', title: 'Redox Reactions', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c8', title: 'Solutions & Colligative Properties', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c9', title: 'Electrochemistry', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c10', title: 'Chemical Kinetics', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c11', title: 'Surface Chemistry', subject: 'Chemistry', branch: 'Physical Chemistry' },
+    { id: 'c12', title: 'Periodic Table & Periodicity', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c13', title: 'Chemical Bonding & Molecular Structure', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c14', title: 'Hydrogen & s-Block Elements', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c15', title: 'p-Block Elements (Group 13-14)', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c16', title: 'p-Block Elements (Group 15-18)', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c17', title: 'd- & f-Block Elements', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c18', title: 'Coordination Compounds', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c19', title: 'Metallurgy & Principles of Extraction', subject: 'Chemistry', branch: 'Inorganic Chemistry' },
+    { id: 'c20', title: 'IUPAC Nomenclature & GOC', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c21', title: 'Isomerism in Organic Compounds', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c22', title: 'Hydrocarbons (Alkanes, Alkenes, Alkynes)', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c23', title: 'Aromatic Compounds (Benzene)', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c24', title: 'Haloalkanes & Haloarenes', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c25', title: 'Alcohols, Phenols & Ethers', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c26', title: 'Aldehydes, Ketones & Carboxylic Acids', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c27', title: 'Amines & Diazonium Salts', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c28', title: 'Biomolecules', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c29', title: 'Polymers', subject: 'Chemistry', branch: 'Organic Chemistry' },
+    { id: 'c30', title: 'Everyday Chemistry & Practical Chemistry', subject: 'Chemistry', branch: 'Practical Chemistry' },
 
-  // Inject Styles matching user's macOS mockup
+    // Mathematics (25)
+    { id: 'm1', title: 'Sets, Relations & Functions', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm2', title: 'Complex Numbers', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm3', title: 'Quadratic Equations', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm4', title: 'Permutations & Combinations (P&C)', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm5', title: 'Binomial Theorem', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm6', title: 'Sequences & Series (AP, GP)', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm7', title: 'Matrices & Determinants', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm8', title: 'Probability', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm9', title: 'Statistics', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm10', title: 'Mathematical Reasoning', subject: 'Mathematics', branch: 'Algebra' },
+    { id: 'm11', title: 'Trigonometric Functions & Identities', subject: 'Mathematics', branch: 'Trigonometry' },
+    { id: 'm12', title: 'Inverse Trigonometric Functions (ITF)', subject: 'Mathematics', branch: 'Trigonometry' },
+    { id: 'm13', title: 'Straight Lines & Pair of Lines', subject: 'Mathematics', branch: 'Coordinate Geometry' },
+    { id: 'm14', title: 'Circles & System of Circles', subject: 'Mathematics', branch: 'Coordinate Geometry' },
+    { id: 'm15', title: 'Conic Sections: Parabola', subject: 'Mathematics', branch: 'Coordinate Geometry' },
+    { id: 'm16', title: 'Conic Sections: Ellipse & Hyperbola', subject: 'Mathematics', branch: 'Coordinate Geometry' },
+    { id: 'm17', title: 'Limits, Continuity & Differentiability', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm18', title: 'Methods of Differentiation (MOD)', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm19', title: 'Application of Derivatives (AOD)', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm20', title: 'Indefinite Integration', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm21', title: 'Definite Integration', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm22', title: 'Differential Equations (DE)', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm23', title: 'Area Under Curves (AUC)', subject: 'Mathematics', branch: 'Calculus' },
+    { id: 'm24', title: 'Vector Algebra', subject: 'Mathematics', branch: 'Vectors & 3D' },
+    { id: 'm25', title: 'Three Dimensional Geometry (3D)', subject: 'Mathematics', branch: 'Vectors & 3D' }
+  ];
+
+  // Mascot SVG: Fox holding cardboard box (matching user's screenshots)
+  const FOX_SVG = `
+    <svg width="130" height="130" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Tail -->
+      <path d="M125 105 C145 95 155 70 145 55 C135 68 120 78 105 82 Z" fill="#e07a2c"/>
+      <path d="M145 55 C140 60 135 65 130 68 C135 62 142 57 145 55 Z" fill="#ffffff"/>
+      <!-- Legs -->
+      <ellipse cx="65" cy="138" rx="8" ry="4" fill="#c06018"/>
+      <ellipse cx="95" cy="138" rx="8" ry="4" fill="#c06018"/>
+      <!-- Body -->
+      <path d="M60 90 Q80 82 100 90 L95 136 Q80 140 65 136 Z" fill="#e07a2c"/>
+      <path d="M72 95 Q80 92 88 95 L84 134 Q80 136 76 134 Z" fill="#fef3e7"/>
+      <!-- Head & Ears -->
+      <path d="M52 45 L40 18 Q55 24 64 36 Z" fill="#e07a2c"/>
+      <path d="M46 32 L42 22 Q50 26 54 31 Z" fill="#4a2612"/>
+      <path d="M108 45 L120 18 Q105 24 96 36 Z" fill="#e07a2c"/>
+      <path d="M114 32 L118 22 Q110 26 106 31 Z" fill="#4a2612"/>
+      <ellipse cx="80" cy="52" rx="28" ry="22" fill="#e07a2c"/>
+      <!-- Cheeks & Snout -->
+      <path d="M56 54 Q80 75 104 54 Q92 72 80 74 Q68 72 56 54 Z" fill="#ffffff"/>
+      <!-- Nose & Eyes -->
+      <path d="M77 62 Q80 60 83 62 L80 66 Z" fill="#2d1c10"/>
+      <ellipse cx="68" cy="48" rx="3.5" ry="4.5" fill="#2d1c10"/>
+      <circle cx="69" cy="46.5" r="1.2" fill="#ffffff"/>
+      <ellipse cx="92" cy="48" rx="3.5" ry="4.5" fill="#2d1c10"/>
+      <circle cx="93" cy="46.5" r="1.2" fill="#ffffff"/>
+      <!-- Cardboard Box held by paws -->
+      <path d="M42 84 L118 84 L110 114 L50 114 Z" fill="#c4935a"/>
+      <path d="M42 84 L50 114 L46 114 L38 84 Z" fill="#aa7b44"/>
+      <path d="M42 84 L118 84 L112 88 L48 88 Z" fill="#8c6233"/>
+      <!-- Paws -->
+      <circle cx="48" cy="92" r="6" fill="#e07a2c"/>
+      <circle cx="112" cy="92" r="6" fill="#e07a2c"/>
+    </svg>
+  `;
+
+  // Inject Styles: Pixel-perfect recreation of Akiva Track screens
   const style = document.createElement('style');
   style.textContent = `
     :root {
-      --sb-bg: rgba(15, 17, 28, 0.94);
-      --sb-glass: rgba(255, 255, 255, 0.045);
-      --sb-glass2: rgba(255, 255, 255, 0.08);
-      --sb-line: rgba(255, 255, 255, 0.09);
-      --sb-acc: #f59e0b;
-      --sb-acc-glow: rgba(245, 158, 11, 0.28);
-      --sb-teal: #2dd4bf;
-      --sb-red: #f87171;
-      --sb-text: #eef1f8;
-      --sb-muted: #8b93a7;
-      --sb-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+      --ak-bg: #090b12;
+      --ak-card: #131726;
+      --ak-card-inner: #1a1e32;
+      --ak-border: rgba(255, 255, 255, 0.08);
+      --ak-orange: #e07a2c;
+      --ak-orange-glow: rgba(224, 122, 44, 0.35);
+      --ak-orange-light: #f59e0b;
+      --ak-green: #34d399;
+      --ak-green-bg: rgba(52, 211, 153, 0.12);
+      --ak-blue: #38bdf8;
+      --ak-blue-bg: #152238;
+      --ak-red: #ef4444;
+      --ak-text: #f1f5f9;
+      --ak-muted: #8b95a5;
+      --ak-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
-    /* Fixed Floating Sidebar */
-    .sb-root {
+    /* Fixed Left macOS Sidebar Launcher */
+    .akiva-mac-sidebar {
       position: fixed;
-      top: 18px;
-      bottom: 18px;
-      left: 18px;
-      z-index: 85;
-      display: flex;
-      pointer-events: none;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    }
-    .sb-bar {
-      pointer-events: auto;
-      width: 252px;
-      height: 100%;
-      background: var(--sb-bg);
-      border: 1px solid var(--sb-line);
-      border-radius: 26px;
-      backdrop-filter: blur(28px) saturate(1.4);
-      -webkit-backdrop-filter: blur(28px) saturate(1.4);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+      left: 16px;
+      top: 16px;
+      bottom: 16px;
+      width: 240px;
+      background: rgba(14, 17, 28, 0.94);
+      backdrop-filter: blur(28px) saturate(1.5);
+      -webkit-backdrop-filter: blur(28px) saturate(1.5);
+      border: 1px solid var(--ak-border);
+      border-radius: 24px;
+      z-index: 70;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 18px 14px;
-      transition: width 0.4s var(--sb-ease), padding 0.4s var(--sb-ease);
-      position: relative;
+      padding: 16px 12px;
       box-sizing: border-box;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s ease;
+      font-family: var(--ak-font);
       user-select: none;
     }
-    .sb-bar.collapsed {
-      width: 66px;
-      padding: 18px 8px;
+    .akiva-mac-sidebar.collapsed {
+      width: 62px;
+      padding: 16px 8px;
     }
 
-    /* Toggle Edge Pill Button */
-    .sb-toggle-btn {
+    /* Sidebar Edge Toggle Chevron */
+    .akiva-edge-toggle {
       position: absolute;
-      right: -13px;
-      top: 36px;
-      width: 26px;
-      height: 26px;
+      right: -12px;
+      top: 32px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: #181d33;
-      border: 1.5px solid var(--sb-line);
-      color: var(--sb-text);
+      background: #1e2438;
+      border: 1.5px solid var(--ak-border);
+      color: #fff;
       display: grid;
       place-items: center;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      transition: transform 0.3s var(--sb-ease), background 0.2s;
+      font-size: 11px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
       z-index: 10;
+      transition: transform 0.25s;
     }
-    .sb-toggle-btn:hover { background: #262e4c; }
-    .sb-bar.collapsed .sb-toggle-btn svg { transform: rotate(180deg); }
+    .akiva-mac-sidebar.collapsed .akiva-edge-toggle {
+      transform: rotate(180deg);
+    }
 
-    /* macOS Traffic Dots */
-    .sb-mac-dots {
+    /* Top Mac Dots */
+    .akiva-mac-dots {
       display: flex;
       gap: 6px;
-      padding-left: 6px;
-      margin-bottom: 14px;
+      padding: 2px 6px 12px;
     }
-    .sb-dot { width: 9px; height: 9px; border-radius: 50%; }
-    .sb-dot-red { background: #ff5f56; }
-    .sb-dot-yellow { background: #ffbd2e; }
-    .sb-dot-green { background: #27c93f; }
-    .sb-bar.collapsed .sb-mac-dots { justify-content: center; padding-left: 0; }
+    .akiva-mac-dot { width: 9px; height: 9px; border-radius: 50%; }
+    .akiva-dot-red { background: #ff5f56; }
+    .akiva-dot-yellow { background: #ffbd2e; }
+    .akiva-dot-green { background: #27c93f; }
+    .akiva-mac-sidebar.collapsed .akiva-mac-dots { justify-content: center; padding-left: 0; }
 
     /* Profile Header */
-    .sb-profile {
+    .akiva-profile {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding: 4px 6px 14px;
-      border-bottom: 1px solid var(--sb-line);
-      margin-bottom: 14px;
+      border-bottom: 1px solid var(--ak-border);
+      margin-bottom: 12px;
       overflow: hidden;
     }
-    .sb-avatar {
-      width: 38px;
-      height: 38px;
+    .akiva-avatar {
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #f59e0b, #ef4444);
+      background: linear-gradient(135deg, #e07a2c, #ea580c);
       color: #fff;
       display: grid;
       place-items: center;
-      font-weight: 800;
-      font-size: 14px;
-      flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
-    }
-    .sb-user-meta { display: flex; flex-direction: column; overflow: hidden; white-space: nowrap; }
-    .sb-user-role { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--sb-acc); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
-    .sb-user-name { font-weight: 700; font-size: 13.5px; color: var(--sb-text); text-overflow: ellipsis; overflow: hidden; }
-    .sb-bar.collapsed .sb-profile { padding: 4px 0 14px; justify-content: center; }
-    .sb-bar.collapsed .sb-user-meta { display: none; }
-
-    /* Nav Section Title */
-    .sb-section-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
       font-weight: 700;
-      color: var(--sb-muted);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 0 8px 8px;
+      font-size: 13px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px var(--ak-orange-glow);
     }
-    .sb-bar.collapsed .sb-section-title { display: none; }
+    .akiva-user-name { font-weight: 700; font-size: 13px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .akiva-user-sub { font-size: 10px; color: var(--ak-orange); text-transform: uppercase; font-family: monospace; font-weight: 700; }
+    .akiva-mac-sidebar.collapsed .akiva-profile { justify-content: center; padding: 4px 0 14px; }
+    .akiva-mac-sidebar.collapsed .akiva-user-meta { display: none; }
 
-    /* Nav Items */
-    .sb-nav-list { display: flex; flex-direction: column; gap: 6px; position: relative; }
-    .sb-nav-item {
+    /* Sidebar Navigation Items */
+    .akiva-nav-list { display: flex; flex-direction: column; gap: 5px; }
+    .akiva-nav-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      color: var(--sb-muted);
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      color: var(--ak-muted);
       cursor: pointer;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
-      transition: all 0.2s var(--sb-ease);
+      transition: all 0.2s;
       position: relative;
-      background: transparent;
-      border: 1px solid transparent;
-      outline: none;
     }
-    .sb-nav-item:hover {
-      background: var(--sb-glass2);
-      color: var(--sb-text);
-      transform: translateX(2px);
-    }
-    .sb-nav-item.active {
-      background: rgba(245, 158, 11, 0.14);
+    .akiva-nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
       color: #fff;
-      border-color: rgba(245, 158, 11, 0.35);
-      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
     }
-    .sb-nav-item.active .sb-icon-wrap { color: var(--sb-acc); }
-
-    .sb-icon-wrap {
-      width: 22px;
-      height: 22px;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
+    .akiva-nav-item.active {
+      background: rgba(224, 122, 44, 0.16);
+      color: #fff;
+      border: 1px solid rgba(224, 122, 44, 0.35);
     }
-    .sb-item-text {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sb-item-badge {
-      font-family: 'JetBrains Mono', monospace;
+    .akiva-nav-item.active .akiva-icon { color: var(--ak-orange); }
+    .akiva-badge {
+      margin-left: auto;
       font-size: 10px;
+      font-family: monospace;
+      padding: 1px 6px;
+      border-radius: 8px;
+      background: rgba(224, 122, 44, 0.2);
+      color: var(--ak-orange);
       font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 10px;
-      background: rgba(245, 158, 11, 0.18);
-      color: var(--sb-acc);
     }
-    .sb-item-badge.badge-red {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
-    }
-    .sb-bar.collapsed .sb-nav-item {
-      padding: 10px 0;
+    .akiva-mac-sidebar.collapsed .akiva-nav-item {
       justify-content: center;
+      padding: 10px 0;
     }
-    .sb-bar.collapsed .sb-item-text,
-    .sb-bar.collapsed .sb-item-badge { display: none; }
+    .akiva-mac-sidebar.collapsed .akiva-item-label,
+    .akiva-mac-sidebar.collapsed .akiva-badge { display: none; }
 
-    /* Collapsed Flyout Popover Card (matching user screenshot) */
-    .sb-flyout {
+    /* Collapsed Hover Flyout */
+    .akiva-flyout {
       position: absolute;
-      left: 64px;
+      left: 56px;
       top: 50%;
       transform: translateY(-50%) translateX(6px);
-      background: #141829;
-      border: 1px solid var(--sb-line);
-      border-radius: 14px;
-      padding: 10px 14px;
+      background: #161928;
+      border: 1px solid var(--ak-border);
+      border-radius: 10px;
+      padding: 7px 12px;
       white-space: nowrap;
       pointer-events: none;
       opacity: 0;
       visibility: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      transition: all 0.2s var(--sb-ease);
-      z-index: 120;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+      transition: all 0.2s;
+      z-index: 100;
+      font-size: 12px;
+      color: #fff;
+      font-weight: 600;
     }
-    .sb-flyout-title { font-size: 12.5px; font-weight: 700; color: #fff; }
-    .sb-flyout-sub { font-size: 10.5px; font-family: 'JetBrains Mono', monospace; color: var(--sb-acc); }
-    .sb-bar.collapsed .sb-nav-item:hover .sb-flyout {
+    .akiva-mac-sidebar.collapsed .akiva-nav-item:hover .akiva-flyout {
       opacity: 1;
       visibility: visible;
-      transform: translateY(-50%) translateX(12px);
+      transform: translateY(-50%) translateX(10px);
     }
 
-    /* Bottom Card ("Let's start!") */
-    .sb-bottom-card {
+    /* Bottom Card on Sidebar */
+    .akiva-bottom-card {
       background: rgba(255, 255, 255, 0.035);
-      border: 1px solid var(--sb-line);
-      border-radius: 18px;
-      padding: 14px;
+      border: 1px solid var(--ak-border);
+      border-radius: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
-    .sb-card-title { font-weight: 700; font-size: 14px; color: #fff; }
-    .sb-card-desc { font-size: 11px; color: var(--sb-muted); line-height: 1.4; }
-    .sb-add-btn {
-      background: var(--sb-acc);
-      color: #06080f;
+    .akiva-card-h { font-size: 13px; font-weight: 700; color: #fff; }
+    .akiva-card-p { font-size: 10.5px; color: var(--ak-muted); line-height: 1.35; }
+    .akiva-pill-btn {
+      background: var(--ak-orange);
+      color: #0c0d14;
+      border: none;
+      border-radius: 12px;
+      padding: 9px;
       font-weight: 700;
       font-size: 12px;
-      font-family: 'JetBrains Mono', monospace;
-      padding: 9px 12px;
-      border-radius: 12px;
-      border: none;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+      box-shadow: 0 4px 14px var(--ak-orange-glow);
       transition: transform 0.15s, filter 0.2s;
     }
-    .sb-add-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
-    .sb-add-btn:active { transform: scale(0.96); }
-
-    /* Collapsed Circular Amber Plus Button */
-    .sb-collapsed-add {
+    .akiva-pill-btn:hover { filter: brightness(1.1); transform: scale(1.02); }
+    .akiva-mac-sidebar.collapsed .akiva-bottom-card { display: none; }
+    .akiva-collapsed-fab {
       display: none;
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: var(--sb-acc);
-      color: #06080f;
+      background: var(--ak-orange);
+      color: #0c0d14;
       border: none;
       cursor: pointer;
+      font-size: 18px;
+      font-weight: 700;
       place-items: center;
       margin: 0 auto;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
-      transition: transform 0.15s;
+      box-shadow: 0 4px 12px var(--ak-orange-glow);
     }
-    .sb-collapsed-add:hover { transform: scale(1.06); }
-    .sb-collapsed-add:active { transform: scale(0.92); }
-    .sb-bar.collapsed .sb-bottom-card { display: none; }
-    .sb-bar.collapsed .sb-collapsed-add { display: grid; }
+    .akiva-mac-sidebar.collapsed .akiva-collapsed-fab { display: grid; }
 
-    /* Detail Pane Backdrop Overlay */
-    .sb-pane-backdrop {
+    /* ==============================================================
+       AKIVA SLIDE-OUT APP DRAWER (1:1 with the 14 Mobile Screenshots)
+       ============================================================== */
+    .akiva-drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(2, 4, 10, 0.5);
-      backdrop-filter: blur(4px);
-      z-index: 83;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 90;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s var(--sb-ease);
+      transition: opacity 0.3s ease;
     }
-    .sb-pane-backdrop.open {
+    .akiva-drawer-backdrop.open {
       opacity: 1;
       pointer-events: auto;
     }
 
-    /* Slide-out Detail Drawer for Active Tab */
-    .sb-detail-pane {
+    .akiva-app-panel {
       position: fixed;
-      top: 18px;
-      bottom: 18px;
-      left: 282px;
-      width: min(460px, calc(100vw - 110px));
-      background: rgba(15, 19, 34, 0.98);
-      border: 1px solid var(--sb-line);
-      border-radius: 26px;
-      backdrop-filter: blur(28px) saturate(1.4);
-      -webkit-backdrop-filter: blur(28px) saturate(1.4);
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85);
-      z-index: 84;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: min(440px, 100vw);
+      background: #0c0d15;
+      border-left: 1px solid var(--ak-border);
+      z-index: 95;
       display: flex;
       flex-direction: column;
-      padding: 22px;
-      box-sizing: border-box;
-      transform: translateX(-16px);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.35s var(--sb-ease);
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+      font-family: var(--ak-font);
+      color: var(--ak-text);
+      box-shadow: -15px 0 60px rgba(0, 0, 0, 0.85);
+      overflow: hidden;
     }
-    .sb-bar.collapsed ~ .sb-detail-pane {
-      left: 96px;
-    }
-    .sb-detail-pane.open {
+    .akiva-app-panel.open {
       transform: translateX(0);
-      opacity: 1;
-      pointer-events: auto;
     }
 
-    .sb-pane-header {
+    /* Screen Top Nav Bar */
+    .ak-topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--sb-line);
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--ak-border);
+      flex-shrink: 0;
     }
-    .sb-pane-title-group { display: flex; align-items: center; gap: 10px; }
-    .sb-pane-title { font-weight: 700; font-size: 17px; color: #fff; }
-    .sb-pane-sub { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--sb-muted); }
-    .sb-pane-close {
-      width: 30px;
-      height: 30px;
-      border-radius: 9px;
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
-      color: var(--sb-muted);
+    .ak-topbar-left { display: flex; align-items: center; gap: 12px; }
+    .ak-back-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
       cursor: pointer;
       display: grid;
       place-items: center;
-      font-size: 14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .ak-topbar-title { font-weight: 700; font-size: 17px; color: #fff; }
+    .ak-close-btn {
+      background: none;
+      border: none;
+      color: var(--ak-muted);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .ak-close-btn:hover { color: #fff; }
+
+    /* Scrollable Screen Content Container */
+    .ak-screen-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    .ak-screen-body::-webkit-scrollbar { width: 5px; }
+    .ak-screen-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+
+    /* Screen 1: Today's Progress Card */
+    .ak-progress-card {
+      background: linear-gradient(135deg, rgba(20, 24, 38, 0.85), rgba(12, 14, 24, 0.95));
+      border: 1px solid var(--ak-border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ak-progress-card::before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, var(--ak-orange-glow), transparent 70%);
+      pointer-events: none;
+    }
+    .ak-prog-h { font-size: 18px; font-weight: 800; color: #fff; margin: 0 0 4px; }
+    .ak-prog-sub { font-size: 12px; color: var(--ak-muted); margin: 0 0 14px; }
+    .ak-prog-sub span { color: var(--ak-orange); font-weight: 700; }
+
+    .ak-dial-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .ak-speedo-wrap {
+      width: 86px;
+      height: 86px;
+      position: relative;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+    }
+    .ak-speedo-val {
+      position: absolute;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: monospace;
+      color: #fff;
+    }
+    .ak-stat-boxes {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ak-stat-box {
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ak-stat-blue { background: var(--ak-blue-bg); border: 1px solid rgba(56, 189, 248, 0.2); }
+    .ak-stat-green { background: var(--ak-green-bg); border: 1px solid rgba(52, 211, 153, 0.2); }
+    .ak-stat-num { font-size: 16px; font-weight: 800; font-family: monospace; color: #fff; }
+    .ak-stat-lbl { font-size: 11px; font-weight: 600; color: var(--ak-text); }
+
+    /* Top Action Buttons (Backlog & Future Tasks) */
+    .ak-action-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .ak-act-btn {
+      padding: 12px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       transition: all 0.2s;
     }
-    .sb-pane-close:hover { color: #fff; background: var(--sb-glass2); }
+    .ak-btn-orange {
+      background: var(--ak-orange);
+      color: #0c0d14;
+      box-shadow: 0 4px 14px var(--ak-orange-glow);
+    }
+    .ak-btn-gray {
+      background: #1c2136;
+      border: 1px solid var(--ak-border);
+      color: #fff;
+    }
 
-    .sb-pane-body { flex: 1; overflow-y: auto; padding-right: 4px; }
-    .sb-pane-body::-webkit-scrollbar { width: 5px; }
-    .sb-pane-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+    /* Sub Tabs (Today's Task / Completed Task) */
+    .ak-subtab-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .ak-subtab {
+      padding: 8px 14px;
+      border-radius: 12px;
+      background: transparent;
+      border: 1px solid var(--ak-border);
+      color: var(--ak-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .ak-subtab.active {
+      border-color: var(--ak-orange);
+      color: #fff;
+      background: rgba(224, 122, 44, 0.1);
+    }
+    .ak-filter-icon-btn {
+      margin-left: auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: #171b2e;
+      border: 1px solid var(--ak-border);
+      color: var(--ak-muted);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
 
-    /* Task Card Styles */
-    .sb-task-item {
+    /* Subject Quick Filter Bar */
+    .ak-subj-filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .ak-subj-pill {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--ak-muted);
+      cursor: pointer;
+      padding: 2px 0;
+      white-space: nowrap;
+      position: relative;
+    }
+    .ak-subj-pill.active {
+      color: #fff;
+    }
+    .ak-subj-pill.active::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--ak-orange);
+      border-radius: 2px;
+    }
+
+    /* Task Card (1:1 with Screenshot 12) */
+    .ak-task-card {
+      background: #101524;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .ak-task-card.is-done {
+      border-color: rgba(255, 255, 255, 0.1);
+      opacity: 0.65;
+    }
+    .ak-task-top {
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      padding: 12px;
-      border-radius: 14px;
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
-      margin-bottom: 8px;
-      transition: all 0.2s;
     }
-    .sb-task-item.done {
-      background: rgba(45, 212, 191, 0.08);
-      border-color: rgba(45, 212, 191, 0.25);
-    }
-    .sb-task-item.done .sb-task-text {
-      text-decoration: line-through;
-      color: var(--sb-muted);
-    }
-    .sb-task-check {
+    .ak-task-circle {
       width: 22px;
       height: 22px;
-      border-radius: 7px;
+      border-radius: 50%;
       border: 2px solid rgba(255, 255, 255, 0.35);
       background: transparent;
       cursor: pointer;
       display: grid;
       place-items: center;
-      transition: all 0.2s;
       flex-shrink: 0;
       margin-top: 1px;
     }
-    .sb-task-check:hover { border-color: var(--sb-teal); }
-    .sb-task-item.done .sb-task-check {
-      background: var(--sb-teal);
-      border-color: var(--sb-teal);
-      color: #06080f;
+    .ak-task-card.is-done .ak-task-circle {
+      background: var(--ak-green);
+      border-color: var(--ak-green);
+      color: #0c0d14;
     }
-    .sb-task-text { flex: 1; font-size: 13.5px; line-height: 1.4; word-break: break-word; color: #fff; }
-    .sb-task-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-    .sb-task-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 9.5px;
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: var(--sb-glass2);
-      color: var(--sb-muted);
-    }
-    .sb-task-tag.tag-subj { color: #38bdf8; }
-    .sb-task-tag.tag-chap { color: var(--sb-teal); }
-    .sb-task-tag.tag-date { color: var(--sb-acc); }
-    .sb-task-tag.tag-late { background: rgba(239, 68, 68, 0.16); color: #f87171; }
-
-    .sb-task-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .sb-task-act {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      padding: 5px 8px;
-      border-radius: 7px;
-      background: var(--sb-glass2);
-      border: 1px solid var(--sb-line);
-      color: var(--sb-text);
+    .ak-task-info { flex: 1; min-width: 0; }
+    .ak-task-title { font-size: 14.5px; font-weight: 700; color: #fff; margin: 0 0 2px; word-break: break-word; }
+    .ak-task-card.is-done .ak-task-title { text-decoration: line-through; }
+    .ak-task-sub { font-size: 11px; color: var(--ak-muted); font-family: monospace; }
+    .ak-task-dots {
+      background: none;
+      border: none;
+      color: var(--ak-muted);
       cursor: pointer;
-      display: inline-flex;
+      font-size: 18px;
+      padding: 0 4px;
+    }
+
+    /* Card Bottom Row: Mode [L][P][R], Level badge, Timer */
+    .ak-task-bot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 11px;
+    }
+    .ak-mode-group {
+      display: flex;
       align-items: center;
       gap: 4px;
-      transition: all 0.2s;
     }
-    .sb-task-act:hover { background: rgba(255,255,255,0.14); }
-
-    /* Progress & Chapter Matrix */
-    .sb-progress-block {
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
-    }
-    .sb-prog-head { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 600; margin-bottom: 8px; }
-    .sb-prog-bar {
-      height: 8px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-    .sb-prog-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.6s var(--sb-ease);
-    }
-
-    /* Chapter Filter & Matrix */
-    .sb-filter-bar {
-      display: flex;
-      gap: 5px;
-      margin: 12px 0 10px;
-    }
-    .sb-filter-btn {
-      flex: 1;
-      padding: 7px 2px;
-      border-radius: 9px;
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
-      color: var(--sb-muted);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 700;
+    .ak-mode-tag {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #1e2438;
+      border: 1px solid var(--ak-border);
+      color: var(--ak-muted);
+      font-size: 10px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
       cursor: pointer;
+    }
+    .ak-mode-tag.active {
+      background: var(--ak-orange);
+      color: #0c0d14;
+      border-color: var(--ak-orange);
+    }
+    .ak-level-badge {
+      padding: 3px 8px;
+      border-radius: 8px;
+      background: #252019;
+      border: 1px solid rgba(224, 122, 44, 0.3);
+      color: var(--ak-orange-light);
+      font-weight: 700;
+      font-size: 10.5px;
+    }
+    .ak-timer-tag {
+      margin-left: auto;
+      color: var(--ak-orange-light);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Empty State Container */
+    .ak-empty-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      transition: all 0.2s;
+      padding: 24px 10px;
     }
-    .sb-filter-btn.active {
-      background: var(--sb-acc);
-      color: #06080f;
-      border-color: var(--sb-acc);
+    .ak-empty-h { font-size: 16px; font-weight: 800; color: #fff; margin: 12px 0 6px; }
+    .ak-empty-p { font-size: 12px; color: var(--ak-muted); line-height: 1.5; max-width: 320px; margin: 0 0 20px; }
+
+    /* Floating Action Button (FAB) */
+    .ak-fab {
+      position: absolute;
+      right: 20px;
+      bottom: 24px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--ak-orange);
+      color: #0c0d14;
+      border: none;
+      font-size: 24px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 6px 20px var(--ak-orange-glow);
+      z-index: 10;
+      transition: transform 0.2s;
     }
-    .sb-chap-search {
+    .ak-fab:hover { transform: scale(1.08); }
+
+    /* Screen 2: Add Topics Screen (1:1 with Screenshot 2, 4, 5, 7) */
+    .ak-field-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #fff;
+      margin: 14px 0 8px;
+      display: block;
+    }
+    .ak-search-box {
       width: 100%;
       box-sizing: border-box;
-      padding: 10px 14px;
+      padding: 12px 14px;
       border-radius: 12px;
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
+      background: #141829;
+      border: 1px solid var(--ak-border);
       color: #fff;
-      font-size: 12.5px;
+      font-size: 13px;
       outline: none;
       transition: border-color 0.2s;
     }
-    .sb-chap-search:focus { border-color: var(--sb-acc); }
+    .ak-search-box:focus { border-color: var(--ak-orange); }
 
-    .sb-chapter-card {
+    /* Live Auto-Suggest List */
+    .ak-suggest-list {
+      background: #141829;
+      border: 1px solid var(--ak-border);
+      border-radius: 12px;
+      margin-top: 6px;
+      max-height: 190px;
+      overflow-y: auto;
+    }
+    .ak-suggest-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ak-suggest-item:hover { background: rgba(224, 122, 44, 0.12); }
+    .ak-suggest-title { font-size: 13px; font-weight: 600; color: #fff; }
+    .ak-suggest-path { font-size: 10.5px; color: var(--ak-orange); margin-top: 2px; }
+
+    /* Screen 3: Future Tasks Strip (1:1 with Screenshot 8, 11) */
+    .ak-day-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+    }
+    .ak-day-card {
+      min-width: 52px;
+      padding: 10px 4px;
+      border-radius: 14px;
+      background: #15192b;
+      border: 1px solid var(--ak-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .ak-day-card.active {
+      border-color: var(--ak-orange);
+      background: rgba(224, 122, 44, 0.12);
+    }
+    .ak-day-num { font-size: 15px; font-weight: 800; font-family: monospace; color: #fff; }
+    .ak-day-txt { font-size: 10px; font-weight: 700; color: var(--ak-muted); text-transform: uppercase; }
+
+    /* Screen 4: Progress Bar Visualizer (Dual Circular Gauges, 1:1 with Screenshot 9) */
+    .ak-prog-section {
+      background: #121626;
+      border: 1px solid var(--ak-border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .ak-sec-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .ak-sec-title { font-size: 16px; font-weight: 800; color: #fff; }
+    .ak-sec-link { font-size: 11px; color: var(--ak-orange); text-decoration: none; font-weight: 600; }
+
+    .ak-orbit-wrap {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: 11px;
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
-      margin-bottom: 6px;
-      font-size: 12.5px;
-      transition: all 0.2s;
+      justify-content: space-around;
+      position: relative;
+      padding: 10px 0;
     }
-    .sb-chapter-card.done {
-      background: rgba(45, 212, 191, 0.08);
-      border-color: rgba(45, 212, 191, 0.25);
+    .ak-node-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .sb-chap-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-    .sb-chap-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff; font-weight: 500; }
-    .sb-chap-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .ak-node-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .ak-node-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid currentColor;
+      font-size: 12px;
+    }
 
-    /* Modal for Quick Add Task */
-    .sb-modal-backdrop {
+    /* Screen 5: Edit Task Modal Overlay */
+    .ak-edit-modal-wrap {
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.75);
       backdrop-filter: blur(8px);
-      z-index: 100;
+      z-index: 110;
       display: none;
       align-items: center;
       justify-content: center;
     }
-    .sb-modal-backdrop.open { display: flex; }
-    .sb-modal {
-      background: #111526;
-      border: 1px solid var(--sb-line);
+    .ak-edit-modal-wrap.open { display: flex; }
+    .ak-edit-modal {
+      background: #111424;
+      border: 1px solid var(--ak-border);
       border-radius: 22px;
-      padding: 24px;
-      max-width: 440px;
+      padding: 20px;
       width: 90%;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.85);
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.9);
       box-sizing: border-box;
     }
-    .sb-chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 10px 0 14px;
-    }
-    .sb-chip {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      padding: 4px 9px;
-      border-radius: 8px;
-      background: var(--sb-glass);
-      border: 1px solid var(--sb-line);
-      color: var(--sb-muted);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .sb-chip:hover { color: #fff; border-color: var(--sb-acc); }
 
+    /* Toast Notification */
+    .ak-toast {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      background: #0f3d2a;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #fff;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 12px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 105;
+      pointer-events: none;
+    }
+    .ak-toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 768px) {
-      .sb-root { left: 10px; top: 10px; bottom: 10px; }
-      .sb-detail-pane { left: 80px; width: calc(100vw - 90px); }
+      .akiva-mac-sidebar {
+        display: none !important;
+      }
+      .akiva-app-panel {
+        width: 100vw;
+        border-left: none;
+      }
     }
   `;
   document.head.appendChild(style);
 
-  // Storage Key & Initial Data
-  const STORE_KEY = 'tests_sidebar_v3';
-  function loadData() {
+  // Storage and State Management
+  const STORE_KEY = 'akiva_jee_tracker_v4';
+  function loadState() {
     try {
       const d = JSON.parse(localStorage.getItem(STORE_KEY));
       if (d && Array.isArray(d.tasks)) return d;
     } catch (e) {}
 
-    // Default seed with real JEE tasks
     const today = todayStr();
-    const yest = shiftDate(-1);
-    const tmrw = shiftDate(1);
-
     return {
-      collapsed: false,
+      collapsedSidebar: false,
       tasks: [
         {
-          id: 't_seed_1',
-          text: 'Solve 25 Kinematics PYQs (2023-2025)',
+          id: 'task_kinematics',
+          title: 'Kinematics',
           subject: 'Physics',
-          chapter: 'Kinematics: 1D Motion',
+          branch: 'Mechanics',
+          mode: 'L',
+          level: 'JEE Mains + Advanced',
           date: today,
-          done: false
-        },
-        {
-          id: 't_seed_2',
-          text: 'Revise Chemical Bonding hybridisation & geometry',
-          subject: 'Chemistry',
-          chapter: 'Chemical Bonding & Molecular Structure',
-          date: today,
-          done: true
-        },
-        {
-          id: 't_seed_3',
-          text: 'Definite Integration King\'s property practice',
-          subject: 'Maths',
-          chapter: 'Definite Integration',
-          date: tmrw,
-          done: false
-        },
-        {
-          id: 't_seed_4',
-          text: 'Atomic Structure Bohr radius derivations',
-          subject: 'Chemistry',
-          chapter: 'Atomic Structure',
-          date: yest,
+          hoursLeft: 23,
           done: false
         }
       ],
       completedChapters: {
-        "Kinematics: 1D Motion": true,
-        "Units & Dimensions": true,
-        "Laws of Motion & Friction": true,
-        "Mole Concept & Stoichiometry": true,
-        "Atomic Structure": true,
-        "Sets, Relations & Functions": true,
-        "Quadratic Equations": true
+        'Units & Dimensions': true,
+        'Mole Concept & Stoichiometry': true,
+        'Sets, Relations & Functions': true
       }
     };
   }
 
-  function saveData(d) {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch (e) {}
+  function saveState(s) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {}
   }
 
   function todayStr() {
@@ -736,156 +979,136 @@
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
-  function shiftDate(offsetDays) {
+  function shiftDateStr(offsetDays) {
     const d = new Date();
     d.setDate(d.getDate() + offsetDays);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   }
 
-  const state = loadData();
+  const state = loadState();
 
-  // Build Floating Sidebar DOM
+  // Root Container
   const root = document.createElement('div');
-  root.className = 'sb-root';
+  root.className = 'akiva-hub-root';
 
+  // 1. Desktop macOS Sidebar Launcher (matching Image 3)
   root.innerHTML = `
-    <!-- Main Left Sidebar -->
-    <aside class="sb-bar ${state.collapsed ? 'collapsed' : ''}" id="sbBar">
-      <button class="sb-toggle-btn" id="sbToggleBtn" aria-label="Toggle Sidebar">
-        ${ICONS.chevron}
-      </button>
+    <aside class="akiva-mac-sidebar ${state.collapsedSidebar ? 'collapsed' : ''}" id="akivaSidebar">
+      <button class="akiva-edge-toggle" id="akivaEdgeToggle" title="Toggle Sidebar">‹</button>
 
       <div>
-        <div class="sb-mac-dots">
-          <div class="sb-dot sb-dot-red"></div>
-          <div class="sb-dot sb-dot-yellow"></div>
-          <div class="sb-dot sb-dot-green"></div>
+        <div class="akiva-mac-dots">
+          <div class="akiva-mac-dot akiva-dot-red"></div>
+          <div class="akiva-mac-dot akiva-dot-yellow"></div>
+          <div class="akiva-mac-dot akiva-dot-green"></div>
         </div>
 
-        <div class="sb-profile">
-          <div class="sb-avatar">PS</div>
-          <div class="sb-user-meta">
-            <span class="sb-user-role">JEE Aspirant</span>
-            <span class="sb-user-name">Pranay Surjuse</span>
+        <div class="akiva-profile">
+          <div class="akiva-avatar">PS</div>
+          <div class="akiva-user-meta">
+            <div class="akiva-user-sub">JEE ASPIRANT</div>
+            <div class="akiva-user-name">Pranay Surjuse</div>
           </div>
         </div>
 
-        <div class="sb-section-title">Study Hub</div>
-
-        <nav class="sb-nav-list">
-          <!-- 1. To-do List -->
-          <div class="sb-nav-item" data-tab="todo">
-            <div class="sb-icon-wrap">${ICONS.todo}</div>
-            <span class="sb-item-text">To-do List</span>
-            <span class="sb-item-badge" id="sbTodoBadge">0</span>
-            <div class="sb-flyout">
-              <span class="sb-flyout-title">To-do List</span>
-              <span class="sb-flyout-sub" id="sbTodoFlyoutSub">Today's checklist</span>
-            </div>
+        <nav class="akiva-nav-list">
+          <div class="akiva-nav-item" data-view="today">
+            <span class="akiva-icon">📋</span>
+            <span class="akiva-item-label">Today's Tasks</span>
+            <span class="akiva-badge" id="akBadgeToday">0</span>
+            <div class="akiva-flyout">Today's Progress</div>
           </div>
 
-          <!-- 2. Future Tasks -->
-          <div class="sb-nav-item" data-tab="future">
-            <div class="sb-icon-wrap">${ICONS.future}</div>
-            <span class="sb-item-text">Future Tasks</span>
-            <span class="sb-item-badge" id="sbFutureBadge">0</span>
-            <div class="sb-flyout">
-              <span class="sb-flyout-title">Future Tasks</span>
-              <span class="sb-flyout-sub" id="sbFutureFlyoutSub">Scheduled tasks</span>
-            </div>
+          <div class="akiva-nav-item" data-view="future">
+            <span class="akiva-icon">🗓️</span>
+            <span class="akiva-item-label">Future Tasks</span>
+            <span class="akiva-badge" id="akBadgeFuture">0</span>
+            <div class="akiva-flyout">7-Day Planner</div>
           </div>
 
-          <!-- 3. Backlogs -->
-          <div class="sb-nav-item" data-tab="backlog">
-            <div class="sb-icon-wrap">${ICONS.backlog}</div>
-            <span class="sb-item-text">Backlogs</span>
-            <span class="sb-item-badge badge-red" id="sbBacklogBadge">0</span>
-            <div class="sb-flyout">
-              <span class="sb-flyout-title">Backlogs</span>
-              <span class="sb-flyout-sub" id="sbBacklogFlyoutSub" style="color:var(--sb-red);">Overdue tasks</span>
-            </div>
+          <div class="akiva-nav-item" data-view="backlog">
+            <span class="akiva-icon">⏳</span>
+            <span class="akiva-item-label">Backlogs</span>
+            <span class="akiva-badge" id="akBadgeBacklog" style="background:rgba(239,68,68,0.2); color:#f87171;">0</span>
+            <div class="akiva-flyout">Backlog Recovery</div>
           </div>
 
-          <!-- 4. Progress Bar -->
-          <div class="sb-nav-item" data-tab="progress">
-            <div class="sb-icon-wrap">${ICONS.progress}</div>
-            <span class="sb-item-text">Progress Bar</span>
-            <span class="sb-item-badge" id="sbProgressBadge">0%</span>
-            <div class="sb-flyout">
-              <span class="sb-flyout-title">Progress Bar</span>
-              <span class="sb-flyout-sub" id="sbProgressFlyoutSub">83 JEE Chapters</span>
-            </div>
+          <div class="akiva-nav-item" data-view="progress">
+            <span class="akiva-icon">📈</span>
+            <span class="akiva-item-label">Progress Bar</span>
+            <span class="akiva-badge" id="akBadgeProgress">0%</span>
+            <div class="akiva-flyout">83 JEE Chapters</div>
           </div>
         </nav>
       </div>
 
       <div>
-        <div class="sb-bottom-card">
-          <span class="sb-card-title">Let's study!</span>
-          <span class="sb-card-desc">Creating or adding new tasks couldn't be easier</span>
-          <button class="sb-add-btn" id="sbOpenAddModal">
-            ${ICONS.plus} Add New Task
+        <div class="akiva-bottom-card">
+          <div class="akiva-card-h">Let's study!</div>
+          <div class="akiva-card-p">Creating or adding new tasks couldn't be easier</div>
+          <button class="akiva-pill-btn" id="akOpenAddBtn">
+            <span>+</span> Add New Task
           </button>
         </div>
-        <button class="sb-collapsed-add" id="sbCollapsedAddBtn" title="Add Task">${ICONS.plus}</button>
+        <button class="akiva-collapsed-fab" id="akCollapsedFab" title="Add Task">+</button>
       </div>
     </aside>
 
-    <!-- Detail Pane Backdrop Overlay -->
-    <div class="sb-pane-backdrop" id="sbPaneBackdrop"></div>
+    <!-- 2. Akiva Drawer Backdrop -->
+    <div class="akiva-drawer-backdrop" id="akivaBackdrop"></div>
 
-    <!-- Slide-out Detail Drawer for Active Tab -->
-    <section class="sb-detail-pane" id="sbDetailPane">
-      <div class="sb-pane-header">
-        <div class="sb-pane-title-group">
-          <span class="sb-pane-title" id="sbPaneHeading">To-do List</span>
-          <span class="sb-pane-sub" id="sbPaneSub"></span>
+    <!-- 3. Akiva 1:1 App Screen Drawer Panel -->
+    <section class="akiva-app-panel" id="akivaAppPanel">
+      <div class="ak-topbar">
+        <div class="ak-topbar-left">
+          <button class="ak-back-btn" id="akBackBtn" title="Back" style="display:none;">‹</button>
+          <span class="ak-topbar-title" id="akTopTitle">Today's Progress</span>
         </div>
-        <button class="sb-pane-close" id="sbPaneClose" aria-label="Close pane">&times;</button>
+        <button class="ak-close-btn" id="akCloseBtn" aria-label="Close">&times;</button>
       </div>
-      <div class="sb-pane-body" id="sbPaneContent"></div>
+
+      <div class="ak-screen-body" id="akScreenContent"></div>
+
+      <!-- Toast Notification -->
+      <div class="ak-toast" id="akToast">
+        <span>✓</span>
+        <span id="akToastMsg">Topics saved for today. [v2]</span>
+      </div>
     </section>
 
-    <!-- Quick Add Task Modal -->
-    <div class="sb-modal-backdrop" id="sbAddModal">
-      <div class="sb-modal">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <b style="color:#fff; font-size:16px;">Add New Study Task</b>
-          <button class="sb-pane-close" id="sbCloseAddModal">&times;</button>
+    <!-- 4. Edit Task Modal (1:1 with Screenshot 13) -->
+    <div class="ak-edit-modal-wrap" id="akEditModal">
+      <div class="ak-edit-modal">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <b style="font-size:16px; color:#fff;">Edit Task</b>
+          <button class="ak-close-btn" id="akCloseEditModal">&times;</button>
         </div>
 
-        <input type="text" id="sbTaskInput" placeholder="e.g. Solve 30 PYQs / Formula Revision" maxlength="120" style="width:100%; box-sizing:border-box; padding:12px; border-radius:10px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:14px; outline:none; margin-bottom:10px;">
+        <div style="background:#171c2e; border:1px solid rgba(52,211,153,0.3); border-radius:14px; padding:14px; margin-bottom:16px;">
+          <h4 id="akEditTaskTitle" style="margin:0 0 4px; color:#fff; font-size:15px;">Kinematics</h4>
+          <div id="akEditTaskPath" style="font-size:11px; color:var(--ak-muted); font-family:monospace; margin-bottom:12px;">Kinematics >> Physics</div>
 
-        <div class="sb-chip-row">
-          <span class="sb-chip" onclick="window.sbQuickFillTask('Solve 30 PYQs (2023-2025)')">+ 30 PYQs</span>
-          <span class="sb-chip" onclick="window.sbQuickFillTask('Formula Revision & Short Notes')">+ Formulas</span>
-          <span class="sb-chip" onclick="window.sbQuickFillTask('NCERT Exemplar & In-text Questions')">+ NCERT</span>
-          <span class="sb-chip" onclick="window.sbQuickFillTask('Attempt Chapter Mock Test')">+ Chapter Test</span>
-        </div>
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+            <span style="font-size:12px; color:var(--ak-muted);">Mode:</span>
+            <button class="ak-mode-tag" id="akEditModeL" onclick="window.akSetEditMode('L')">L</button>
+            <button class="ak-mode-tag" id="akEditModeP" onclick="window.akSetEditMode('P')">P</button>
+            <button class="ak-mode-tag" id="akEditModeR" onclick="window.akSetEditMode('R')">R</button>
+          </div>
 
-        <div style="display:flex; gap:8px; margin-bottom:12px;">
-          <select id="sbSubjSelect" style="flex:1; padding:10px; border-radius:10px; background:#181d33; border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:12px; outline:none;">
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-            <option value="Maths">Maths</option>
-            <option value="Other">General / Other</option>
-          </select>
-          <select id="sbScheduleSelect" style="flex:1; padding:10px; border-radius:10px; background:#181d33; border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:12px; outline:none;">
-            <option value="today">Today</option>
-            <option value="tomorrow">Tomorrow</option>
-            <option value="in2days">In 2 Days</option>
-            <option value="weekend">This Weekend</option>
+          <select id="akEditLevelSelect" style="width:100%; padding:9px; border-radius:10px; background:#1e2438; border:1px solid var(--ak-border); color:#fff; font-size:12px; outline:none;">
+            <option value="JEE Mains">JEE Mains</option>
+            <option value="JEE Advanced">JEE Advanced</option>
+            <option value="JEE Mains + Advanced">JEE Mains + Advanced</option>
           </select>
         </div>
 
-        <div style="margin-bottom:16px;">
-          <label style="display:block; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--sb-muted); margin-bottom:6px; letter-spacing:0.06em;">TAG JEE CHAPTER (OPTIONAL):</label>
-          <select id="sbChapterSelect" style="width:100%; padding:10px; border-radius:10px; background:#181d33; border:1px solid rgba(255,255,255,0.15); color:#fff; font-size:12px; outline:none;">
-          </select>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <button class="ak-act-btn ak-btn-orange" id="akBtnMoveToBacklog">Move To Backlog</button>
+          <button class="ak-act-btn ak-btn-gray" id="akBtnMoveToFuture">Move To Future</button>
         </div>
 
-        <button class="sb-add-btn" id="sbSaveTaskBtn" style="width:100%; padding:12px;">
-          Add to Study Hub &rarr;
+        <button class="ak-act-btn" id="akBtnDeleteTask" style="width:100%; background:rgba(239,68,68,0.18); color:#f87171; border:1px solid rgba(239,68,68,0.3);">
+          Delete Task
         </button>
       </div>
     </div>
@@ -893,498 +1116,829 @@
 
   document.body.appendChild(root);
 
-  // Element handles
-  const bar = document.getElementById('sbBar');
-  const toggleBtn = document.getElementById('sbToggleBtn');
-  const detailPane = document.getElementById('sbDetailPane');
-  const paneBackdrop = document.getElementById('sbPaneBackdrop');
-  const paneClose = document.getElementById('sbPaneClose');
-  const paneHeading = document.getElementById('sbPaneHeading');
-  const paneSub = document.getElementById('sbPaneSub');
-  const paneContent = document.getElementById('sbPaneContent');
+  // References
+  const sidebar = document.getElementById('akivaSidebar');
+  const edgeToggle = document.getElementById('akivaEdgeToggle');
+  const panel = document.getElementById('akivaAppPanel');
+  const backdrop = document.getElementById('akivaBackdrop');
+  const closeBtn = document.getElementById('akCloseBtn');
+  const backBtn = document.getElementById('akBackBtn');
+  const topTitle = document.getElementById('akTopTitle');
+  const screenContent = document.getElementById('akScreenContent');
+  const toast = document.getElementById('akToast');
+  const toastMsg = document.getElementById('akToastMsg');
 
-  const addModal = document.getElementById('sbAddModal');
-  const openAddModal = document.getElementById('sbOpenAddModal');
-  const collapsedAddBtn = document.getElementById('sbCollapsedAddBtn');
-  const closeAddModal = document.getElementById('sbCloseAddModal');
-  const taskInput = document.getElementById('sbTaskInput');
-  const subjSelect = document.getElementById('sbSubjSelect');
-  const chapterSelect = document.getElementById('sbChapterSelect');
-  const scheduleSelect = document.getElementById('sbScheduleSelect');
-  const saveTaskBtn = document.getElementById('sbSaveTaskBtn');
+  // Edit Modal references
+  const editModal = document.getElementById('akEditModal');
+  const closeEditModal = document.getElementById('akCloseEditModal');
+  const editTaskTitle = document.getElementById('akEditTaskTitle');
+  const editTaskPath = document.getElementById('akEditTaskPath');
+  const editLevelSelect = document.getElementById('akEditLevelSelect');
+  const btnMoveToBacklog = document.getElementById('akBtnMoveToBacklog');
+  const btnMoveToFuture = document.getElementById('akBtnMoveToFuture');
+  const btnDeleteTask = document.getElementById('akBtnDeleteTask');
 
-  let currentTab = null;
-  let activeChapterFilter = 'All';
-  let chapterSearchQuery = '';
+  let currentView = 'today';
+  let viewHistory = [];
+  let selectedTaskForEdit = null;
+  let activeSubjFilter = 'All';
+  let addTopicSubject = 'All';
+  let addTopicQuery = '';
+  let addTopicSelectedChapter = null;
+  let addTopicMode = 'L';
+  let selectedFutureDay = shiftDateStr(1);
 
-  // Dynamic Chapter Dropdown population in Add Task Modal
-  function populateChapterDropdown(subj, preselected = '') {
-    chapterSelect.innerHTML = '<option value="">-- No Specific Chapter --</option>';
-    const chaps = JEE_CHAPTERS[subj] || [];
-    chaps.forEach(ch => {
-      const opt = document.createElement('option');
-      opt.value = ch;
-      opt.textContent = ch;
-      if (ch === preselected) opt.selected = true;
-      chapterSelect.appendChild(opt);
-    });
-  }
-  populateChapterDropdown('Physics');
-  subjSelect.onchange = (e) => populateChapterDropdown(e.target.value);
-
-  // Toggle Collapse State
-  toggleBtn.onclick = () => {
-    state.collapsed = !state.collapsed;
-    bar.classList.toggle('collapsed', state.collapsed);
-    saveData(state);
+  // Toggle Sidebar collapse
+  edgeToggle.onclick = () => {
+    state.collapsedSidebar = !state.collapsedSidebar;
+    sidebar.classList.toggle('collapsed', state.collapsedSidebar);
+    saveState(state);
   };
 
-  // Nav Click
-  document.querySelectorAll('.sb-nav-item').forEach(item => {
+  // Nav Item click
+  document.querySelectorAll('.akiva-nav-item').forEach(item => {
     item.onclick = () => {
-      const tab = item.dataset.tab;
-      if (currentTab === tab && detailPane.classList.contains('open')) {
-        closeDetailPane();
-      } else {
-        openTab(tab);
-      }
+      openView(item.dataset.view);
     };
   });
 
-  paneClose.onclick = closeDetailPane;
-  paneBackdrop.onclick = closeDetailPane;
+  document.getElementById('akOpenAddBtn').onclick = () => openView('add_today');
+  document.getElementById('akCollapsedFab').onclick = () => openView('add_today');
 
-  // ESC key listener
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (addModal.classList.contains('open')) closeModal();
-      else if (detailPane.classList.contains('open')) closeDetailPane();
+  closeBtn.onclick = closePanel;
+  backdrop.onclick = closePanel;
+
+  backBtn.onclick = () => {
+    if (viewHistory.length > 0) {
+      const prev = viewHistory.pop();
+      renderScreen(prev, false);
+    } else {
+      openView('today');
     }
-  });
+  };
 
-  function closeDetailPane() {
-    detailPane.classList.remove('open');
-    paneBackdrop.classList.remove('open');
-    document.querySelectorAll('.sb-nav-item').forEach(i => i.classList.remove('active'));
-    currentTab = null;
+  function showToast(msg) {
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2400);
   }
 
-  function openTab(tab) {
-    currentTab = tab;
-    document.querySelectorAll('.sb-nav-item').forEach(i => i.classList.toggle('active', i.dataset.tab === tab));
-    detailPane.classList.add('open');
-    paneBackdrop.classList.add('open');
-    renderPaneContent(tab);
+  function openView(v) {
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    renderScreen(v, true);
   }
 
-  // Chapter Progress Calculation
-  function getChapterProgress() {
-    const totalP = JEE_CHAPTERS.Physics.length;
-    const totalC = JEE_CHAPTERS.Chemistry.length;
-    const totalM = JEE_CHAPTERS.Maths.length;
-    const totalAll = totalP + totalC + totalM;
-
-    let doneP = 0, doneC = 0, doneM = 0;
-    JEE_CHAPTERS.Physics.forEach(ch => { if (state.completedChapters[ch]) doneP++; });
-    JEE_CHAPTERS.Chemistry.forEach(ch => { if (state.completedChapters[ch]) doneC++; });
-    JEE_CHAPTERS.Maths.forEach(ch => { if (state.completedChapters[ch]) doneM++; });
-    const doneAll = doneP + doneC + doneM;
-
-    return {
-      Physics: { done: doneP, total: totalP, pct: Math.round((doneP / totalP) * 100) },
-      Chemistry: { done: doneC, total: totalC, pct: Math.round((doneC / totalC) * 100) },
-      Maths: { done: doneM, total: totalM, pct: Math.round((doneM / totalM) * 100) },
-      Overall: { done: doneAll, total: totalAll, pct: Math.round((doneAll / totalAll) * 100) }
-    };
+  function closePanel() {
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
   }
 
-  function renderCounts() {
+  function renderScreen(v, pushHistory = true) {
+    if (pushHistory && currentView && currentView !== v) {
+      viewHistory.push(currentView);
+    }
+    currentView = v;
+
+    // Back button visibility
+    backBtn.style.display = (v === 'today') ? 'none' : 'grid';
+
+    // Highlight active nav item
+    document.querySelectorAll('.akiva-nav-item').forEach(i => {
+      i.classList.toggle('active', i.dataset.view === v);
+    });
+
+    if (v === 'today') renderTodayScreen();
+    else if (v === 'add_today') renderAddTopicScreen('today');
+    else if (v === 'add_backlog') renderAddTopicScreen('backlog');
+    else if (v === 'add_future') renderAddTopicScreen('future');
+    else if (v === 'backlog') renderBacklogScreen();
+    else if (v === 'future') renderFutureScreen();
+    else if (v === 'progress') renderProgressScreen();
+
+    updateBadges();
+  }
+
+  // Calculate Progress Stats
+  function getStats() {
     const today = todayStr();
     const todayTasks = state.tasks.filter(t => t.date === today);
-    const pendingToday = todayTasks.filter(t => !t.done).length;
-    const futureTasks = state.tasks.filter(t => t.date > today).length;
-    const backlogTasks = state.tasks.filter(t => t.date < today && !t.done).length;
-    const prog = getChapterProgress();
+    const planned = todayTasks.length;
+    const completed = todayTasks.filter(t => t.done).length;
+    const pct = planned > 0 ? Math.round((completed / planned) * 100) : 0;
 
-    document.getElementById('sbTodoBadge').textContent = pendingToday;
-    document.getElementById('sbFutureBadge').textContent = futureTasks;
-    document.getElementById('sbBacklogBadge').textContent = backlogTasks;
-    document.getElementById('sbProgressBadge').textContent = `${prog.Overall.pct}%`;
+    const futureCount = state.tasks.filter(t => t.date > today).length;
+    const backlogCount = state.tasks.filter(t => t.date < today && !t.done).length;
 
-    // Flyout subtexts
-    document.getElementById('sbTodoFlyoutSub').textContent = `${pendingToday} pending tasks`;
-    document.getElementById('sbFutureFlyoutSub').textContent = `${futureTasks} upcoming`;
-    document.getElementById('sbBacklogFlyoutSub').textContent = `${backlogTasks} overdue`;
-    document.getElementById('sbProgressFlyoutSub').textContent = `${prog.Overall.done}/${prog.Overall.total} (${prog.Overall.pct}%)`;
+    // Chapters count
+    const totalChapters = JEE_CHAPTERS.length; // 83
+    let doneChapters = 0;
+    JEE_CHAPTERS.forEach(c => { if (state.completedChapters[c.title]) doneChapters++; });
+    const overallPct = Math.round((doneChapters / totalChapters) * 100);
+
+    return { planned, completed, pct, futureCount, backlogCount, doneChapters, totalChapters, overallPct };
   }
 
-  function renderPaneContent(tab) {
+  function updateBadges() {
+    const s = getStats();
+    document.getElementById('akBadgeToday').textContent = s.planned - s.completed;
+    document.getElementById('akBadgeFuture').textContent = s.futureCount;
+    document.getElementById('akBadgeBacklog').textContent = s.backlogCount;
+    document.getElementById('akBadgeProgress').textContent = `${s.overallPct}%`;
+  }
+
+  /* ==========================================================
+     SCREEN 1: TODAY'S PROGRESS (1:1 with Screenshots 1 & 12)
+     ========================================================== */
+  function renderTodayScreen() {
+    topTitle.textContent = "Today's Progress";
+    const s = getStats();
     const today = todayStr();
+    const tasks = state.tasks.filter(t => t.date === today);
+    const filteredTasks = activeSubjFilter === 'All' ? tasks : tasks.filter(t => t.subject === activeSubjFilter);
 
-    if (tab === 'todo') {
-      paneHeading.textContent = 'To-do List';
-      paneSub.textContent = `Today: ${new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}`;
-      const list = state.tasks.filter(t => t.date === today);
+    let contentHtml = `
+      <!-- Top Card: Speedo dial & metrics (Screenshot 12) -->
+      <div class="ak-progress-card">
+        <h2 class="ak-prog-h">Today's Progress</h2>
+        <div class="ak-prog-sub">You're <span>${s.planned - s.completed} tasks</span> away from finishing</div>
 
-      if (!list.length) {
-        paneContent.innerHTML = `
-          <div style="text-align:center; padding:45px 10px; color:var(--sb-muted); font-size:13px;">
-            <div style="font-size:32px; margin-bottom:10px;">📋</div>
-            <p style="color:#fff; font-weight:600; margin:0 0 4px;">No tasks planned for today</p>
-            <p style="font-size:11.5px; margin:0 0 16px;">Add questions, chapter revision, or mock test goals!</p>
-            <button class="sb-add-btn" onclick="document.getElementById('sbOpenAddModal').click()" style="margin:0 auto;">${ICONS.plus} Add Today's First Task</button>
+        <div class="ak-dial-row">
+          <!-- Circular Speedo Dial -->
+          <div class="ak-speedo-wrap">
+            <svg width="86" height="86" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" stroke-dasharray="180 60" transform="rotate(135 50 50)"/>
+              <circle cx="50" cy="50" r="38" stroke="var(--ak-orange)" stroke-width="8" fill="none" stroke-linecap="round"
+                stroke-dasharray="${(s.pct * 1.8)} 240" transform="rotate(135 50 50)"/>
+            </svg>
+            <span class="ak-speedo-val">${s.pct}%</span>
           </div>
-        `;
-      } else {
-        const doneCount = list.filter(t => t.done).length;
-        const pct = Math.round((doneCount / list.length) * 100);
-        let html = `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--sb-glass); padding:10px 14px; border-radius:12px; border:1px solid var(--sb-line); margin-bottom:14px; font-size:13px;">
-            <span>Completed: <b>${doneCount} / ${list.length}</b></span>
-            <span style="font-family:'JetBrains Mono',monospace; color:var(--sb-teal); font-weight:700;">${pct}%</span>
-          </div>
-          <div class="sb-prog-bar" style="margin-bottom:16px;">
-            <div class="sb-prog-fill" style="width:${pct}%; background:var(--sb-teal);"></div>
-          </div>
-        `;
-        list.forEach(t => {
-          html += `
-            <div class="sb-task-item ${t.done ? 'done' : ''}">
-              <button class="sb-task-check" onclick="window.sbToggleTask('${t.id}')">${t.done ? ICONS.check : ''}</button>
-              <div class="sb-task-text">
-                ${t.text}
-                <div class="sb-task-tags">
-                  <span class="sb-task-tag tag-subj">${t.subject}</span>
-                  ${t.chapter ? `<span class="sb-task-tag tag-chap">${t.chapter}</span>` : ''}
-                </div>
-              </div>
-              <div class="sb-task-actions">
-                <button class="sb-task-act" onclick="window.sbDeleteTask('${t.id}')" title="Delete">${ICONS.trash}</button>
-              </div>
+
+          <div class="ak-stat-boxes">
+            <div class="ak-stat-box ak-stat-blue">
+              <span class="ak-stat-num">${s.planned}</span>
+              <span class="ak-stat-lbl">Planned Tasks</span>
             </div>
-          `;
-        });
-        paneContent.innerHTML = html;
-      }
-    } else if (tab === 'future') {
-      paneHeading.textContent = 'Future Tasks';
-      paneSub.textContent = 'Scheduled & Upcoming';
-      const list = state.tasks.filter(t => t.date > today);
-
-      if (!list.length) {
-        paneContent.innerHTML = `
-          <div style="text-align:center; padding:45px 10px; color:var(--sb-muted); font-size:13px;">
-            <div style="font-size:32px; margin-bottom:10px;">🗓️</div>
-            <p style="color:#fff; font-weight:600; margin:0 0 4px;">No upcoming tasks scheduled</p>
-            <p style="font-size:11.5px; margin:0 0 16px;">Schedule chapters and revision for tomorrow or the weekend!</p>
-            <button class="sb-add-btn" onclick="document.getElementById('sbOpenAddModal').click()" style="margin:0 auto;">${ICONS.plus} Schedule Future Task</button>
-          </div>
-        `;
-      } else {
-        let html = '';
-        list.forEach(t => {
-          html += `
-            <div class="sb-task-item">
-              <div class="sb-task-text">
-                ${t.text}
-                <div class="sb-task-tags">
-                  <span class="sb-task-tag tag-subj">${t.subject}</span>
-                  ${t.chapter ? `<span class="sb-task-tag tag-chap">${t.chapter}</span>` : ''}
-                  <span class="sb-task-tag tag-date">${t.date}</span>
-                </div>
-              </div>
-              <div class="sb-task-actions">
-                <button class="sb-task-act" onclick="window.sbMoveToToday('${t.id}')" title="Move to Today">${ICONS.bolt} Today</button>
-                <button class="sb-task-act" onclick="window.sbDeleteTask('${t.id}')" title="Delete">${ICONS.trash}</button>
-              </div>
+            <div class="ak-stat-box ak-stat-green">
+              <span class="ak-stat-num">${s.completed}</span>
+              <span class="ak-stat-lbl">Completed Tasks</span>
             </div>
-          `;
-        });
-        paneContent.innerHTML = html;
-      }
-    } else if (tab === 'backlog') {
-      paneHeading.textContent = 'Backlogs';
-      paneSub.textContent = 'Overdue Incomplete Tasks';
-      const list = state.tasks.filter(t => t.date < today && !t.done);
-
-      if (!list.length) {
-        paneContent.innerHTML = `
-          <div style="text-align:center; padding:45px 10px; color:var(--sb-muted); font-size:13px;">
-            <div style="font-size:32px; margin-bottom:10px;">✨</div>
-            <p style="color:#fff; font-weight:600; margin:0 0 4px;">Backlog is 100% clean!</p>
-            <p style="font-size:11.5px;">No overdue tasks. Keep up the high momentum! 🚀</p>
           </div>
-        `;
-      } else {
-        let html = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-            <span style="font-size:12px; color:var(--sb-muted);">${list.length} tasks delayed:</span>
-            <button class="sb-task-act" onclick="window.sbMoveAllBacklogsToToday()" style="background:rgba(245,158,11,0.18); color:var(--sb-acc);">${ICONS.bolt} Move All to Today</button>
-          </div>
-        `;
-        list.forEach(t => {
-          html += `
-            <div class="sb-task-item" style="border-color:rgba(239,68,68,0.25);">
-              <div class="sb-task-text">
-                ${t.text}
-                <div class="sb-task-tags">
-                  <span class="sb-task-tag tag-subj">${t.subject}</span>
-                  ${t.chapter ? `<span class="sb-task-tag tag-chap">${t.chapter}</span>` : ''}
-                  <span class="sb-task-tag tag-late">Due ${t.date}</span>
-                </div>
-              </div>
-              <div class="sb-task-actions">
-                <button class="sb-task-act" onclick="window.sbMoveToToday('${t.id}')" title="Move to Today">${ICONS.bolt} Today</button>
-                <button class="sb-task-act" onclick="window.sbToggleTask('${t.id}')" title="Mark Done">${ICONS.check}</button>
-                <button class="sb-task-act" onclick="window.sbDeleteTask('${t.id}')" title="Delete">${ICONS.trash}</button>
-              </div>
-            </div>
-          `;
-        });
-        paneContent.innerHTML = html;
-      }
-    } else if (tab === 'progress') {
-      paneHeading.textContent = 'Progress Bar';
-      paneSub.textContent = '83 JEE Chapters Matrix';
-      renderProgressTabContent();
-    }
-
-    renderCounts();
-  }
-
-  function renderProgressTabContent() {
-    const prog = getChapterProgress();
-
-    paneContent.innerHTML = `
-      <!-- Overall Progress -->
-      <div class="sb-progress-block">
-        <div class="sb-prog-head">
-          <span>Overall JEE Syllabus</span>
-          <span style="color:var(--sb-acc);">${prog.Overall.done} / ${prog.Overall.total} (${prog.Overall.pct}%)</span>
-        </div>
-        <div class="sb-prog-bar">
-          <div class="sb-prog-fill" style="width:${prog.Overall.pct}%; background:linear-gradient(90deg, #6366f1, #f59e0b);"></div>
         </div>
       </div>
 
-      <!-- Subject 3-Grid -->
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:14px;">
-        <div class="sb-progress-block" style="padding:10px; margin-bottom:0;">
-          <div style="font-size:11px; color:#34d399; font-weight:700;">Physics</div>
-          <div style="font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; margin:4px 0;">${prog.Physics.pct}%</div>
-          <div style="font-size:10px; color:var(--sb-muted);">${prog.Physics.done}/${prog.Physics.total}</div>
-        </div>
-        <div class="sb-progress-block" style="padding:10px; margin-bottom:0;">
-          <div style="font-size:11px; color:#38bdf8; font-weight:700;">Chemistry</div>
-          <div style="font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; margin:4px 0;">${prog.Chemistry.pct}%</div>
-          <div style="font-size:10px; color:var(--sb-muted);">${prog.Chemistry.done}/${prog.Chemistry.total}</div>
-        </div>
-        <div class="sb-progress-block" style="padding:10px; margin-bottom:0;">
-          <div style="font-size:11px; color:#f59e0b; font-weight:700;">Maths</div>
-          <div style="font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; margin:4px 0;">${prog.Maths.pct}%</div>
-          <div style="font-size:10px; color:var(--sb-muted);">${prog.Maths.done}/${prog.Maths.total}</div>
-        </div>
+      <!-- Action Buttons Row -->
+      <div class="ak-action-pills">
+        <button class="ak-act-btn ak-btn-orange" onclick="window.akOpenScreen('backlog')">
+          <span>⏳</span> Backlog
+        </button>
+        <button class="ak-act-btn ak-btn-gray" onclick="window.akOpenScreen('future')">
+          <span>🗓️</span> Future Tasks
+        </button>
       </div>
 
-      <!-- Master JEE Chapters Search & Matrix -->
-      <div style="margin-top:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <b style="font-size:13.5px; color:#fff;">Complete JEE Chapters</b>
-          <span style="font-size:11px; color:var(--sb-muted);" id="sbChapterCountLabel"></span>
-        </div>
+      <!-- Sub Tabs -->
+      <div class="ak-subtab-strip">
+        <button class="ak-subtab active">Today's Task</button>
+        <button class="ak-subtab" onclick="window.akShowCompletedOnly()">Completed Task</button>
+        <button class="ak-filter-icon-btn" title="Filter">&#9881;</button>
+      </div>
 
-        <input type="text" class="sb-chap-search" id="sbSearchInput" placeholder="Search any chapter (e.g. Thermodynamics, Matrices, Optics)..." value="${chapterSearchQuery}">
-
-        <div class="sb-filter-bar">
-          <button class="sb-filter-btn ${activeChapterFilter === 'All' ? 'active' : ''}" onclick="window.sbSetFilter('All')">All (83)</button>
-          <button class="sb-filter-btn ${activeChapterFilter === 'Physics' ? 'active' : ''}" onclick="window.sbSetFilter('Physics')">Physics (28)</button>
-          <button class="sb-filter-btn ${activeChapterFilter === 'Chemistry' ? 'active' : ''}" onclick="window.sbSetFilter('Chemistry')">Chem (30)</button>
-          <button class="sb-filter-btn ${activeChapterFilter === 'Maths' ? 'active' : ''}" onclick="window.sbSetFilter('Maths')">Maths (25)</button>
-        </div>
-
-        <div id="sbChapterContainer" style="max-height:310px; overflow-y:auto; padding-right:2px;"></div>
+      <!-- Subject Filters -->
+      <div class="ak-subj-filter-row">
+        <span class="ak-subj-pill ${activeSubjFilter === 'All' ? 'active' : ''}" onclick="window.akSetSubjFilter('All')">All (${tasks.length})</span>
+        <span class="ak-subj-pill ${activeSubjFilter === 'Physics' ? 'active' : ''}" onclick="window.akSetSubjFilter('Physics')">Physics (${tasks.filter(t => t.subject === 'Physics').length})</span>
+        <span class="ak-subj-pill ${activeSubjFilter === 'Chemistry' ? 'active' : ''}" onclick="window.akSetSubjFilter('Chemistry')">Chemistry (${tasks.filter(t => t.subject === 'Chemistry').length})</span>
+        <span class="ak-subj-pill ${activeSubjFilter === 'Mathematics' ? 'active' : ''}" onclick="window.akSetSubjFilter('Mathematics')">Maths (${tasks.filter(t => t.subject === 'Mathematics').length})</span>
       </div>
     `;
 
-    renderChapterListOnly();
+    if (!filteredTasks.length) {
+      // Empty state with Fox illustration (Screenshot 1)
+      contentHtml += `
+        <div class="ak-empty-wrap">
+          ${FOX_SVG}
+          <div class="ak-empty-h">No task for today</div>
+          <div class="ak-empty-p">You can plan your JEE study by creating a to do list for the chapters/Topics you are going to study today. Completing them will add those chapters to progress bar. Each tasks will be given a span of 24 hours post which it will become a backlog</div>
+          <button class="ak-pill-btn" onclick="window.akOpenScreen('add_today')" style="padding:12px 24px; font-size:13px;">
+            Add Topics For Today &rarr;
+          </button>
+        </div>
+      `;
+    } else {
+      contentHtml += `<div style="display:flex; flex-direction:column; gap:6px;">`;
+      filteredTasks.forEach(t => {
+        contentHtml += `
+          <div class="ak-task-card ${t.done ? 'is-done' : ''}">
+            <div class="ak-task-top">
+              <button class="ak-task-circle" onclick="window.akToggleTaskDone('${t.id}')">
+                ${t.done ? '&#10003;' : ''}
+              </button>
+              <div class="ak-task-info">
+                <h4 class="ak-task-title">${t.title}</h4>
+                <div class="ak-task-sub">${t.title} &gt;&gt; ${t.subject}</div>
+              </div>
+              <button class="ak-task-dots" onclick="window.akOpenEditModal('${t.id}')">&hellip;</button>
+            </div>
 
-    // Instant search input listener without full DOM rerender
-    const searchInp = document.getElementById('sbSearchInput');
-    if (searchInp) {
-      searchInp.oninput = (e) => {
-        chapterSearchQuery = e.target.value;
-        renderChapterListOnly();
+            <div class="ak-task-bot">
+              <span style="color:var(--ak-muted);">Mode</span>
+              <div class="ak-mode-group">
+                <button class="ak-mode-tag ${t.mode === 'L' ? 'active' : ''}" onclick="window.akQuickSetMode('${t.id}', 'L')">L</button>
+                <button class="ak-mode-tag ${t.mode === 'P' ? 'active' : ''}" onclick="window.akQuickSetMode('${t.id}', 'P')">P</button>
+                <button class="ak-mode-tag ${t.mode === 'R' ? 'active' : ''}" onclick="window.akQuickSetMode('${t.id}', 'R')">R</button>
+              </div>
+
+              <span class="ak-level-badge">${t.level} &or;</span>
+              <span class="ak-timer-tag">&#9201; ${t.hoursLeft || 23} hrs</span>
+            </div>
+          </div>
+        `;
+      });
+      contentHtml += `</div>`;
+    }
+
+    // Floating + Button
+    contentHtml += `
+      <button class="ak-fab" onclick="window.akOpenScreen('add_today')" title="Add Topic">+</button>
+    `;
+
+    screenContent.innerHTML = contentHtml;
+  }
+
+  /* ==========================================================
+     SCREEN 2: ADD TOPICS SCREEN (1:1 with Screenshots 2, 4, 5, 7)
+     ========================================================== */
+  function renderAddTopicScreen(targetScreen = 'today') {
+    let titleStr = "Add Topics For Today";
+    if (targetScreen === 'backlog') titleStr = "Add Topics To Backlog";
+    else if (targetScreen === 'future') titleStr = "Add Topics To Future";
+    topTitle.textContent = titleStr;
+
+    // Filter matching chapters
+    let filteredChaps = JEE_CHAPTERS;
+    if (addTopicSubject !== 'All') {
+      filteredChaps = filteredChaps.filter(c => c.subject === addTopicSubject);
+    }
+    if (addTopicQuery) {
+      const q = addTopicQuery.toLowerCase();
+      filteredChaps = filteredChaps.filter(c => c.title.toLowerCase().includes(q) || c.branch.toLowerCase().includes(q));
+    }
+
+    let suggestListHtml = '';
+    if (addTopicQuery && filteredChaps.length) {
+      filteredChaps.slice(0, 5).forEach(c => {
+        suggestListHtml += `
+          <div class="ak-suggest-item" onclick="window.akSelectSuggestedChapter('${c.id}')">
+            <div class="ak-suggest-title">${c.title}</div>
+            <div class="ak-suggest-path">${c.subject} &gt;&gt; ${c.branch}</div>
+          </div>
+        `;
+      });
+    }
+
+    screenContent.innerHTML = `
+      <label class="ak-field-label">By Chapter*</label>
+
+      <!-- Subject Tabs -->
+      <div class="ak-subj-filter-row" style="margin-bottom:10px;">
+        <span class="ak-subj-pill ${addTopicSubject === 'All' ? 'active' : ''}" onclick="window.akSetAddSubj('All')">All</span>
+        <span class="ak-subj-pill ${addTopicSubject === 'Chemistry' ? 'active' : ''}" onclick="window.akSetAddSubj('Chemistry')">Chemistry</span>
+        <span class="ak-subj-pill ${addTopicSubject === 'Mathematics' ? 'active' : ''}" onclick="window.akSetAddSubj('Mathematics')">Mathematics</span>
+        <span class="ak-subj-pill ${addTopicSubject === 'Physics' ? 'active' : ''}" onclick="window.akSetAddSubj('Physics')">Physics</span>
+      </div>
+
+      <!-- Live Search Box -->
+      <input type="text" class="ak-search-box" id="akAddSearchInp" placeholder="Search your chapter" value="${addTopicQuery}">
+      <div style="font-size:10.5px; color:var(--ak-muted); margin:4px 0 10px;">The chapter can be from any subject in your course.</div>
+
+      ${suggestListHtml ? `<div class="ak-suggest-list">${suggestListHtml}</div>` : ''}
+
+      <label class="ak-field-label">Select Topic*</label>
+      <select class="ak-search-box" id="akTopicSelect" style="margin-bottom:14px;">
+        ${addTopicSelectedChapter ? `
+          <option value="All Topics">Entire Chapter (${addTopicSelectedChapter.title})</option>
+          <option value="Formula Revision">Formula Revision & Key Concepts</option>
+          <option value="PYQ Practice">Solve 30 PYQs (2023-2025)</option>
+          <option value="NCERT Reading">NCERT Exemplar & In-text</option>
+        ` : `
+          <option value="">Search a chapter above first</option>
+        `}
+      </select>
+
+      <label class="ak-field-label">Study Mode</label>
+      <div style="display:flex; gap:8px; margin-bottom:16px;">
+        <button class="ak-act-btn ${addTopicMode === 'L' ? 'ak-btn-orange' : 'ak-btn-gray'}" style="flex:1; padding:9px 4px;" onclick="window.akSetAddMode('L')">(L) Lecture</button>
+        <button class="ak-act-btn ${addTopicMode === 'P' ? 'ak-btn-orange' : 'ak-btn-gray'}" style="flex:1; padding:9px 4px;" onclick="window.akSetAddMode('P')">(P) Practice</button>
+        <button class="ak-act-btn ${addTopicMode === 'R' ? 'ak-btn-orange' : 'ak-btn-gray'}" style="flex:1; padding:9px 4px;" onclick="window.akSetAddMode('R')">(R) Revision</button>
+      </div>
+
+      <label class="ak-field-label">Target Level</label>
+      <select class="ak-search-box" id="akLevelSelect" style="margin-bottom:24px;">
+        <option value="JEE Mains + Advanced">JEE Mains + Advanced</option>
+        <option value="JEE Mains">JEE Mains Only</option>
+        <option value="JEE Advanced">JEE Advanced Only</option>
+      </select>
+
+      <button class="ak-pill-btn" onclick="window.akSaveNewTopic('${targetScreen}')" style="width:100%; padding:14px; font-size:14px;">
+        ${targetScreen === 'today' ? 'Add Topic ->' : (targetScreen === 'backlog' ? 'Add To Backlog ->' : 'Add To Future ->')}
+      </button>
+    `;
+
+    const inp = document.getElementById('akAddSearchInp');
+    if (inp) {
+      inp.oninput = (e) => {
+        addTopicQuery = e.target.value;
+        renderAddTopicScreen(targetScreen);
+        const refoc = document.getElementById('akAddSearchInp');
+        if (refoc) {
+          refoc.focus();
+          refoc.selectionStart = refoc.selectionEnd = refoc.value.length;
+        }
       };
     }
   }
 
-  function renderChapterListOnly() {
-    let list = [];
-    if (activeChapterFilter === 'All') {
-      list = [
-        ...JEE_CHAPTERS.Physics.map(c => ({ title: c, subj: 'Physics' })),
-        ...JEE_CHAPTERS.Chemistry.map(c => ({ title: c, subj: 'Chemistry' })),
-        ...JEE_CHAPTERS.Maths.map(c => ({ title: c, subj: 'Maths' }))
-      ];
-    } else {
-      list = (JEE_CHAPTERS[activeChapterFilter] || []).map(c => ({ title: c, subj: activeChapterFilter }));
-    }
-
-    if (chapterSearchQuery) {
-      const q = chapterSearchQuery.toLowerCase();
-      list = list.filter(c => c.title.toLowerCase().includes(q) || c.subj.toLowerCase().includes(q));
-    }
-
-    const countLabel = document.getElementById('sbChapterCountLabel');
-    if (countLabel) countLabel.textContent = `${list.length} chapters`;
-
-    const container = document.getElementById('sbChapterContainer');
-    if (!container) return;
-
-    if (!list.length) {
-      container.innerHTML = `
-        <div style="text-align:center; padding:30px 10px; color:var(--sb-muted); font-size:12.5px;">
-          No matching JEE chapters found for "${chapterSearchQuery}".
-        </div>
-      `;
-      return;
-    }
-
-    let html = '';
-    list.forEach(c => {
-      const isDone = !!state.completedChapters[c.title];
-      html += `
-        <div class="sb-chapter-card ${isDone ? 'done' : ''}">
-          <div class="sb-chap-left">
-            <button class="sb-task-check" onclick="window.sbToggleChapter('${c.title.replace(/'/g, "\\'")}')">${isDone ? ICONS.check : ''}</button>
-            <span class="sb-chap-title">${c.title}</span>
-          </div>
-          <div class="sb-chap-right">
-            <span class="sb-task-tag tag-subj" style="${isDone ? 'color:var(--sb-teal);' : ''}">${c.subj}</span>
-            <button class="sb-task-act" onclick="window.sbPlanTaskForChapter('${c.title.replace(/'/g, "\\'")}', '${c.subj}')" title="Add task for this chapter">${ICONS.plus} Plan</button>
-          </div>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-  }
-
-  // Window methods for global onclick actions
-  window.sbToggleChapter = function(chName) {
-    state.completedChapters[chName] = !state.completedChapters[chName];
-    saveData(state);
-    renderProgressTabContent();
-    renderCounts();
-  };
-
-  window.sbSetFilter = function(filter) {
-    activeChapterFilter = filter;
-    document.querySelectorAll('.sb-filter-btn').forEach(b => {
-      b.classList.toggle('active', b.textContent.startsWith(filter === 'All' ? 'All' : filter.slice(0, 4)));
-    });
-    renderChapterListOnly();
-  };
-
-  window.sbPlanTaskForChapter = function(chapName, subjName) {
-    subjSelect.value = subjName;
-    populateChapterDropdown(subjName, chapName);
-    taskInput.value = `Practice questions: ${chapName}`;
-    openModal();
-  };
-
-  window.sbToggleTask = function(id) {
-    const t = state.tasks.find(x => x.id === id);
-    if (t) {
-      t.done = !t.done;
-      saveData(state);
-      renderPaneContent(currentTab);
-      renderCounts();
-    }
-  };
-
-  window.sbDeleteTask = function(id) {
-    state.tasks = state.tasks.filter(x => x.id !== id);
-    saveData(state);
-    renderPaneContent(currentTab);
-    renderCounts();
-  };
-
-  window.sbMoveToToday = function(id) {
-    const t = state.tasks.find(x => x.id === id);
-    if (t) {
-      t.date = todayStr();
-      saveData(state);
-      renderPaneContent(currentTab);
-      renderCounts();
-    }
-  };
-
-  window.sbMoveAllBacklogsToToday = function() {
+  /* ==========================================================
+     SCREEN 3: BACKLOG RECOVERY (1:1 with Screenshot 3)
+     ========================================================== */
+  function renderBacklogScreen() {
+    topTitle.textContent = "Backlogs";
     const today = todayStr();
-    state.tasks.forEach(t => {
-      if (t.date < today && !t.done) t.date = today;
-    });
-    saveData(state);
-    renderPaneContent('backlog');
-    renderCounts();
-  };
+    const backlogs = state.tasks.filter(t => t.date < today && !t.done);
 
-  window.sbQuickFillTask = function(title) {
-    taskInput.value = title;
-  };
+    let html = `
+      <!-- Backlog Recovery Header Card (Screenshot 3) -->
+      <div class="ak-progress-card" style="background:linear-gradient(135deg, #1c1524, #120f18);">
+        <h2 class="ak-prog-h">Backlog recovery</h2>
+        <div class="ak-prog-sub">Missed self-study tasks appear here automatically.</div>
 
-  // Add Task Modal Controls
-  function openModal() {
-    addModal.classList.add('open');
-    if (!taskInput.value) taskInput.value = '';
-    taskInput.focus();
-  }
-  function closeModal() {
-    addModal.classList.remove('open');
-  }
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div>
+            <div style="font-size:24px; font-weight:800; font-family:monospace; color:#fff;">${backlogs.length}</div>
+            <div style="font-size:11px; color:var(--ak-muted);">Total Backlogs</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px; color:var(--ak-muted);">Selected range</div>
+            <div style="font-size:12px; font-weight:700; color:var(--ak-orange-light);">${shiftDateStr(-7)} &mdash; ${today} &gt;</div>
+          </div>
+        </div>
 
-  openAddModal.onclick = openModal;
-  collapsedAddBtn.onclick = openModal;
-  closeAddModal.onclick = closeModal;
-  addModal.onclick = (e) => { if (e.target === addModal) closeModal(); };
+        <div style="background:rgba(255,255,255,0.04); border-radius:10px; padding:8px 12px; font-size:11px; color:var(--ak-orange-light);">
+          Current : 7-day backlog tracking
+        </div>
+      </div>
 
-  saveTaskBtn.onclick = function() {
-    const text = taskInput.value.trim();
-    if (!text) return;
+      <div style="font-size:13px; font-weight:700; color:#fff; margin-bottom:12px;">
+        Backlogs from selected range (${backlogs.length})
+      </div>
+    `;
 
-    const subj = subjSelect.value;
-    const chap = chapterSelect.value;
-    const sched = scheduleSelect.value;
-    const today = new Date();
-    let targetDate = todayStr();
+    if (!backlogs.length) {
+      html += `
+        <div class="ak-empty-wrap">
+          ${FOX_SVG}
+          <div class="ak-empty-h">No Backlogs found</div>
+          <div class="ak-empty-p">Great consistency! No missed self-study tasks in this range. Keep up the rhythm!</div>
+        </div>
+      `;
+    } else {
+      html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
+      backlogs.forEach(t => {
+        html += `
+          <div class="ak-task-card" style="border-color:rgba(239,68,68,0.35);">
+            <div class="ak-task-top">
+              <div class="ak-task-info">
+                <h4 class="ak-task-title">${t.title}</h4>
+                <div class="ak-task-sub">${t.title} &gt;&gt; ${t.subject} &bull; Due ${t.date}</div>
+              </div>
+              <button class="ak-task-dots" onclick="window.akOpenEditModal('${t.id}')">&hellip;</button>
+            </div>
 
-    if (sched === 'tomorrow') {
-      today.setDate(today.getDate() + 1);
-      targetDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    } else if (sched === 'in2days') {
-      today.setDate(today.getDate() + 2);
-      targetDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    } else if (sched === 'weekend') {
-      const day = today.getDay();
-      const diff = (6 - day + 7) % 7 || 7;
-      today.setDate(today.getDate() + diff);
-      targetDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <button class="ak-act-btn ak-btn-orange" onclick="window.akMoveTaskToToday('${t.id}')" style="flex:1; padding:8px;">
+                ⚡ Move to Today
+              </button>
+              <button class="ak-act-btn ak-btn-gray" onclick="window.akToggleTaskDone('${t.id}')" style="padding:8px 14px;">
+                ✓ Done
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
     }
+
+    html += `
+      <button class="ak-fab" onclick="window.akOpenScreen('add_backlog')" title="Add Backlog">+</button>
+    `;
+
+    screenContent.innerHTML = html;
+  }
+
+  /* ==========================================================
+     SCREEN 4: FUTURE TASKS (1:1 with Screenshots 8 & 11)
+     ========================================================== */
+  function renderFutureScreen() {
+    topTitle.textContent = "Future Tasks";
+    const today = todayStr();
+
+    // Generate next 7 days
+    let dayCardsHtml = '';
+    for (let i = 1; i <= 7; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      const dStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const dayNum = d.getDate();
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      const isSelected = (dStr === selectedFutureDay);
+
+      dayCardsHtml += `
+        <div class="ak-day-card ${isSelected ? 'active' : ''}" onclick="window.akSelectFutureDay('${dStr}')">
+          <span class="ak-day-num">${dayNum}</span>
+          <span class="ak-day-txt">${dayName}</span>
+        </div>
+      `;
+    }
+
+    const scheduledTasks = state.tasks.filter(t => t.date === selectedFutureDay);
+    const selDateObj = new Date(selectedFutureDay);
+    const dateFormatted = selDateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' });
+
+    let html = `
+      <div style="font-size:11px; color:var(--ak-muted); margin-bottom:12px;">
+        Basic plans 1 day ahead. Pro opens the full 7-day planner.
+      </div>
+
+      <!-- Horizontal Day Strip (Screenshot 8) -->
+      <div class="ak-day-strip">${dayCardsHtml}</div>
+
+      <div style="background:#151829; border:1px solid var(--ak-border); border-radius:16px; padding:14px; margin-bottom:14px;">
+        <div style="font-size:14px; font-weight:800; color:#fff;">${dateFormatted}</div>
+        <div style="font-size:11px; color:var(--ak-muted); margin-top:2px;">You can add the topic/chapters directly by selecting below</div>
+        <button class="ak-pill-btn" onclick="window.akOpenScreen('add_future')" style="margin-top:12px; width:100%;">
+          Add Topic on ${selDateObj.getDate()} ${selDateObj.toLocaleDateString('en-US', { month: 'short' })} &rarr;
+        </button>
+      </div>
+
+      <div style="font-size:13px; font-weight:700; color:#fff; margin-bottom:10px;">
+        Scheduled Tasks (${scheduledTasks.length})
+      </div>
+    `;
+
+    if (!scheduledTasks.length) {
+      html += `
+        <div class="ak-empty-wrap">
+          ${FOX_SVG}
+          <div class="ak-empty-h">No topics added for this date</div>
+          <div class="ak-empty-p">Stay ahead of your JEE syllabus by scheduling chapter practice questions early!</div>
+        </div>
+      `;
+    } else {
+      html += `<div style="display:flex; flex-direction:column; gap:8px;">`;
+      scheduledTasks.forEach(t => {
+        html += `
+          <div class="ak-task-card">
+            <div class="ak-task-top">
+              <div class="ak-task-info">
+                <h4 class="ak-task-title">${t.title}</h4>
+                <div class="ak-task-sub">${t.title} &gt;&gt; ${t.subject}</div>
+              </div>
+              <button class="ak-task-dots" onclick="window.akOpenEditModal('${t.id}')">&hellip;</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+              <span class="ak-level-badge">${t.level}</span>
+              <button class="ak-act-btn ak-btn-orange" onclick="window.akMoveTaskToToday('${t.id}')" style="padding:6px 12px; font-size:11px;">
+                ⚡ Move to Today
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    }
+
+    screenContent.innerHTML = html;
+  }
+
+  /* ==========================================================
+     SCREEN 5: PROGRESS BAR (1:1 with Screenshot 9)
+     Dual Circular Gauges: JEE Mains Only & JEE Advanced Only
+     ========================================================== */
+  function renderProgressScreen() {
+    topTitle.textContent = "Progress Bar";
+
+    // Calculate subject-wise completion
+    let phyDone = 0, chemDone = 0, mathDone = 0;
+    JEE_CHAPTERS.forEach(c => {
+      if (state.completedChapters[c.title]) {
+        if (c.subject === 'Physics') phyDone++;
+        else if (c.subject === 'Chemistry') chemDone++;
+        else if (c.subject === 'Mathematics') mathDone++;
+      }
+    });
+
+    const phyPct = Math.round((phyDone / 28) * 100);
+    const chemPct = Math.round((chemDone / 30) * 100);
+    const mathPct = Math.round((mathDone / 25) * 100);
+    const overallPct = Math.round(((phyDone + chemDone + mathDone) / 83) * 100);
+
+    screenContent.innerHTML = `
+      <!-- Section 1: JEE Mains Only (Screenshot 9) -->
+      <div class="ak-prog-section">
+        <div class="ak-sec-head">
+          <span class="ak-sec-title">JEE Mains Only</span>
+          <span class="ak-sec-link">See progress &rarr;</span>
+        </div>
+
+        <div class="ak-orbit-wrap">
+          <!-- Circular Ring Gauge -->
+          <div style="width:110px; height:110px; position:relative; display:grid; place-items:center;">
+            <svg width="110" height="110" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" stroke-dasharray="190 50" transform="rotate(130 50 50)"/>
+              <circle cx="50" cy="50" r="38" stroke="var(--ak-orange)" stroke-width="8" fill="none" stroke-linecap="round"
+                stroke-dasharray="${(overallPct * 1.9)} 240" transform="rotate(130 50 50)"/>
+            </svg>
+            <div style="position:absolute; text-align:center;">
+              <div style="font-size:18px; font-weight:800; color:#fff;">${overallPct}%</div>
+              <div style="font-size:9.5px; color:var(--ak-muted);">complete</div>
+            </div>
+          </div>
+
+          <!-- Orbiting Subject Nodes -->
+          <div class="ak-node-stack">
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:var(--ak-orange);">🧪</div>
+              <span>${chemPct}% Chemistry</span>
+            </div>
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:var(--ak-blue);">⚛</div>
+              <span>${phyPct}% Physics</span>
+            </div>
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:#fff;">∑</div>
+              <span>${mathPct}% Mathematics</span>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; font-size:11px; color:var(--ak-muted); margin-top:8px;">Overall Completion</div>
+      </div>
+
+      <!-- Section 2: JEE Advanced Only (Screenshot 9) -->
+      <div class="ak-prog-section">
+        <div class="ak-sec-head">
+          <span class="ak-sec-title">JEE Advanced Only</span>
+          <span class="ak-sec-link">See progress &rarr;</span>
+        </div>
+
+        <div class="ak-orbit-wrap">
+          <div class="ak-node-stack">
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:var(--ak-orange);">🧪</div>
+              <span>${chemPct}% Chemistry</span>
+            </div>
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:var(--ak-blue);">⚛</div>
+              <span>${phyPct}% Physics</span>
+            </div>
+            <div class="ak-node-item">
+              <div class="ak-node-icon" style="color:#fff;">∑</div>
+              <span>${mathPct}% Mathematics</span>
+            </div>
+          </div>
+
+          <div style="width:110px; height:110px; position:relative; display:grid; place-items:center;">
+            <svg width="110" height="110" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" stroke="rgba(255,255,255,0.08)" stroke-width="8" fill="none" stroke-dasharray="190 50" transform="rotate(130 50 50)"/>
+              <circle cx="50" cy="50" r="38" stroke="#38bdf8" stroke-width="8" fill="none" stroke-linecap="round"
+                stroke-dasharray="${(overallPct * 1.9)} 240" transform="rotate(130 50 50)"/>
+            </svg>
+            <div style="position:absolute; text-align:center;">
+              <div style="font-size:18px; font-weight:800; color:#fff;">${overallPct}%</div>
+              <div style="font-size:9.5px; color:var(--ak-muted);">complete</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; font-size:11px; color:var(--ak-muted); margin-top:8px;">Overall Completion</div>
+      </div>
+
+      <!-- Section 3: Interactive 83 Chapter Completion Checklist -->
+      <div style="background:#121626; border:1px solid var(--ak-border); border-radius:20px; padding:16px;">
+        <div style="font-size:15px; font-weight:800; color:#fff; margin-bottom:10px;">83 JEE Chapters Matrix</div>
+
+        <div class="ak-subj-filter-row" style="margin-bottom:12px;">
+          <span class="ak-subj-pill ${activeSubjFilter === 'All' ? 'active' : ''}" onclick="window.akSetSubjFilter('All')">All (83)</span>
+          <span class="ak-subj-pill ${activeSubjFilter === 'Physics' ? 'active' : ''}" onclick="window.akSetSubjFilter('Physics')">Physics (28)</span>
+          <span class="ak-subj-pill ${activeSubjFilter === 'Chemistry' ? 'active' : ''}" onclick="window.akSetSubjFilter('Chemistry')">Chem (30)</span>
+          <span class="ak-subj-pill ${activeSubjFilter === 'Mathematics' ? 'active' : ''}" onclick="window.akSetSubjFilter('Mathematics')">Maths (25)</span>
+        </div>
+
+        <div style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+          ${JEE_CHAPTERS.filter(c => activeSubjFilter === 'All' || c.subject === activeSubjFilter).map(c => {
+            const isDone = !!state.completedChapters[c.title];
+            return `
+              <div style="display:flex; align-items:center; justify-content:space-between; background:#181d30; padding:8px 12px; border-radius:10px; border:1px solid var(--ak-border);">
+                <div style="display:flex; align-items:center; gap:10px; min-width:0; flex:1;">
+                  <button class="ak-task-circle" onclick="window.akToggleChapterComplete('${c.title.replace(/'/g, "\\'")}')" style="${isDone ? 'background:var(--ak-green); border-color:var(--ak-green); color:#000;' : ''}">
+                    ${isDone ? '&#10003;' : ''}
+                  </button>
+                  <div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                    <div style="font-size:12.5px; font-weight:600; color:#fff;">${c.title}</div>
+                    <div style="font-size:10px; color:var(--ak-muted);">${c.subject} &gt;&gt; ${c.branch}</div>
+                  </div>
+                </div>
+                <button class="ak-pill-btn" onclick="window.akPlanTaskForChapter('${c.title.replace(/'/g, "\\'")}', '${c.subject}')" style="padding:4px 9px; font-size:10.5px; flex-shrink:0;">
+                  + Plan
+                </button>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  /* ==========================================================
+     GLOBAL ACTION HANDLERS
+     ========================================================== */
+  window.akOpenScreen = function(screenName) {
+    renderScreen(screenName, true);
+  };
+
+  window.akSetSubjFilter = function(subj) {
+    activeSubjFilter = subj;
+    renderScreen(currentView, false);
+  };
+
+  window.akSetAddSubj = function(subj) {
+    addTopicSubject = subj;
+    renderAddTopicScreen(currentView === 'add_backlog' ? 'backlog' : (currentView === 'add_future' ? 'future' : 'today'));
+  };
+
+  window.akSetAddMode = function(mode) {
+    addTopicMode = mode;
+    renderAddTopicScreen(currentView === 'add_backlog' ? 'backlog' : (currentView === 'add_future' ? 'future' : 'today'));
+  };
+
+  window.akSelectSuggestedChapter = function(chapId) {
+    const ch = JEE_CHAPTERS.find(x => x.id === chapId);
+    if (ch) {
+      addTopicSelectedChapter = ch;
+      addTopicQuery = ch.title;
+      renderAddTopicScreen(currentView === 'add_backlog' ? 'backlog' : (currentView === 'add_future' ? 'future' : 'today'));
+    }
+  };
+
+  window.akSaveNewTopic = function(targetScreen) {
+    const chap = addTopicSelectedChapter ? addTopicSelectedChapter.title : addTopicQuery.trim();
+    if (!chap) return;
+
+    let targetDate = todayStr();
+    if (targetScreen === 'backlog') targetDate = shiftDateStr(-1);
+    else if (targetScreen === 'future') targetDate = selectedFutureDay;
+
+    const subject = addTopicSelectedChapter ? addTopicSelectedChapter.subject : 'General';
+    const branch = addTopicSelectedChapter ? addTopicSelectedChapter.branch : 'Self-study';
+    const level = document.getElementById('akLevelSelect') ? document.getElementById('akLevelSelect').value : 'JEE Mains + Advanced';
 
     state.tasks.push({
       id: 't_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-      text: text,
-      subject: subj,
-      chapter: chap,
+      title: chap,
+      subject: subject,
+      branch: branch,
+      mode: addTopicMode,
+      level: level,
       date: targetDate,
+      hoursLeft: 23,
       done: false
     });
 
-    saveData(state);
-    closeModal();
-    renderCounts();
-    if (currentTab) renderPaneContent(currentTab);
+    saveState(state);
+    addTopicQuery = '';
+    addTopicSelectedChapter = null;
+
+    showToast('Topics saved for today. [v2]');
+    renderScreen(targetScreen === 'today' ? 'today' : (targetScreen === 'backlog' ? 'backlog' : 'future'), false);
   };
 
-  renderCounts();
+  window.akToggleTaskDone = function(taskId) {
+    const t = state.tasks.find(x => x.id === taskId);
+    if (t) {
+      t.done = !t.done;
+      saveState(state);
+      renderScreen(currentView, false);
+    }
+  };
+
+  window.akQuickSetMode = function(taskId, mode) {
+    const t = state.tasks.find(x => x.id === taskId);
+    if (t) {
+      t.mode = mode;
+      saveState(state);
+      renderScreen(currentView, false);
+    }
+  };
+
+  window.akMoveTaskToToday = function(taskId) {
+    const t = state.tasks.find(x => x.id === taskId);
+    if (t) {
+      t.date = todayStr();
+      saveState(state);
+      showToast('Moved to Today\'s Tasks');
+      renderScreen(currentView, false);
+    }
+  };
+
+  window.akSelectFutureDay = function(dStr) {
+    selectedFutureDay = dStr;
+    renderFutureScreen();
+  };
+
+  window.akToggleChapterComplete = function(chapTitle) {
+    state.completedChapters[chapTitle] = !state.completedChapters[chapTitle];
+    saveState(state);
+    renderProgressScreen();
+    updateBadges();
+  };
+
+  window.akPlanTaskForChapter = function(chapTitle, subj) {
+    const ch = JEE_CHAPTERS.find(x => x.title === chapTitle);
+    addTopicSelectedChapter = ch || { title: chapTitle, subject: subj, branch: 'General' };
+    addTopicQuery = chapTitle;
+    addTopicSubject = subj;
+    openView('add_today');
+  };
+
+  // Edit Modal controls (Screenshot 13)
+  window.akOpenEditModal = function(taskId) {
+    const t = state.tasks.find(x => x.id === taskId);
+    if (!t) return;
+    selectedTaskForEdit = t;
+
+    editTaskTitle.textContent = t.title;
+    editTaskPath.textContent = `${t.title} >> ${t.subject}`;
+    editLevelSelect.value = t.level || 'JEE Mains + Advanced';
+
+    ['L', 'P', 'R'].forEach(m => {
+      const btn = document.getElementById(`akEditMode${m}`);
+      if (btn) btn.classList.toggle('active', t.mode === m);
+    });
+
+    editModal.classList.add('open');
+  };
+
+  window.akSetEditMode = function(mode) {
+    if (selectedTaskForEdit) {
+      selectedTaskForEdit.mode = mode;
+      ['L', 'P', 'R'].forEach(m => {
+        const btn = document.getElementById(`akEditMode${m}`);
+        if (btn) btn.classList.toggle('active', m === mode);
+      });
+      saveState(state);
+    }
+  };
+
+  closeEditModal.onclick = () => editModal.classList.remove('open');
+  editModal.onclick = (e) => { if (e.target === editModal) editModal.classList.remove('open'); };
+
+  btnMoveToBacklog.onclick = () => {
+    if (selectedTaskForEdit) {
+      selectedTaskForEdit.date = shiftDateStr(-1);
+      saveState(state);
+      editModal.classList.remove('open');
+      showToast('Task moved to Backlogs');
+      renderScreen(currentView, false);
+    }
+  };
+
+  btnMoveToFuture.onclick = () => {
+    if (selectedTaskForEdit) {
+      selectedTaskForEdit.date = shiftDateStr(1);
+      saveState(state);
+      editModal.classList.remove('open');
+      showToast('Task moved to Future Tasks');
+      renderScreen(currentView, false);
+    }
+  };
+
+  btnDeleteTask.onclick = () => {
+    if (selectedTaskForEdit) {
+      state.tasks = state.tasks.filter(x => x.id !== selectedTaskForEdit.id);
+      saveState(state);
+      editModal.classList.remove('open');
+      showToast('Task deleted');
+      renderScreen(currentView, false);
+    }
+  };
+
+  // Keyboard shortcut: ESC closes drawer/modals
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (editModal.classList.contains('open')) editModal.classList.remove('open');
+      else if (panel.classList.contains('open')) closePanel();
+    }
+  });
+
+  // Initial badge update
+  updateBadges();
 })();

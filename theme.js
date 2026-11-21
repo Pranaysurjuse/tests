@@ -36,8 +36,16 @@ ready(function(){
   nav.innerHTML=items.map(function(i){
     var on=(i[0]==='home'&&home&&!subj)||(i[0]===subj)||(i[0]==='combine'&&subj==='adv');
     return '<a href="'+BASE+i[2]+'"'+(on?' class="on"':'')+'><svg viewBox="0 0 24 24">'+ic[i[0]]+'</svg>'+i[1]+'</a>'}).join('')+
-    '<button type="button" aria-label="Theme"><svg viewBox="0 0 24 24">'+ic.theme+'</svg>Theme</button>';
+    '<button type="button" class="t-track-btn" aria-label="Track"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>Track</button>'+
+    '<button type="button" class="t-theme-btn" aria-label="Theme"><svg viewBox="0 0 24 24">'+ic.theme+'</svg>Theme</button>';
   B.appendChild(nav);
+  var trk=nav.querySelector('.t-track-btn');
+  if(trk){
+    trk.addEventListener('click',function(e){
+      e.preventDefault();
+      if(window.akOpenScreen)window.akOpenScreen('today');
+    });
+  }
   /* theme panel */
   var pn=D.createElement('div');pn.className='t-panel';
   pn.innerHTML='<h4>Mood</h4><div class="t-moods">'+MOODS.map(function(m){return '<button type="button" data-m="'+m[0]+'" aria-label="'+m[0]+'" style="--sw:'+m[1]+';background:radial-gradient(circle at 30% 25%,'+m[1]+',#05060d 85%)"></button>'}).join('')+'</div><div class="t-row">Animations<button type="button" class="t-sw" aria-label="Animations"></button></div>';
@@ -47,7 +55,7 @@ ready(function(){
   sync();
   pn.addEventListener('click',function(e){var b=e.target.closest('[data-m]');if(b){S.mood=b.dataset.m;save(S);apply();sync()}});
   sw.addEventListener('click',function(){S.motion=S.motion==='off'?'on':'off';save(S);apply();sync()});
-  nav.querySelector('button').addEventListener('click',function(e){e.stopPropagation();pn.classList.toggle('open')});
+  nav.querySelector('.t-theme-btn').addEventListener('click',function(e){e.stopPropagation();pn.classList.toggle('open')});
   D.addEventListener('click',function(e){if(!pn.contains(e.target))pn.classList.remove('open')});
 
   /* scroll: progress + hide nav on scroll down */
