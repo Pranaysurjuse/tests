@@ -60,6 +60,16 @@ Eliminated the monotone black/amber UI in favor of vibrant, distinct colors:
 - Floating macOS-style bottom dock with navigation items (`Home`, `Phy`, `Chem`, `Maths`, `All`, `Track`, `Theme`).
 - **Global Track Launcher:** Clicking `Track` opens the Study Hub drawer on any page, auto-injecting `studyhub.js` on demand if not present.
 
+### E. Search Bars & Strict Chapter Naming Rule
+- **Search Functionality**:
+  - Live search bar added to all 4 subjects (`physics.html`, `chemistry.html`, `maths.html`, `combine.html`, `combine-menu.html`) and their full test logs (`/overview/index.html`).
+  - Allows searching by chapter/syllabus, test number (e.g. `Test #01`), date, or test type.
+- **Strict Rule on Past Test Chapter Names**:
+  - **NEVER assume, guess, or assign chapter names to past tests** without explicit confirmation from the user (order: *"dont name naytest yet bro"*).
+  - All past tests default to `chapter: ""` with neutral labels (`Test #01` to `Test #08`, or `Combine Test #01` to `#04`).
+  - If `chapter` is empty, overview log views do not show fake chapter headers/badges; they show clean dates, scores, and ranks as originally logged.
+  - Supports dynamic assignment via `localStorage` keys: `user_ch_phy_<id>`, `user_ch_chem_<id>`, `user_ch_math_<id>`, and `user_ch_comb_<id>`.
+
 ---
 
 ## 3. Sidebar Configuration
