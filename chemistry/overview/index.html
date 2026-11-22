@@ -83,6 +83,33 @@
 
   .empty-msg { font-size: 13px; color: #6b6b6b; padding: 40px 10px; text-align: center; }
 
+  /* Chapter Search Bar */
+  .search-wrap{margin:16px 0 12px;}
+  .search-box{
+    position:relative; display:flex; align-items:center; background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:2px 14px; backdrop-filter:blur(8px);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .search-box:focus-within{
+    border-color:#3b9dff; box-shadow:0 0 0 1px #3b9dff inset, 0 4px 18px rgba(59,157,255,.15);
+  }
+  .search-icon{width:15px; height:15px; color:#8fa79d; flex-shrink:0; margin-right:10px;}
+  .search-input{
+    width:100%; background:transparent; border:none; outline:none;
+    font-family:'Courier New',monospace; font-size:12.5px; color:#f4f1ea; padding:10px 0;
+  }
+  .search-input::placeholder{color:#8fa79d; font-size:11.5px;}
+  .search-clear{
+    background:transparent; border:none; color:#8fa79d; font-size:18px;
+    line-height:1; cursor:pointer; padding:4px 6px; border-radius:6px; transition:color .15s;
+  }
+  .search-clear:hover{color:#fff;}
+  .chapter-pill{
+    display:inline-block; font-size:11.5px; font-weight:600; color:#3b9dff;
+    background:rgba(59,157,255,.1); border:1px solid rgba(59,157,255,.25);
+    border-radius:6px; padding:2px 8px; line-height:1.4;
+  }
+
   .footer-note { margin-top: 30px; font-size: 12px; color: #56685f; text-align: center; }
 </style>
 <style id="ui2">
@@ -151,11 +178,24 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
     <div class="tooltip" id="tooltip"></div>
   </div>
 
-  <div class="section-label">Full test history</div>
+  <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
+    <span>Full test history</span>
+    <span id="histCount" style="font-size:11px; color:#8fa79d; text-transform:none;">8 tests</span>
+  </div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter (e.g. Mole Concept, Thermodynamics)..." autocomplete="off" spellcheck="false">
+      <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
+    </div>
+  </div>
   <div class="chart-card">
     <div class="table-scroll">
     <table class="hist">
-      <thead><tr><th>Date</th><th>Type</th><th>Score</th><th>%</th><th>Accuracy</th><th>Class rank</th></tr></thead>
+      <thead><tr><th>Date</th><th>Chapter / Syllabus</th><th>Type</th><th>Score</th><th>%</th><th>Accuracy</th><th>Class rank</th></tr></thead>
       <tbody id="histBody"></tbody>
     </table>
     </div>
@@ -167,14 +207,14 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
 <script>
   const ACCENT = '#3b9dff';
   const DATA = [
-    {date: "2026-06-20", label: "20 Jun", score: 58, maxScore: 100, accuracy: null, type: "Class test", rank: 2, classSize: 38},
-    {date: "2026-07-01", label: "01 Jul", score: 53, maxScore: 100, accuracy: null, type: "Class test", rank: 1, classSize: 35},
-    {date: "2026-07-22", label: "22 Jul", score: 78, maxScore: 100, accuracy: 80.0, type: "Practice test", rank: null, classSize: null},
-    {date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null},
-    {date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null},
-    {date: "2026-09-19", label: "19 Sep", score: 57, maxScore: 100, accuracy: 56.0, type: "Class test", rank: null, classSize: null},
-    {date: "2026-09-30", label: "30 Sep", score: 72, maxScore: 100, accuracy: 76.0, type: "Class test", rank: null, classSize: null},
-    {date: "2026-10-14", label: "14 Oct", score: 64, maxScore: 100, accuracy: null, type: "Class test", rank: null, classSize: null}
+    {date: "2026-06-20", label: "20 Jun", score: 58, maxScore: 100, accuracy: null, type: "Class test", rank: 2, classSize: 38, chapter: "Mole Concept & Stoichiometry"},
+    {date: "2026-07-01", label: "01 Jul", score: 53, maxScore: 100, accuracy: null, type: "Class test", rank: 1, classSize: 35, chapter: "Atomic Structure"},
+    {date: "2026-07-22", label: "22 Jul", score: 78, maxScore: 100, accuracy: 80.0, type: "Practice test", rank: null, classSize: null, chapter: "Periodic Table & Periodicity"},
+    {date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null, chapter: "Chemical Bonding & Molecular Structure"},
+    {date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null, chapter: "States of Matter (Gases & Liquids)"},
+    {date: "2026-09-19", label: "19 Sep", score: 57, maxScore: 100, accuracy: 56.0, type: "Class test", rank: null, classSize: null, chapter: "Thermodynamics & Thermochemistry"},
+    {date: "2026-09-30", label: "30 Sep", score: 72, maxScore: 100, accuracy: 76.0, type: "Class test", rank: null, classSize: null, chapter: "Chemical Equilibrium"},
+    {date: "2026-10-14", label: "14 Oct", score: 64, maxScore: 100, accuracy: null, type: "Class test", rank: null, classSize: null, chapter: "Ionic Equilibrium & Redox Reactions"}
   ];
   DATA.forEach(d => d.percent = (d.score / d.maxScore) * 100);
 
@@ -288,18 +328,76 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
     });
   }
 
+  let searchQuery = '';
+
   function renderHistory() {
     const tbody = document.getElementById('histBody');
-    tbody.innerHTML = DATA.slice().reverse().map(d => `
+    const q = searchQuery.trim().toLowerCase();
+    let rows = DATA.slice().reverse();
+
+    if (q) {
+      rows = rows.filter(d =>
+        (d.chapter && d.chapter.toLowerCase().includes(q)) ||
+        (d.type && d.type.toLowerCase().includes(q)) ||
+        (d.label && d.label.toLowerCase().includes(q)) ||
+        (d.date && d.date.toLowerCase().includes(q))
+      );
+    }
+
+    const countEl = document.getElementById('histCount');
+    if (countEl) {
+      countEl.textContent = q ? `${rows.length} of ${DATA.length} tests` : `${DATA.length} tests`;
+    }
+
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">No tests found matching "<b>${q}</b>"<br><button type="button" onclick="clearChapterSearch()" style="margin-top:10px; background:rgba(255,255,255,0.06); border:1px solid #3b9dff; color:#3b9dff; font-family:'Courier New',monospace; font-size:11px; padding:6px 14px; border-radius:8px; cursor:pointer;">Clear search</button></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(d => `
       <tr>
         <td>${d.label} '26</td>
+        <td><span class="chapter-pill">${d.chapter || 'Class test'}</span></td>
         <td>${d.type}</td>
-        <td>${d.score} / ${d.maxScore}</td>
+        <td><strong>${d.score}</strong> / ${d.maxScore}</td>
         <td>${d.percent.toFixed(1)}%</td>
         <td>${d.accuracy !== null ? d.accuracy.toFixed(1) + '%' : '<span class="dash">&mdash;</span>'}</td>
         <td>${d.rank ? `<span class="rank-badge ${d.rank > 3 ? 'mid' : ''}">#${d.rank} / ${d.classSize}</span>` : '<span class="dash">&mdash;</span>'}</td>
       </tr>
     `).join('');
+  }
+
+  function clearChapterSearch() {
+    const sInput = document.getElementById('chapterSearch');
+    const cBtn = document.getElementById('clearSearch');
+    if (sInput) sInput.value = '';
+    if (cBtn) cBtn.style.display = 'none';
+    searchQuery = '';
+    renderHistory();
+  }
+
+  function setupChapterSearch() {
+    const sInput = document.getElementById('chapterSearch');
+    const cBtn = document.getElementById('clearSearch');
+    if (!sInput) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQ = urlParams.get('q') || urlParams.get('chapter') || '';
+    if (initialQ) {
+      sInput.value = initialQ;
+      searchQuery = initialQ;
+      if (cBtn) cBtn.style.display = 'block';
+    }
+
+    sInput.addEventListener('input', function(e) {
+      searchQuery = e.target.value;
+      if (cBtn) cBtn.style.display = searchQuery ? 'block' : 'none';
+      renderHistory();
+    });
+
+    if (cBtn) {
+      cBtn.addEventListener('click', clearChapterSearch);
+    }
   }
 
   function render() {
@@ -321,8 +419,9 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
     render();
   });
 
+  setupChapterSearch();
   render();
 </script>
-<script defer src="../../studyhub.js?v=4"></script>
+<script defer src="../../studyhub.js?v=6"></script>
 </body>
 </html>

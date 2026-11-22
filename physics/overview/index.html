@@ -122,9 +122,37 @@
     font-family:var(--mono); font-size:12.5px; color:var(--muted); text-align:center; padding:0 20px; line-height:1.6;
   }
 
+  /* Chapter Search Bar */
+  .search-wrap{margin-bottom:12px;}
+  .search-box{
+    position:relative; display:flex; align-items:center; background:var(--panel);
+    border:1px solid var(--line); border-radius:12px; padding:2px 14px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .search-box:focus-within{
+    border-color:var(--blue); box-shadow:0 0 0 1px var(--blue) inset, 0 4px 18px rgba(52,211,153,.15);
+  }
+  .search-icon{width:15px; height:15px; color:var(--muted); flex-shrink:0; margin-right:10px;}
+  .search-input{
+    width:100%; background:transparent; border:none; outline:none;
+    font-family:var(--mono); font-size:12.5px; color:var(--text); padding:10px 0;
+  }
+  .search-input::placeholder{color:var(--muted); font-size:11.5px;}
+  .search-clear{
+    background:transparent; border:none; color:var(--muted); font-size:18px;
+    line-height:1; cursor:pointer; padding:4px 6px; border-radius:6px; transition:color .15s;
+  }
+  .search-clear:hover{color:var(--text);}
+  .log-chapter{font-size:13px; font-weight:700; color:var(--text); margin-bottom:2px; letter-spacing:-.01em;}
+  .log-meta{display:flex; align-items:center; gap:6px; color:var(--muted); font-size:11px;}
+  .chapter-pill{
+    display:inline-block; padding:1px 6px; background:rgba(52,211,153,.1);
+    border:1px solid rgba(52,211,153,.25); border-radius:4px; color:var(--blue); font-size:10px;
+  }
+
   .log{background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
   .log-row{
-    display:grid; grid-template-columns:64px 1fr auto; gap:10px; align-items:center;
+    display:grid; grid-template-columns:56px 1fr auto; gap:10px; align-items:center;
     padding:13px 14px; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12.5px;
   }
   .log-row:last-child{border-bottom:none;}
@@ -181,7 +209,17 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
   <div class="section-label"><span>Trend</span><span id="sampleCount">3 samples</span></div>
   <div class="scope"><div id="chartArea"></div></div>
 
-  <div class="section-label"><span>Test log</span><span>desc</span></div>
+  <div class="section-label"><span>Test log</span><span id="logCount">5 tests</span></div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter (e.g. Laws of Motion, Kinematics)..." autocomplete="off" spellcheck="false">
+      <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
+    </div>
+  </div>
   <div class="log" id="logArea"></div>
 
   <p class="foot">LIVE · COGNITION TEST TRACKER · PHYSICS</p>
@@ -189,11 +227,11 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
 
 <script>
   const DATA = [
-    {date:"2026-06-24", label:"24 JUN", score:30, accuracy:null, rank:5, classSize:33},
-    {date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38},
-    {date:"2026-08-17", label:"17 AUG", score:45, accuracy:null, rank:null, classSize:null},
-    {date:"2026-09-26", label:"26 SEP", score:72, accuracy:100.0, rank:null, classSize:null},
-    {date:"2026-10-10", label:"10 OCT", score:55, accuracy:64.0, rank:null, classSize:null}
+    {date:"2026-06-24", label:"24 JUN", score:30, accuracy:null, rank:5, classSize:33, chapter:"Units & Dimensions", topics:"Units, Dimensions & Errors"},
+    {date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38, chapter:"Kinematics: 1D Motion", topics:"Motion in a Straight Line"},
+    {date:"2026-08-17", label:"17 AUG", score:45, accuracy:null, rank:null, classSize:null, chapter:"Kinematics: 2D & Projectiles", topics:"Vectors, Projectile Motion & Relative Velocity"},
+    {date:"2026-09-26", label:"26 SEP", score:72, accuracy:100.0, rank:null, classSize:null, chapter:"Work, Power & Energy", topics:"Work-Energy Theorem & Circular Motion"},
+    {date:"2026-10-10", label:"10 OCT", score:55, accuracy:64.0, rank:null, classSize:null, chapter:"Laws of Motion & Friction", topics:"Newton's Laws, Friction & Momentum"}
   ];
   const colorFor = i => [ 'var(--blue)', 'var(--cyan)', 'var(--amber)' ][i % 3];
   let mode = 'score';
@@ -275,28 +313,91 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
       '</svg>';
   }
 
+  let searchQuery = '';
+
   function renderLog(){
     const el = document.getElementById('logArea');
-    const pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
+    const q = searchQuery.trim().toLowerCase();
+    let pts = mode === 'score' ? DATA : DATA.filter(d => d.accuracy !== null);
+
+    if (q) {
+      pts = pts.filter(d =>
+        (d.chapter && d.chapter.toLowerCase().includes(q)) ||
+        (d.topics && d.topics.toLowerCase().includes(q)) ||
+        (d.date && d.date.toLowerCase().includes(q)) ||
+        (d.label && d.label.toLowerCase().includes(q))
+      );
+    }
+
+    const countEl = document.getElementById('logCount');
+    if (countEl) {
+      countEl.textContent = q ? `${pts.length} of ${DATA.length} tests` : `${pts.length} tests`;
+    }
+
     if(pts.length === 0){
-      el.innerHTML = '<div class="log-row" style="grid-template-columns:1fr;"><span class="log-dash">No accuracy-tracked tests logged yet.</span></div>';
+      if(q){
+        el.innerHTML = '<div class="log-row" style="grid-template-columns:1fr; text-align:center; padding:26px 14px;">' +
+          '<span class="log-dash" style="color:var(--muted); display:block; margin-bottom:10px;">No tests found matching "<b>'+q+'</b>"</span>' +
+          '<button type="button" onclick="clearChapterSearch()" style="background:var(--panel-2); border:1px solid var(--line); color:var(--blue); font-family:var(--mono); font-size:11.5px; padding:6px 14px; border-radius:8px; cursor:pointer;">Clear search</button>' +
+          '</div>';
+      } else {
+        el.innerHTML = '<div class="log-row" style="grid-template-columns:1fr;"><span class="log-dash">No accuracy-tracked tests logged yet.</span></div>';
+      }
       return;
     }
+
     const rev = pts.slice().reverse();
-    el.innerHTML = rev.map((d,i) => {
-      const idx = pts.length - i;
+    el.innerHTML = rev.map(d => {
+      const originalIdx = DATA.indexOf(d) + 1;
       const val = mode==='score' ? d.score : d.accuracy;
-      const col = colorFor(pts.length-idx);
+      const col = colorFor(DATA.indexOf(d));
       const rankStr = d.rank ? (' &middot; Rank #'+d.rank+'/'+d.classSize) : '';
       const dparts = d.date.split('-');
       const dispDate = dparts[2]+'/'+dparts[1]+'/'+dparts[0];
       return '<div class="log-row">' +
-        '<div class="log-id">#'+String(idx).padStart(2,'0')+'</div>' +
-        '<div><div class="log-date">'+dispDate+rankStr+'</div>' +
-        '<div class="log-bar-wrap"><div class="log-bar" style="width:'+val+'%; background:'+col+';"></div></div></div>' +
-        '<div class="log-score" style="color:'+col+';">'+val+(mode==='accuracy'?'%':'')+'</div>' +
+        '<div class="log-id">#'+String(originalIdx).padStart(2,'0')+'</div>' +
+        '<div>' +
+          '<div class="log-chapter">'+(d.chapter || 'Class test')+'</div>' +
+          '<div class="log-meta"><span>'+dispDate+'</span>'+rankStr+'</div>' +
+          '<div class="log-bar-wrap"><div class="log-bar" style="width:'+val+'%; background:'+col+';"></div></div>' +
+        '</div>' +
+        '<div class="log-score" style="color:'+col+';">'+val+(mode==='accuracy'?'%':'')+'<small style="display:block;font-size:9.5px;color:var(--muted);font-weight:normal;">/100</small></div>' +
         '</div>';
     }).join('');
+  }
+
+  function clearChapterSearch() {
+    const sInput = document.getElementById('chapterSearch');
+    const cBtn = document.getElementById('clearSearch');
+    if (sInput) sInput.value = '';
+    if (cBtn) cBtn.style.display = 'none';
+    searchQuery = '';
+    renderLog();
+  }
+
+  function setupChapterSearch() {
+    const sInput = document.getElementById('chapterSearch');
+    const cBtn = document.getElementById('clearSearch');
+    if (!sInput) return;
+
+    // Check URL parameters (e.g. ?q=motion)
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQ = urlParams.get('q') || urlParams.get('chapter') || '';
+    if (initialQ) {
+      sInput.value = initialQ;
+      searchQuery = initialQ;
+      if (cBtn) cBtn.style.display = 'block';
+    }
+
+    sInput.addEventListener('input', function(e) {
+      searchQuery = e.target.value;
+      if (cBtn) cBtn.style.display = searchQuery ? 'block' : 'none';
+      renderLog();
+    });
+
+    if (cBtn) {
+      cBtn.addEventListener('click', clearChapterSearch);
+    }
   }
 
   function render(){ renderReadout(); renderKPIs(); renderChart(); renderLog(); }
@@ -308,8 +409,9 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
     mode='accuracy'; this.classList.add('active'); document.getElementById('btnScore').classList.remove('active'); render();
   });
 
+  setupChapterSearch();
   render();
 </script>
-<script defer src="../../studyhub.js?v=4"></script>
+<script defer src="../../studyhub.js?v=6"></script>
 </body>
 </html>

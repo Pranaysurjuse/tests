@@ -48,6 +48,33 @@
 
   .empty-msg { font-size: 13px; color: #6b6b6b; padding: 20px 10px; text-align: center; }
 
+  /* Chapter Search Bar */
+  .search-wrap{margin:16px 0 12px;}
+  .search-box{
+    position:relative; display:flex; align-items:center; background:rgba(255,255,255,.045);
+    border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:2px 14px; backdrop-filter:blur(8px);
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .search-box:focus-within{
+    border-color:#a78bfa; box-shadow:0 0 0 1px #a78bfa inset, 0 4px 18px rgba(167,139,250,.15);
+  }
+  .search-icon{width:15px; height:15px; color:#8fa79d; flex-shrink:0; margin-right:10px;}
+  .search-input{
+    width:100%; background:transparent; border:none; outline:none;
+    font-family:'Courier New',monospace; font-size:12.5px; color:#f4f1ea; padding:10px 0;
+  }
+  .search-input::placeholder{color:#8fa79d; font-size:11.5px;}
+  .search-clear{
+    background:transparent; border:none; color:#8fa79d; font-size:18px;
+    line-height:1; cursor:pointer; padding:4px 6px; border-radius:6px; transition:color .15s;
+  }
+  .search-clear:hover{color:#fff;}
+  .chapter-pill{
+    display:inline-block; font-size:11.5px; font-weight:600; color:#a78bfa;
+    background:rgba(167,139,250,.1); border:1px solid rgba(167,139,250,.25);
+    border-radius:6px; padding:2px 8px; line-height:1.4;
+  }
+
   .alert-box { background: #2b1a0f; border: 1px solid #ffb84d55; border-radius: 12px; padding: 14px 16px; margin-bottom: 20px; font-size: 13px; color: #d8d8d8; line-height: 1.6; opacity:0; animation: fadeInUp 0.5s ease 0.02s forwards; }
   .alert-box b { color: #ffb84d; }
   .alert-box ul { margin: 6px 0 0; padding-left: 18px; }
@@ -95,11 +122,24 @@
     <div id="trendChart"></div>
   </div>
 
-  <div class="section-label">Full test history</div>
+  <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
+    <span>Full test history</span>
+    <span id="histCount" style="font-size:11px; color:#8fa79d; text-transform:none;">4 tests</span>
+  </div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter or topic (e.g. Kinematics, Mole Concept)..." autocomplete="off" spellcheck="false">
+      <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
+    </div>
+  </div>
   <div class="chart-card">
     <div class="table-scroll">
     <table class="hist">
-      <thead><tr><th>Date</th><th>Total</th><th>Accuracy</th><th>Physics</th><th>Chemistry</th><th>Maths</th></tr></thead>
+      <thead><tr><th>Date</th><th>Chapters Tested</th><th>Total</th><th>Accuracy</th><th>Physics</th><th>Chemistry</th><th>Maths</th></tr></thead>
       <tbody id="histBody"></tbody>
     </table>
     </div>
@@ -111,24 +151,28 @@
 <script>
   const DATA = [
     {date: "2026-08-08", label: "08 Aug", score: 143, maxScore: 300, accuracy: 62.5, correct: 40, wrong: 24, skipped: 11,
+     chapter: "Part Test 1: Kinematics, Mole Concept, Quadratic Equations",
      subjects: {
        physics: {score: 57, maxScore: 100, correct: 16, wrong: 9, skipped: 0},
        chemistry: {score: 61, maxScore: 100, correct: 17, wrong: 8, skipped: 0},
        maths: {score: 25, maxScore: 100, correct: 7, wrong: 7, skipped: 11}
      }},
     {date: "2026-08-23", label: "23 Aug", score: 95, maxScore: 300, accuracy: 56.0, correct: 28, wrong: 22, skipped: 25,
+     chapter: "Part Test 2: Kinematics (2D), Atomic Structure, Trigonometry",
      subjects: {
        physics: {score: 33, maxScore: 100, correct: 10, wrong: 10, skipped: 5},
        chemistry: {score: 54, maxScore: 100, correct: 15, wrong: 8, skipped: 2},
        maths: {score: 8, maxScore: 100, correct: 3, wrong: 4, skipped: 18}
      }},
     {date: "2026-09-12", label: "12 Sep", score: 146, maxScore: 300, accuracy: 85.7, correct: 12, wrong: 2, skipped: 11, partialData: true,
+     chapter: "Part Test 3: NLM & Friction, Chemical Bonding, Sequences & Series",
      subjects: {
        physics: {score: 29, maxScore: 100, estimated: true},
        chemistry: {score: 71, maxScore: 100, estimated: true},
        maths: {score: 46, maxScore: 100, correct: 12, wrong: 2, skipped: 11}
      }},
     {date: "2026-10-17", label: "17 Oct", score: 108, maxScore: 300, accuracy: null, partialData: true, noBreakdown: true,
+     chapter: "Part Test 4: Work-Energy, States of Matter, Straight Lines & Circles",
      subjects: {
        physics: {score: 64, maxScore: 100, estimated: true},
        chemistry: {score: 22, maxScore: 100, estimated: true},
@@ -259,14 +303,36 @@
     `;
   }
 
-  const tbody = document.getElementById('histBody');
-  if (DATA.length < 2) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#6b6b6b;padding:20px;">First tracked Combine test &mdash; trend graph will build up as more are logged.</td></tr>`;
-  } else {
-    tbody.innerHTML = DATA.slice().reverse().map(d => `
+  let searchQuery = '';
+
+  function renderHistory() {
+    const tbody = document.getElementById('histBody');
+    const q = searchQuery.trim().toLowerCase();
+    let rows = DATA.slice().reverse();
+
+    if (q) {
+      rows = rows.filter(d =>
+        (d.chapter && d.chapter.toLowerCase().includes(q)) ||
+        (d.label && d.label.toLowerCase().includes(q)) ||
+        (d.date && d.date.toLowerCase().includes(q))
+      );
+    }
+
+    const countEl = document.getElementById('histCount');
+    if (countEl) {
+      countEl.textContent = q ? `${rows.length} of ${DATA.length} tests` : `${DATA.length} tests`;
+    }
+
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">No tests found matching "<b>${q}</b>"<br><button type="button" onclick="clearChapterSearch()" style="margin-top:10px; background:rgba(255,255,255,0.06); border:1px solid #a78bfa; color:#a78bfa; font-family:'Courier New',monospace; font-size:11px; padding:6px 14px; border-radius:8px; cursor:pointer;">Clear search</button></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rows.map(d => `
       <tr>
         <td>${d.label} '26</td>
-        <td>${d.score} / ${d.maxScore}</td>
+        <td><span class="chapter-pill">${d.chapter || 'Combine Test'}</span></td>
+        <td><strong>${d.score}</strong> / ${d.maxScore}</td>
         <td>${d.accuracy==null?'—':d.accuracy.toFixed(1)+'%'}${d.partialData ? ' *' : ''}</td>
         <td>${d.subjects.physics.score}/100</td>
         <td>${d.subjects.chemistry.score}/100</td>
@@ -274,7 +340,44 @@
       </tr>
     `).join('');
   }
+
+  function clearChapterSearch() {
+    const sInput = document.getElementById('chapterSearch');
+    const cBtn = document.getElementById('clearSearch');
+    if (sInput) sInput.value = '';
+    if (cBtn) cBtn.style.display = 'none';
+    searchQuery = '';
+    renderHistory();
+  }
+
+  function setupChapterSearch() {
+    const sInput = document.getElementById('chapterSearch');
+    const cBtn = document.getElementById('clearSearch');
+    if (!sInput) return;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQ = urlParams.get('q') || urlParams.get('chapter') || '';
+    if (initialQ) {
+      sInput.value = initialQ;
+      searchQuery = initialQ;
+      if (cBtn) cBtn.style.display = 'block';
+    }
+
+    sInput.addEventListener('input', function(e) {
+      searchQuery = e.target.value;
+      if (cBtn) cBtn.style.display = searchQuery ? 'block' : 'none';
+      renderHistory();
+    });
+
+    if (cBtn) {
+      cBtn.addEventListener('click', clearChapterSearch);
+    }
+  }
+
+  renderTrend();
+  setupChapterSearch();
+  renderHistory();
 </script>
-<script defer src="../../studyhub.js?v=4"></script>
+<script defer src="../../studyhub.js?v=6"></script>
 </body>
 </html>
