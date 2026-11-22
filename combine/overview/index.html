@@ -132,14 +132,14 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter or topic (e.g. Kinematics, Mole Concept)..." autocomplete="off" spellcheck="false">
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search tests by chapter, test #, date..." autocomplete="off" spellcheck="false">
       <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
     </div>
   </div>
   <div class="chart-card">
     <div class="table-scroll">
     <table class="hist">
-      <thead><tr><th>Date</th><th>Chapters Tested</th><th>Total</th><th>Accuracy</th><th>Physics</th><th>Chemistry</th><th>Maths</th></tr></thead>
+      <thead><tr><th>Date</th><th>Chapter / Syllabus</th><th>Total</th><th>Accuracy</th><th>Physics</th><th>Chemistry</th><th>Maths</th></tr></thead>
       <tbody id="histBody"></tbody>
     </table>
     </div>
@@ -150,35 +150,40 @@
 
 <script>
   const DATA = [
-    {date: "2026-08-08", label: "08 Aug", score: 143, maxScore: 300, accuracy: 62.5, correct: 40, wrong: 24, skipped: 11,
-     chapter: "Part Test 1: Kinematics, Mole Concept, Quadratic Equations",
+    {id: 1, date: "2026-08-08", label: "08 Aug", score: 143, maxScore: 300, accuracy: 62.5, correct: 40, wrong: 24, skipped: 11,
+     title: "Combine Test #01", chapter: "",
      subjects: {
        physics: {score: 57, maxScore: 100, correct: 16, wrong: 9, skipped: 0},
        chemistry: {score: 61, maxScore: 100, correct: 17, wrong: 8, skipped: 0},
        maths: {score: 25, maxScore: 100, correct: 7, wrong: 7, skipped: 11}
      }},
-    {date: "2026-08-23", label: "23 Aug", score: 95, maxScore: 300, accuracy: 56.0, correct: 28, wrong: 22, skipped: 25,
-     chapter: "Part Test 2: Kinematics (2D), Atomic Structure, Trigonometry",
+    {id: 2, date: "2026-08-23", label: "23 Aug", score: 95, maxScore: 300, accuracy: 56.0, correct: 28, wrong: 22, skipped: 25,
+     title: "Combine Test #02", chapter: "",
      subjects: {
        physics: {score: 33, maxScore: 100, correct: 10, wrong: 10, skipped: 5},
        chemistry: {score: 54, maxScore: 100, correct: 15, wrong: 8, skipped: 2},
        maths: {score: 8, maxScore: 100, correct: 3, wrong: 4, skipped: 18}
      }},
-    {date: "2026-09-12", label: "12 Sep", score: 146, maxScore: 300, accuracy: 85.7, correct: 12, wrong: 2, skipped: 11, partialData: true,
-     chapter: "Part Test 3: NLM & Friction, Chemical Bonding, Sequences & Series",
+    {id: 3, date: "2026-09-12", label: "12 Sep", score: 146, maxScore: 300, accuracy: 85.7, correct: 12, wrong: 2, skipped: 11, partialData: true,
+     title: "Combine Test #03", chapter: "",
      subjects: {
        physics: {score: 29, maxScore: 100, estimated: true},
        chemistry: {score: 71, maxScore: 100, estimated: true},
        maths: {score: 46, maxScore: 100, correct: 12, wrong: 2, skipped: 11}
      }},
-    {date: "2026-10-17", label: "17 Oct", score: 108, maxScore: 300, accuracy: null, partialData: true, noBreakdown: true,
-     chapter: "Part Test 4: Work-Energy, States of Matter, Straight Lines & Circles",
+    {id: 4, date: "2026-10-17", label: "17 Oct", score: 108, maxScore: 300, accuracy: null, partialData: true, noBreakdown: true,
+     title: "Combine Test #04", chapter: "",
      subjects: {
        physics: {score: 64, maxScore: 100, estimated: true},
        chemistry: {score: 22, maxScore: 100, estimated: true},
        maths: {score: 22, maxScore: 100, estimated: true}
      }}
   ];
+
+  DATA.forEach(d => {
+    const saved = localStorage.getItem('user_ch_comb_' + d.id);
+    if (saved) d.chapter = saved;
+  });
 
   const latest = DATA[DATA.length - 1];
   const previous = DATA.length > 1 ? DATA[DATA.length - 2] : null;
@@ -313,6 +318,7 @@
     if (q) {
       rows = rows.filter(d =>
         (d.chapter && d.chapter.toLowerCase().includes(q)) ||
+        (d.title && d.title.toLowerCase().includes(q)) ||
         (d.label && d.label.toLowerCase().includes(q)) ||
         (d.date && d.date.toLowerCase().includes(q))
       );
@@ -331,7 +337,7 @@
     tbody.innerHTML = rows.map(d => `
       <tr>
         <td>${d.label} '26</td>
-        <td><span class="chapter-pill">${d.chapter || 'Combine Test'}</span></td>
+        <td>${d.chapter ? `<span class="chapter-pill">${d.chapter}</span>` : '<span class="dash">&mdash;</span>'}</td>
         <td><strong>${d.score}</strong> / ${d.maxScore}</td>
         <td>${d.accuracy==null?'—':d.accuracy.toFixed(1)+'%'}${d.partialData ? ' *' : ''}</td>
         <td>${d.subjects.physics.score}/100</td>

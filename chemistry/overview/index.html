@@ -188,7 +188,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter (e.g. Mole Concept, Thermodynamics)..." autocomplete="off" spellcheck="false">
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search tests by chapter, type, or date..." autocomplete="off" spellcheck="false">
       <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
     </div>
   </div>
@@ -207,16 +207,21 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
 <script>
   const ACCENT = '#3b9dff';
   const DATA = [
-    {date: "2026-06-20", label: "20 Jun", score: 58, maxScore: 100, accuracy: null, type: "Class test", rank: 2, classSize: 38, chapter: "Mole Concept & Stoichiometry"},
-    {date: "2026-07-01", label: "01 Jul", score: 53, maxScore: 100, accuracy: null, type: "Class test", rank: 1, classSize: 35, chapter: "Atomic Structure"},
-    {date: "2026-07-22", label: "22 Jul", score: 78, maxScore: 100, accuracy: 80.0, type: "Practice test", rank: null, classSize: null, chapter: "Periodic Table & Periodicity"},
-    {date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null, chapter: "Chemical Bonding & Molecular Structure"},
-    {date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null, chapter: "States of Matter (Gases & Liquids)"},
-    {date: "2026-09-19", label: "19 Sep", score: 57, maxScore: 100, accuracy: 56.0, type: "Class test", rank: null, classSize: null, chapter: "Thermodynamics & Thermochemistry"},
-    {date: "2026-09-30", label: "30 Sep", score: 72, maxScore: 100, accuracy: 76.0, type: "Class test", rank: null, classSize: null, chapter: "Chemical Equilibrium"},
-    {date: "2026-10-14", label: "14 Oct", score: 64, maxScore: 100, accuracy: null, type: "Class test", rank: null, classSize: null, chapter: "Ionic Equilibrium & Redox Reactions"}
+    {id: 1, date: "2026-06-20", label: "20 Jun", score: 58, maxScore: 100, accuracy: null, type: "Class test", rank: 2, classSize: 38, chapter: ""},
+    {id: 2, date: "2026-07-01", label: "01 Jul", score: 53, maxScore: 100, accuracy: null, type: "Class test", rank: 1, classSize: 35, chapter: ""},
+    {id: 3, date: "2026-07-22", label: "22 Jul", score: 78, maxScore: 100, accuracy: 80.0, type: "Practice test", rank: null, classSize: null, chapter: ""},
+    {id: 4, date: "2026-08-05", label: "05 Aug", score: 85, maxScore: 112, accuracy: 78.6, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 5, date: "2026-08-27", label: "27 Aug", score: 80, maxScore: 100, accuracy: 84.0, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 6, date: "2026-09-19", label: "19 Sep", score: 57, maxScore: 100, accuracy: 56.0, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 7, date: "2026-09-30", label: "30 Sep", score: 72, maxScore: 100, accuracy: 76.0, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 8, date: "2026-10-14", label: "14 Oct", score: 64, maxScore: 100, accuracy: null, type: "Class test", rank: null, classSize: null, chapter: ""}
   ];
-  DATA.forEach(d => d.percent = (d.score / d.maxScore) * 100);
+
+  DATA.forEach(d => {
+    const saved = localStorage.getItem('user_ch_chem_' + d.id);
+    if (saved) d.chapter = saved;
+    d.percent = (d.score / d.maxScore) * 100;
+  });
 
   let mode = 'score';
 
@@ -357,7 +362,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opac
     tbody.innerHTML = rows.map(d => `
       <tr>
         <td>${d.label} '26</td>
-        <td><span class="chapter-pill">${d.chapter || 'Class test'}</span></td>
+        <td>${d.chapter ? `<span class="chapter-pill">${d.chapter}</span>` : '<span class="dash">&mdash;</span>'}</td>
         <td>${d.type}</td>
         <td><strong>${d.score}</strong> / ${d.maxScore}</td>
         <td>${d.percent.toFixed(1)}%</td>

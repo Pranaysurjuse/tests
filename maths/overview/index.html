@@ -180,7 +180,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter (e.g. Quadratic, Trigonometry, Sequences)..." autocomplete="off" spellcheck="false">
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search tests by chapter, type, or date..." autocomplete="off" spellcheck="false">
       <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
     </div>
   </div>
@@ -199,14 +199,19 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
 <script>
   const ACCENT = '#ef8b7c';
   const DATA = [
-    {date: "2026-06-27", label: "27 Jun", score: 58, accuracy: null, type: "Class test", rank: 1, classSize: 28, chapter: "Sets, Relations & Functions"},
-    {date: "2026-07-08", label: "08 Jul", score: 70, accuracy: null, type: "Class test", rank: 3, classSize: 36, chapter: "Quadratic Equations & Complex Numbers"},
-    {date: "2026-07-18", label: "18 Jul", score: 37, accuracy: 55.0, type: "Practice test", rank: null, classSize: null, chapter: "Trigonometric Functions & Identities"},
-    {date: "2026-08-01", label: "01 Aug", score: 18, accuracy: 40.0, type: "Class test", rank: null, classSize: null, chapter: "Sequences & Series (AP, GP)"},
-    {date: "2026-09-05", label: "05 Sep", score: 48, accuracy: 70.6, type: "Class test", rank: null, classSize: null, chapter: "Straight Lines & Linear Equations"},
-    {date: "2026-09-23", label: "23 Sep", score: 37, accuracy: 76.9, type: "Class test", rank: null, classSize: null, chapter: "Circles & System of Circles"},
-    {date: "2026-10-07", label: "07 Oct", score: 25, accuracy: null, type: "Class test", rank: null, classSize: null, chapter: "Permutations & Combinations (P&C)"}
+    {id: 1, date: "2026-06-27", label: "27 Jun", score: 58, accuracy: null, type: "Class test", rank: 1, classSize: 28, chapter: ""},
+    {id: 2, date: "2026-07-08", label: "08 Jul", score: 70, accuracy: null, type: "Class test", rank: 3, classSize: 36, chapter: ""},
+    {id: 3, date: "2026-07-18", label: "18 Jul", score: 37, accuracy: 55.0, type: "Practice test", rank: null, classSize: null, chapter: ""},
+    {id: 4, date: "2026-08-01", label: "01 Aug", score: 18, accuracy: 40.0, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 5, date: "2026-09-05", label: "05 Sep", score: 48, accuracy: 70.6, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 6, date: "2026-09-23", label: "23 Sep", score: 37, accuracy: 76.9, type: "Class test", rank: null, classSize: null, chapter: ""},
+    {id: 7, date: "2026-10-07", label: "07 Oct", score: 25, accuracy: null, type: "Class test", rank: null, classSize: null, chapter: ""}
   ];
+
+  DATA.forEach(d => {
+    const saved = localStorage.getItem('user_ch_math_' + d.id);
+    if (saved) d.chapter = saved;
+  });
 
   let mode = 'score';
 
@@ -348,7 +353,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;back
     tbody.innerHTML = rows.map(d => `
       <tr>
         <td>${d.label} '26</td>
-        <td><span class="chapter-pill">${d.chapter || 'Class test'}</span></td>
+        <td>${d.chapter ? `<span class="chapter-pill">${d.chapter}</span>` : '<span class="dash">&mdash;</span>'}</td>
         <td>${d.type}</td>
         <td><strong>${d.score}</strong> / 100</td>
         <td>${d.accuracy !== null ? d.accuracy.toFixed(1) + '%' : '<span class="dash">&mdash;</span>'}</td>
