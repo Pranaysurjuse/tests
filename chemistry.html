@@ -56,7 +56,7 @@ h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
 <div class="search-section fade" style="animation-delay:.11s">
   <div class="search-box">
     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="text" id="chapterSearch" placeholder="Search test marks by chapter (e.g. Mole Concept, Thermodynamics)..." autocomplete="off" spellcheck="false">
+    <input type="text" id="chapterSearch" placeholder="Search tests by chapter, test #, date..." autocomplete="off" spellcheck="false">
     <button type="button" id="clearSearch" class="search-clear" style="display:none;">&times;</button>
   </div>
   <div id="searchResults" class="results-box" style="display:none;"></div>
@@ -71,15 +71,21 @@ h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
 </div>
 <script>
   const CHEM_TESTS = [
-    {date: "2026-10-14", label: "14 Oct 2026", score: 64, max: 100, acc: null, rank: null, chapter: "Ionic Equilibrium & Redox Reactions"},
-    {date: "2026-09-30", label: "30 Sep 2026", score: 72, max: 100, acc: "76% Acc", rank: null, chapter: "Chemical Equilibrium"},
-    {date: "2026-09-19", label: "19 Sep 2026", score: 57, max: 100, acc: "56% Acc", rank: null, chapter: "Thermodynamics & Thermochemistry"},
-    {date: "2026-08-27", label: "27 Aug 2026", score: 80, max: 100, acc: "84% Acc", rank: null, chapter: "States of Matter (Gases & Liquids)"},
-    {date: "2026-08-05", label: "05 Aug 2026", score: 85, max: 112, acc: "78.6% Acc", rank: null, chapter: "Chemical Bonding & Molecular Structure"},
-    {date: "2026-07-22", label: "22 Jul 2026", score: 78, max: 100, acc: "80% Acc", rank: null, chapter: "Periodic Table & Periodicity"},
-    {date: "2026-07-01", label: "01 Jul 2026", score: 53, max: 100, acc: null, rank: "Rank #1/35", chapter: "Atomic Structure"},
-    {date: "2026-06-20", label: "20 Jun 2026", score: 58, max: 100, acc: null, rank: "Rank #2/38", chapter: "Mole Concept & Stoichiometry"}
+    {id: 8, date: "2026-10-14", label: "14 Oct 2026", score: 64, max: 100, acc: null, rank: null, title: "Test #08", chapter: ""},
+    {id: 7, date: "2026-09-30", label: "30 Sep 2026", score: 72, max: 100, acc: "76% Acc", rank: null, title: "Test #07", chapter: ""},
+    {id: 6, date: "2026-09-19", label: "19 Sep 2026", score: 57, max: 100, acc: "56% Acc", rank: null, title: "Test #06", chapter: ""},
+    {id: 5, date: "2026-08-27", label: "27 Aug 2026", score: 80, max: 100, acc: "84% Acc", rank: null, title: "Test #05", chapter: ""},
+    {id: 4, date: "2026-08-05", label: "05 Aug 2026", score: 85, max: 112, acc: "78.6% Acc", rank: null, title: "Test #04", chapter: ""},
+    {id: 3, date: "2026-07-22", label: "22 Jul 2026", score: 78, max: 100, acc: "80% Acc", rank: null, title: "Test #03", chapter: ""},
+    {id: 2, date: "2026-07-01", label: "01 Jul 2026", score: 53, max: 100, acc: null, rank: "Rank #1/35", title: "Test #02", chapter: ""},
+    {id: 1, date: "2026-06-20", label: "20 Jun 2026", score: 58, max: 100, acc: null, rank: "Rank #2/38", title: "Test #01", chapter: ""}
   ];
+
+  // Retrieve user-assigned chapters if any
+  CHEM_TESTS.forEach(t => {
+    const saved = localStorage.getItem('user_ch_chem_' + t.id);
+    if (saved) t.chapter = saved;
+  });
 
   const searchInput = document.getElementById('chapterSearch');
   const clearBtn = document.getElementById('clearSearch');
@@ -96,7 +102,8 @@ h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
     resultsBox.style.display = 'flex';
 
     const matches = CHEM_TESTS.filter(t =>
-      t.chapter.toLowerCase().includes(q) ||
+      (t.chapter && t.chapter.toLowerCase().includes(q)) ||
+      t.title.toLowerCase().includes(q) ||
       t.date.toLowerCase().includes(q) ||
       t.label.toLowerCase().includes(q)
     );
@@ -106,18 +113,22 @@ h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
       return;
     }
 
-    resultsBox.innerHTML = matches.map(t => `
-      <a class="res-card" href="chemistry/overview/index.html?q=${encodeURIComponent(t.chapter)}">
-        <div class="res-info">
-          <span class="res-ch">${t.chapter}</span>
-          <span class="res-dt">${t.label}${t.rank ? ' &bull; ' + t.rank : ''}</span>
-        </div>
-        <div class="res-score">
-          ${t.score} / ${t.max}
-          ${t.acc ? '<div class="res-acc">' + t.acc + '</div>' : ''}
-        </div>
-      </a>
-    `).join('');
+    resultsBox.innerHTML = matches.map(t => {
+      const displayTitle = t.chapter ? t.chapter : t.title;
+      const subtitle = t.chapter ? (t.title + ' &bull; ' + t.label) : t.label;
+      return `
+        <a class="res-card" href="chemistry/overview/index.html?q=${encodeURIComponent(t.chapter || t.title)}">
+          <div class="res-info">
+            <span class="res-ch">${displayTitle}</span>
+            <span class="res-dt">${subtitle}${t.rank ? ' &bull; ' + t.rank : ''}</span>
+          </div>
+          <div class="res-score">
+            ${t.score} / ${t.max}
+            ${t.acc ? '<div class="res-acc">' + t.acc + '</div>' : ''}
+          </div>
+        </a>
+      `;
+    }).join('');
   }
 
   searchInput.addEventListener('input', e => renderQuickSearch(e.target.value));
@@ -126,5 +137,5 @@ h1{font-size:30px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
     renderQuickSearch('');
   });
 </script>
-<script defer src="studyhub.js?v=6"></script>
+<script defer src="studyhub.js?v=7"></script>
 </body></html>

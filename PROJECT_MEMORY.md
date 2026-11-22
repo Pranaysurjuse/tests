@@ -26,28 +26,24 @@
   - 💎 **Combine**: Layered Crystalline Prism stack (Amber glow)
   - 🚀 **Diwali Tracker**: Supersonic Starburst badge
 
-### B. `studyhub.js` & Unified macOS Sidebar Component
-- **Unified Sidebar (`.akiva-mac-sidebar`):**
-  - Integrated the exact dark-gradient **JEE Study Tracker Component** directly *inside* the sidebar:
-    - Dynamic macOS 3-dot window controls and Pranay Surjuse profile avatar.
-    - Dynamic Time & Desk header (Morning/Afternoon/Evening/Night Desk) and active streak badge (`🔥 14 Days`).
-    - Circular Gauge Target Card with SVG arc (`Today's Target`, `0 / 3 Done`, completion %, and countdown guidance). Clicking opens Today's Tasks in the drawer.
-    - 4-Item Quick Nav chips (`Today's Tasks`, `Future Tasks`, `Backlogs`, `Progress Bar`).
-    - Coaching Lecture Revision list with interactive subject badges (PHY, CHEM, MATH), lecture notes, and one-tap completion toggle that automatically syncs with the circular target arc.
-    - `+ Update` button opening the Lecture Revision Manager dialog.
-    - `+ Add New Topic / Task` button launching the topic planner drawer.
-  - Defaults to expanded (`350px`) on desktop for instant tracking, and collapses smoothly to a `62px` rail via the toggle edge chevron (`‹` / `›`).
-  - **Minimized Rail Widgets (`62px` Rail View):**
-    - **JEE Study Tracker Mini Gauge Widget**: Mini SVG progress arc around the `🔥` flame icon with hover flyout (`🔥 JEE Study Tracker • Target (X/Y Done)`). Clicking it opens the full Study Hub drawer.
-    - **Coaching Revision Widget**: `📚` icon with hover flyout opening the Revision Manager dialog.
-    - All widgets in the minimized rail have matching active borders, icons, and hover flyouts.
-  - **Collapsible In-Sidebar Widgets:** Coaching Lecture Revision list can be minimized/expanded with a one-tap `▾` / `▸` toggle.
+### B. `studyhub.js`
+- **Clean macOS Sidebar Launcher:**
+  - Standard macOS 3-dot window controls and Pranay Surjuse profile avatar (`PS`, `JEE ASPIRANT`).
+  - 4 Clean Vertical Nav Items:
+    - 📋 **Today's Tasks** (with badge & flyout)
+    - 🗓️ **Future Tasks** (with badge & flyout)
+    - ⏳ **Backlogs** (with badge & flyout)
+    - 📈 **Progress Bar** (with % badge & flyout)
+  - Bottom Card: "Let's study! Creating or adding new tasks couldn't be easier" with `+ Add New Task` pill button.
+  - Collapses smoothly into the 62px compact icon rail via the toggle edge chevron (`‹` / `›`).
+  - Completely removed the experimental tracker / coaching revision widget additions per user request.
 - **Exact 1:1 Akiva Mobile Drawer Replication:**
   1. **📋 Today's Progress:** Circular Speedo dial ring, task cards with `[L]`, `[P]`, `[R]` mode tags, level selector, and edit modal.
   2. **➕ Add Topics:** Chapter search across all 83 chapters with mode and level selectors.
   3. **⏳ Backlogs Recovery:** 7-day backlog tracking range with `⚡ Move to Today`.
   4. **🗓️ Future Tasks:** 7-day horizontal scrollable calendar strip.
   5. **📈 Progress Bar & 83 JEE Chapters Matrix:** Dual circular gauges (JEE Mains and Advanced) and interactive 83-chapter syllabus checklist.
+- **AI Mentor:** 100% permanently removed.
 - **AI Mentor:** 100% removed.
 
 ### C. Multi-Color Subject & Category Theme System

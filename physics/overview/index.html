@@ -216,7 +216,7 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      <input type="text" id="chapterSearch" class="search-input" placeholder="Search test marks by chapter (e.g. Laws of Motion, Kinematics)..." autocomplete="off" spellcheck="false">
+      <input type="text" id="chapterSearch" class="search-input" placeholder="Search tests by chapter, test #, date..." autocomplete="off" spellcheck="false">
       <button type="button" id="clearSearch" class="search-clear" title="Clear search" style="display:none;">&times;</button>
     </div>
   </div>
@@ -227,12 +227,17 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
 
 <script>
   const DATA = [
-    {date:"2026-06-24", label:"24 JUN", score:30, accuracy:null, rank:5, classSize:33, chapter:"Units & Dimensions", topics:"Units, Dimensions & Errors"},
-    {date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38, chapter:"Kinematics: 1D Motion", topics:"Motion in a Straight Line"},
-    {date:"2026-08-17", label:"17 AUG", score:45, accuracy:null, rank:null, classSize:null, chapter:"Kinematics: 2D & Projectiles", topics:"Vectors, Projectile Motion & Relative Velocity"},
-    {date:"2026-09-26", label:"26 SEP", score:72, accuracy:100.0, rank:null, classSize:null, chapter:"Work, Power & Energy", topics:"Work-Energy Theorem & Circular Motion"},
-    {date:"2026-10-10", label:"10 OCT", score:55, accuracy:64.0, rank:null, classSize:null, chapter:"Laws of Motion & Friction", topics:"Newton's Laws, Friction & Momentum"}
+    {id:1, date:"2026-06-24", label:"24 JUN", score:30, accuracy:null, rank:5, classSize:33, chapter:""},
+    {id:2, date:"2026-07-04", label:"04 JUL", score:60, accuracy:null, rank:1, classSize:38, chapter:""},
+    {id:3, date:"2026-08-17", label:"17 AUG", score:45, accuracy:null, rank:null, classSize:null, chapter:""},
+    {id:4, date:"2026-09-26", label:"26 SEP", score:72, accuracy:100.0, rank:null, classSize:null, chapter:""},
+    {id:5, date:"2026-10-10", label:"10 OCT", score:55, accuracy:64.0, rank:null, classSize:null, chapter:""}
   ];
+
+  DATA.forEach(d => {
+    const saved = localStorage.getItem('user_ch_phy_' + d.id);
+    if (saved) d.chapter = saved;
+  });
   const colorFor = i => [ 'var(--blue)', 'var(--cyan)', 'var(--amber)' ][i % 3];
   let mode = 'score';
 
@@ -354,11 +359,12 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
       const rankStr = d.rank ? (' &middot; Rank #'+d.rank+'/'+d.classSize) : '';
       const dparts = d.date.split('-');
       const dispDate = dparts[2]+'/'+dparts[1]+'/'+dparts[0];
+      const chHeader = d.chapter ? '<div class="log-chapter">'+d.chapter+'</div>' : '';
       return '<div class="log-row">' +
         '<div class="log-id">#'+String(originalIdx).padStart(2,'0')+'</div>' +
         '<div>' +
-          '<div class="log-chapter">'+(d.chapter || 'Class test')+'</div>' +
-          '<div class="log-meta"><span>'+dispDate+'</span>'+rankStr+'</div>' +
+          chHeader +
+          '<div class="log-date">'+dispDate+rankStr+'</div>' +
           '<div class="log-bar-wrap"><div class="log-bar" style="width:'+val+'%; background:'+col+';"></div></div>' +
         '</div>' +
         '<div class="log-score" style="color:'+col+';">'+val+(mode==='accuracy'?'%':'')+'<small style="display:block;font-size:9.5px;color:var(--muted);font-weight:normal;">/100</small></div>' +
@@ -412,6 +418,6 @@ h1{background:linear-gradient(90deg,#fff,#34d399);-webkit-background-clip:text;b
   setupChapterSearch();
   render();
 </script>
-<script defer src="../../studyhub.js?v=6"></script>
+<script defer src="../../studyhub.js?v=7"></script>
 </body>
 </html>

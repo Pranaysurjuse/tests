@@ -174,8 +174,8 @@
       left: 16px;
       top: 16px;
       bottom: 16px;
-      width: 350px;
-      background: rgba(14, 17, 28, 0.96);
+      width: 240px;
+      background: rgba(14, 17, 28, 0.94);
       backdrop-filter: blur(28px) saturate(1.5);
       -webkit-backdrop-filter: blur(28px) saturate(1.5);
       border: 1px solid var(--ak-border);
@@ -183,72 +183,17 @@
       z-index: 70;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      padding: 16px 12px;
       box-sizing: border-box;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.75);
-      transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s ease, padding 0.35s ease;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.35s ease;
       font-family: var(--ak-font);
       user-select: none;
-      overflow: hidden;
     }
     .akiva-mac-sidebar.collapsed {
       width: 62px;
       padding: 16px 8px;
-    }
-    .akiva-mac-sidebar:not(.collapsed) {
-      padding: 16px 14px;
-      overflow-y: auto;
-    }
-
-    /* Collapsed vs Expanded View Switching */
-    .akiva-mac-sidebar.collapsed .akiva-expanded-content { display: none !important; }
-    .akiva-mac-sidebar:not(.collapsed) .akiva-collapsed-rail { display: none !important; }
-
-    .akiva-collapsed-rail {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      width: 100%;
-      height: 100%;
-      justify-content: space-between;
-    }
-
-    .akiva-expanded-content {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-    }
-
-    /* Quick 4-Item Nav Chips */
-    .akiva-quick-nav {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-    }
-    .akiva-nav-chip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 10px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--ak-border);
-      color: #e2e8f0;
-      font-size: 11.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .akiva-nav-chip:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.2);
-      transform: translateY(-1px);
-    }
-    .akiva-nav-chip.active {
-      border-color: var(--ak-orange);
-      background: rgba(224, 122, 44, 0.15);
-      color: #fff;
     }
 
     /* Sidebar Edge Toggle Chevron */
@@ -1008,12 +953,12 @@
   document.head.appendChild(style);
 
   // Storage and State Management
-  const STORE_KEY = 'akiva_jee_tracker_v6';
+  const STORE_KEY = 'akiva_jee_tracker_v5';
   function loadState() {
     try {
       const d = JSON.parse(localStorage.getItem(STORE_KEY));
       if (d && Array.isArray(d.tasks)) {
-        if (typeof d.collapsedSidebar === 'undefined') d.collapsedSidebar = false;
+        if (typeof d.collapsedSidebar === 'undefined') d.collapsedSidebar = true;
         if (!Array.isArray(d.chatMessages)) d.chatMessages = [];
         return d;
       }
@@ -1021,7 +966,7 @@
 
     const today = todayStr();
     return {
-      collapsedSidebar: false,
+      collapsedSidebar: true,
       quizIndex: 0,
       tasks: [
         {
@@ -1087,162 +1032,66 @@
   const root = document.createElement('div');
   root.className = 'akiva-hub-root';
 
-  // 1. Desktop macOS Sidebar Launcher
+  // 1. Desktop macOS Sidebar Launcher (matching Image 3)
   root.innerHTML = `
     <aside class="akiva-mac-sidebar ${state.collapsedSidebar ? 'collapsed' : ''}" id="akivaSidebar">
       <button class="akiva-edge-toggle" id="akivaEdgeToggle" title="Toggle Sidebar">‹</button>
 
-      <!-- 1. Collapsed Rail View (62px) -->
-      <div class="akiva-collapsed-rail">
-        <div style="display:flex; flex-direction:column; align-items:center; gap:10px; width:100%;">
-          <div class="akiva-mac-dots" style="justify-content:center; padding:2px 0 8px;">
-            <div class="akiva-mac-dot akiva-dot-red"></div>
-            <div class="akiva-mac-dot akiva-dot-yellow"></div>
-            <div class="akiva-mac-dot akiva-dot-green"></div>
-          </div>
-
-          <div class="akiva-profile" style="justify-content:center; padding:0 0 10px; border-bottom:1px solid var(--ak-border);">
-            <div class="akiva-avatar" title="Pranay Surjuse">PS</div>
-          </div>
-
-          <nav class="akiva-nav-list" style="width:100%;">
-            <!-- 1. JEE Study Tracker Mini Gauge Widget -->
-            <div class="akiva-nav-item" data-view="today" title="JEE Study Tracker">
-              <div style="position:relative; width:28px; height:28px; display:grid; place-items:center;">
-                <svg style="width:100%; height:100%;" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="14" stroke="rgba(255,255,255,0.12)" stroke-width="3.5" fill="none"/>
-                  <circle id="mini-circle-arc" cx="18" cy="18" r="14" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" fill="none"
-                          stroke-dasharray="87.96" stroke-dashoffset="87.96" style="transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.4s;"/>
-                </svg>
-                <span style="position:absolute; font-size:11px;">🔥</span>
-              </div>
-              <div class="akiva-flyout">🔥 JEE Study Tracker &bull; Target (<span id="mini-ratio-text">0/3 Done</span>)</div>
-            </div>
-
-            <!-- 2. Today's Tasks -->
-            <div class="akiva-nav-item" data-view="today" title="Today's Tasks">
-              <span class="akiva-icon">📋</span>
-              <div class="akiva-flyout">Today's Tasks</div>
-            </div>
-
-            <!-- 3. Future Tasks -->
-            <div class="akiva-nav-item" data-view="future" title="Future Tasks">
-              <span class="akiva-icon">🗓️</span>
-              <div class="akiva-flyout">Future Tasks</div>
-            </div>
-
-            <!-- 4. Backlogs -->
-            <div class="akiva-nav-item" data-view="backlog" title="Backlogs">
-              <span class="akiva-icon">⏳</span>
-              <div class="akiva-flyout">Backlogs</div>
-            </div>
-
-            <!-- 5. Progress Bar / Matrix -->
-            <div class="akiva-nav-item" data-view="progress" title="Progress Bar">
-              <span class="akiva-icon">📈</span>
-              <div class="akiva-flyout">83 JEE Chapters Matrix</div>
-            </div>
-
-            <!-- 6. Coaching Revision Widget -->
-            <div class="akiva-nav-item" onclick="toggleSyllabusModal()" title="Coaching Lecture Revision">
-              <span class="akiva-icon">📚</span>
-              <div class="akiva-flyout">📚 Coaching Revision (+ Update)</div>
-            </div>
-          </nav>
+      <div>
+        <div class="akiva-mac-dots">
+          <div class="akiva-mac-dot akiva-dot-red"></div>
+          <div class="akiva-mac-dot akiva-dot-yellow"></div>
+          <div class="akiva-mac-dot akiva-dot-green"></div>
         </div>
 
-        <button class="akiva-collapsed-fab" id="akCollapsedFab" title="Add Task">+</button>
+        <div class="akiva-profile">
+          <div class="akiva-avatar">PS</div>
+          <div class="akiva-user-meta">
+            <div class="akiva-user-sub">JEE ASPIRANT</div>
+            <div class="akiva-user-name">Pranay Surjuse</div>
+          </div>
+        </div>
+
+        <nav class="akiva-nav-list">
+          <div class="akiva-nav-item" data-view="today">
+            <span class="akiva-icon">📋</span>
+            <span class="akiva-item-label">Today's Tasks</span>
+            <span class="akiva-badge" id="akBadgeToday">0</span>
+            <div class="akiva-flyout">Today's Progress</div>
+          </div>
+
+          <div class="akiva-nav-item" data-view="future">
+            <span class="akiva-icon">🗓️</span>
+            <span class="akiva-item-label">Future Tasks</span>
+            <span class="akiva-badge" id="akBadgeFuture">0</span>
+            <div class="akiva-flyout">7-Day Planner</div>
+          </div>
+
+          <div class="akiva-nav-item" data-view="backlog">
+            <span class="akiva-icon">⏳</span>
+            <span class="akiva-item-label">Backlogs</span>
+            <span class="akiva-badge" id="akBadgeBacklog" style="background:rgba(239,68,68,0.2); color:#f87171;">0</span>
+            <div class="akiva-flyout">Backlog Recovery</div>
+          </div>
+
+          <div class="akiva-nav-item" data-view="progress">
+            <span class="akiva-icon">📈</span>
+            <span class="akiva-item-label">Progress Bar</span>
+            <span class="akiva-badge" id="akBadgeProgress">0%</span>
+            <div class="akiva-flyout">83 JEE Chapters</div>
+          </div>
+        </nav>
       </div>
 
-      <!-- 2. Expanded Full JEE Study Tracker Sidebar Component (350px) -->
-      <div class="akiva-expanded-content">
-        <!-- Top Window Header -->
-        <div style="display:flex; align-items:center; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div class="akiva-mac-dots" style="padding:0;">
-            <div class="akiva-mac-dot akiva-dot-red"></div>
-            <div class="akiva-mac-dot akiva-dot-yellow"></div>
-            <div class="akiva-mac-dot akiva-dot-green"></div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <span style="font-size:10px; font-family:monospace; color:var(--ak-muted); font-weight:700;">PRANAY SURJUSE</span>
-            <div style="width:22px; height:22px; border-radius:50%; background:linear-gradient(135deg, #e07a2c, #ea580c); font-size:10px; font-weight:800; color:#fff; display:grid; place-items:center;">PS</div>
-          </div>
+      <div>
+        <div class="akiva-bottom-card">
+          <div class="akiva-card-h">Let's study!</div>
+          <div class="akiva-card-p">Creating or adding new tasks couldn't be easier</div>
+          <button class="akiva-pill-btn" id="akOpenAddBtn">
+            <span>+</span> Add New Task
+          </button>
         </div>
-
-        <!-- Header with Streak -->
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:2px 4px 0;">
-          <div>
-            <div style="font-size:10px; color:#a1a1aa; font-weight:600; letter-spacing:0.05em; text-transform:uppercase;" id="streakDeskTxt">Evening Desk &bull; 6:30 PM</div>
-            <div style="font-size:14px; font-weight:700; color:#fff; letter-spacing:-0.02em;">JEE Study Tracker</div>
-          </div>
-          <div style="display:flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#fcd34d; font-size:12px; font-weight:600;">
-            <span>🔥</span>
-            <span style="font-family:monospace; font-weight:700;" id="streak-num">14</span>
-            <span style="font-size:9px; text-transform:uppercase; font-weight:700;">Days</span>
-          </div>
-        </div>
-
-        <!-- Circular Gauge Target Card -->
-        <div style="display:flex; align-items:center; gap:14px; padding:12px; border-radius:16px; background:rgba(19,22,32,0.85); border:1px solid rgba(255,255,255,0.08); cursor:pointer; transition:border-color 0.2s;" onclick="window.akOpenScreen('today')" title="Click to open Today's Progress">
-          <div style="position:relative; width:56px; height:56px; flex-shrink:0; display:grid; place-items:center;">
-            <svg style="width:100%; height:100%;" viewBox="0 0 64 64">
-              <circle cx="32" cy="32" r="26" stroke="rgba(255, 255, 255, 0.08)" stroke-width="4.5" fill="none" />
-              <circle id="circle-arc" cx="32" cy="32" r="26" stroke="#f59e0b" stroke-width="4.5" stroke-linecap="round" fill="none"
-                      stroke-dasharray="163.36" stroke-dashoffset="163.36" style="transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.4s;" />
-            </svg>
-            <span id="circle-percent" style="position:absolute; font-family:monospace; font-size:12px; font-weight:700; color:#fff;">0%</span>
-          </div>
-          <div style="flex:1; min-width:0;">
-            <div style="display:flex; align-items:baseline; justify-content:space-between;">
-              <span style="font-size:12px; font-weight:600; color:#fff;">Today's Target</span>
-              <span id="ratio-text" style="font-size:11px; font-family:monospace; color:#fbbf24; font-weight:700;">0 / 3 Done</span>
-            </div>
-            <p id="sub-guidance" style="font-size:10px; color:#a1a1aa; margin:2px 0 0;">3 tasks left before 11:30 PM</p>
-            <div style="font-size:9.5px; font-family:monospace; color:#fbbf24; margin-top:4px;">● Active &bull; Target: 99%ile</div>
-          </div>
-        </div>
-
-        <!-- Quick 4 Navigation Pills -->
-        <div class="akiva-quick-nav">
-          <div class="akiva-nav-chip" data-view="today">
-            <span style="display:flex; align-items:center; gap:6px;"><span>📋</span> Today</span>
-            <span class="akiva-badge" id="akBadgeToday">0</span>
-          </div>
-          <div class="akiva-nav-chip" data-view="future">
-            <span style="display:flex; align-items:center; gap:6px;"><span>🗓️</span> Future</span>
-            <span class="akiva-badge" id="akBadgeFuture">0</span>
-          </div>
-          <div class="akiva-nav-chip" data-view="backlog">
-            <span style="display:flex; align-items:center; gap:6px;"><span>⏳</span> Backlog</span>
-            <span class="akiva-badge" id="akBadgeBacklog" style="background:rgba(239,68,68,0.2); color:#f87171;">0</span>
-          </div>
-          <div class="akiva-nav-chip" data-view="progress">
-            <span style="display:flex; align-items:center; gap:6px;"><span>📈</span> Matrix</span>
-            <span class="akiva-badge" id="akBadgeProgress">0%</span>
-          </div>
-        </div>
-
-        <!-- Coaching Revision List -->
-        <div style="padding-top:6px; border-top:1px solid rgba(255,255,255,0.06);">
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:0 2px 6px;">
-            <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" onclick="window.toggleCoachingCollapse()" title="Minimize / Expand Coaching Revision">
-              <span style="font-size:10px; text-transform:uppercase; font-weight:700; letter-spacing:0.06em; color:#a1a1aa;">Coaching Lecture Revision</span>
-              <span id="coachingCollapseIcon" style="font-size:11px; color:#a1a1aa; font-weight:bold;">▾</span>
-            </div>
-            <button onclick="toggleSyllabusModal()" style="font-size:10.5px; color:#fbbf24; font-weight:700; cursor:pointer; background:none; border:none; padding:0;">+ Update</button>
-          </div>
-          <div style="display:flex; flex-direction:column; gap:5px;" id="lecture-container">
-            <!-- Chapters render here -->
-          </div>
-          <div id="lecture-collapsed-summary" style="display:none; font-size:10.5px; color:var(--ak-muted); padding:5px 8px; background:rgba(255,255,255,0.03); border-radius:8px; cursor:pointer;" onclick="window.toggleCoachingCollapse()">
-            3 Lectures Tracked &bull; Click to expand
-          </div>
-        </div>
-
-        <!-- Add Topic Button -->
-        <button class="ak-act-btn ak-btn-orange" id="akOpenAddBtn" style="width:100%; padding:10px; font-size:12px; margin-top:4px;">
-          <span>+</span> Add New Topic / Task
-        </button>
+        <button class="akiva-collapsed-fab" id="akCollapsedFab" title="Add Task">+</button>
       </div>
     </aside>
 
@@ -1341,25 +1190,21 @@
   let selectedFutureDay = shiftDateStr(1);
 
   // Toggle Sidebar collapse
-  edgeToggle.textContent = state.collapsedSidebar ? '›' : '‹';
   edgeToggle.onclick = () => {
     state.collapsedSidebar = !state.collapsedSidebar;
     sidebar.classList.toggle('collapsed', state.collapsedSidebar);
-    edgeToggle.textContent = state.collapsedSidebar ? '›' : '‹';
     saveState(state);
   };
 
-  // Nav Item & Nav Chip click
-  document.querySelectorAll('.akiva-nav-item, .akiva-nav-chip').forEach(item => {
+  // Nav Item click
+  document.querySelectorAll('.akiva-nav-item').forEach(item => {
     item.onclick = () => {
       openView(item.dataset.view);
     };
   });
 
-  const openAddBtn = document.getElementById('akOpenAddBtn');
-  if (openAddBtn) openAddBtn.onclick = () => openView('add_today');
-  const collapsedFab = document.getElementById('akCollapsedFab');
-  if (collapsedFab) collapsedFab.onclick = () => openView('add_today');
+  document.getElementById('akOpenAddBtn').onclick = () => openView('add_today');
+  document.getElementById('akCollapsedFab').onclick = () => openView('add_today');
 
   closeBtn.onclick = closePanel;
   backdrop.onclick = closePanel;
@@ -1400,7 +1245,7 @@
     backBtn.style.display = (v === 'today') ? 'none' : 'grid';
 
     // Highlight active nav item
-    document.querySelectorAll('.akiva-nav-item, .akiva-nav-chip').forEach(i => {
+    document.querySelectorAll('.akiva-nav-item').forEach(i => {
       i.classList.toggle('active', i.dataset.view === v);
     });
 
@@ -1413,7 +1258,6 @@
     else if (v === 'progress') renderProgressScreen();
 
     updateBadges();
-    updateTargetCard();
   }
 
   // Calculate Progress Stats
@@ -1438,10 +1282,14 @@
 
   function updateBadges() {
     const s = getStats();
-    document.querySelectorAll('#akBadgeToday').forEach(el => el.textContent = s.planned - s.completed);
-    document.querySelectorAll('#akBadgeFuture').forEach(el => el.textContent = s.futureCount);
-    document.querySelectorAll('#akBadgeBacklog').forEach(el => el.textContent = s.backlogCount);
-    document.querySelectorAll('#akBadgeProgress').forEach(el => el.textContent = `${s.overallPct}%`);
+    const bToday = document.getElementById('akBadgeToday');
+    if (bToday) bToday.textContent = s.planned - s.completed;
+    const bFut = document.getElementById('akBadgeFuture');
+    if (bFut) bFut.textContent = s.futureCount;
+    const bBack = document.getElementById('akBadgeBacklog');
+    if (bBack) bBack.textContent = s.backlogCount;
+    const bProg = document.getElementById('akBadgeProgress');
+    if (bProg) bProg.textContent = `${s.overallPct}%`;
   }
 
   /* ==========================================================
@@ -2115,217 +1963,13 @@
     }
   });
 
-  /* ==========================================================
-     COACHING LECTURE REVISION LOGIC & DESK SYNC
-     ========================================================== */
-  const DEFAULT_LECTURES = [
-    { id: 'c_lec_1', subject: 'Physics', subTag: 'PHY', subColor: '#38bdf8', title: 'Current Electricity', note: 'Lec 4 &bull; Notes', done: false },
-    { id: 'c_lec_2', subject: 'Chemistry', subTag: 'CHEM', subColor: '#34d399', title: 'Chemical Kinetics', note: 'Lec 2 &bull; Done', done: true },
-    { id: 'c_lec_3', subject: 'Mathematics', subTag: 'MATH', subColor: '#c084fc', title: 'Matrices & Determinants', note: 'Lec 3 &bull; Revise', done: false }
-  ];
-
-  function getLectures() {
-    try {
-      const saved = localStorage.getItem('akiva_coaching_lectures');
-      return saved ? JSON.parse(saved) : DEFAULT_LECTURES;
-    } catch(e) {
-      return DEFAULT_LECTURES;
-    }
-  }
-
-  function saveLectures(list) {
-    try {
-      localStorage.setItem('akiva_coaching_lectures', JSON.stringify(list));
-    } catch(e) {}
-  }
-
-  function renderLectures() {
-    const container = document.getElementById('lecture-container');
-    if (!container) return;
-    const list = getLectures();
-    container.innerHTML = list.map(item => `
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:7px 9px; border-radius:10px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); cursor:pointer; transition:all 0.15s;" onclick="window.toggleLectureDone('${item.id}')" title="Click to toggle done">
-        <div style="display:flex; align-items:center; gap:8px; min-width:0; overflow:hidden;">
-          <span style="font-size:9.5px; font-family:monospace; font-weight:700; padding:1px 5px; border-radius:4px; background:${item.subColor}22; color:${item.subColor}; border:1px solid ${item.subColor}44; flex-shrink:0;">${item.subTag}</span>
-          <span style="font-size:12px; font-weight:600; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; ${item.done ? 'text-decoration:line-through; opacity:0.6;' : ''}">${item.title}</span>
-        </div>
-        <span style="font-size:10px; font-family:monospace; margin-left:8px; flex-shrink:0; font-weight:600; color:${item.done ? '#34d399' : '#fbbf24'};">${item.done ? '✓ Done' : item.note}</span>
-      </div>
-    `).join('');
-  }
-
-  window.toggleLectureDone = function(id) {
-    const list = getLectures();
-    const item = list.find(x => x.id === id);
-    if (item) {
-      item.done = !item.done;
-      saveLectures(list);
-      renderLectures();
-      updateTargetCard();
-    }
-  };
-
-  let coachingCollapsed = false;
-  window.toggleCoachingCollapse = function() {
-    coachingCollapsed = !coachingCollapsed;
-    const container = document.getElementById('lecture-container');
-    const summary = document.getElementById('lecture-collapsed-summary');
-    const icon = document.getElementById('coachingCollapseIcon');
-    if (container) container.style.display = coachingCollapsed ? 'none' : 'flex';
-    if (summary) {
-      summary.style.display = coachingCollapsed ? 'block' : 'none';
-      const list = getLectures();
-      const doneCount = list.filter(x => x.done).length;
-      summary.innerHTML = `${list.length} Lectures Tracked (${doneCount} Done) &bull; Click to expand`;
-    }
-    if (icon) icon.textContent = coachingCollapsed ? '▸' : '▾';
-  };
-
-  function updateTargetCard() {
-    const streakEl = document.getElementById('streak-num');
-    let streak = 14;
-    try {
-      const savedStreak = localStorage.getItem('akiva_streak');
-      if (savedStreak) streak = parseInt(savedStreak, 10);
-    } catch(e) {}
-    if (streakEl) streakEl.textContent = streak;
-
-    let totalPlanned = 3;
-    let totalDone = 0;
-    try {
-      const today = todayStr();
-      const todayTasks = (state.tasks || []).filter(t => t.date === today);
-      if (todayTasks.length > 0) {
-        totalPlanned = todayTasks.length;
-        totalDone = todayTasks.filter(t => t.done).length;
-      } else {
-        const lecs = getLectures();
-        totalPlanned = lecs.length;
-        totalDone = lecs.filter(l => l.done).length;
-      }
-    } catch(e) {
-      const lecs = getLectures();
-      totalPlanned = lecs.length;
-      totalDone = lecs.filter(l => l.done).length;
-    }
-
-    const pct = totalPlanned > 0 ? Math.round((totalDone / totalPlanned) * 100) : 0;
-    const arc = document.getElementById('circle-arc');
-    const miniArc = document.getElementById('mini-circle-arc');
-    const pctEl = document.getElementById('circle-percent');
-    const ratioEl = document.getElementById('ratio-text');
-    const miniRatioEl = document.getElementById('mini-ratio-text');
-    const subGuideEl = document.getElementById('sub-guidance');
-
-    if (pctEl) pctEl.textContent = pct + '%';
-    if (ratioEl) ratioEl.textContent = `${totalDone} / ${totalPlanned} Done`;
-    if (miniRatioEl) miniRatioEl.textContent = `${totalDone}/${totalPlanned} Done`;
-    if (arc) {
-      const totalCircumference = 163.36;
-      const offset = (totalCircumference * (1 - (pct / 100))).toFixed(2);
-      arc.style.strokeDashoffset = offset;
-    }
-    if (miniArc) {
-      const miniCircumference = 87.96;
-      const offset = (miniCircumference * (1 - (pct / 100))).toFixed(2);
-      miniArc.style.strokeDashoffset = offset;
-    }
-    if (subGuideEl) {
-      const remaining = totalPlanned - totalDone;
-      if (remaining <= 0) {
-        subGuideEl.textContent = "All targets completed! Great work 🚀";
-      } else {
-        subGuideEl.textContent = `${remaining} task${remaining > 1 ? 's' : ''} left before 11:30 PM`;
-      }
-    }
-  }
-
-  function updateDeskHeader() {
-    const el = document.getElementById('streakDeskTxt');
-    if (!el) return;
-    const now = new Date();
-    const hours = now.getHours();
-    let desk = "Evening Desk";
-    if (hours >= 5 && hours < 12) desk = "Morning Desk";
-    else if (hours >= 12 && hours < 17) desk = "Afternoon Desk";
-    else if (hours >= 17 && hours < 21) desk = "Evening Desk";
-    else desk = "Night Desk";
-    const timeStr = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    el.innerHTML = `${desk} &bull; ${timeStr}`;
-  }
-
-  window.toggleSyllabusModal = function() {
-    let modal = document.getElementById('syllabusModal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'syllabusModal';
-      modal.style.cssText = `
-        position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px); display: none; align-items: center; justify-content: center;
-        z-index: 99999; padding: 16px; font-family: var(--ak-font);
-      `;
-      modal.innerHTML = `
-        <div style="background:#0e111a; border:1px solid rgba(255,255,255,0.12); border-radius:24px; max-width:440px; width:100%; padding:22px; color:#e2e8f0; box-shadow:0 25px 60px rgba(0,0,0,0.85);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-            <div>
-              <div style="font-size:10px; color:#fbbf24; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;">Coaching Revision</div>
-              <h3 style="margin:2px 0 0; font-size:16px; font-weight:700; color:#fff;">Lecture Revision Manager</h3>
-            </div>
-            <button onclick="toggleSyllabusModal()" style="background:transparent; border:none; color:#94a3b8; font-size:22px; cursor:pointer; line-height:1;">&times;</button>
-          </div>
-          <p style="font-size:12px; color:#94a3b8; margin:0 0 16px;">Track your ongoing coaching lecture revisions and mark chapters completed:</p>
-          <div id="modalLecturesList" style="display:flex; flex-direction:column; gap:8px; margin-bottom:20px; max-height:240px; overflow-y:auto;"></div>
-          <div style="display:flex; gap:8px;">
-            <button onclick="openFullStudyHub()" style="flex:1; background:rgba(245,158,11,0.15); border:1px solid #f59e0b; color:#fbbf24; font-weight:600; font-size:12px; padding:10px; border-radius:12px; cursor:pointer; transition:background 0.2s;">Open Full Study Hub ⚡</button>
-            <button onclick="toggleSyllabusModal()" style="background:#1e2438; border:1px solid rgba(255,255,255,0.1); color:#fff; font-size:12px; font-weight:600; padding:10px 16px; border-radius:12px; cursor:pointer;">Done</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) toggleSyllabusModal();
-      });
-    }
-
-    if (modal.style.display === 'none' || !modal.style.display) {
-      renderModalLectures();
-      modal.style.display = 'flex';
-    } else {
-      modal.style.display = 'none';
-      renderLectures();
-      updateTargetCard();
-    }
-  };
-
-  function renderModalLectures() {
-    const listEl = document.getElementById('modalLecturesList');
-    if (!listEl) return;
-    const list = getLectures();
-    listEl.innerHTML = list.map((item) => `
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06); border-radius:12px;">
-        <div>
-          <span style="font-size:10px; font-family:monospace; font-weight:700; color:${item.subColor}; margin-right:6px;">[${item.subTag}]</span>
-          <span style="font-size:13px; font-weight:600; color:#fff;">${item.title}</span>
-          <div style="font-size:11px; color:#94a3b8; margin-top:2px;">${item.note}</div>
-        </div>
-        <button onclick="window.toggleLectureDone('${item.id}'); renderModalLectures();" style="background:${item.done ? '#10b981' : 'transparent'}; border:1px solid ${item.done ? '#10b981' : 'rgba(255,255,255,0.2)'}; color:${item.done ? '#000' : '#fff'}; font-size:11px; font-weight:700; padding:5px 12px; border-radius:8px; cursor:pointer;">
-          ${item.done ? '✓ Done' : 'Mark Done'}
-        </button>
-      </div>
-    `).join('');
-  }
-
-  window.openFullStudyHub = function() {
-    toggleSyllabusModal();
-    if (window.akOpenScreen) window.akOpenScreen('today');
-  };
-
-  // Initial updates
-  renderLectures();
-  updateTargetCard();
-  updateDeskHeader();
+  // Initial badge update
   updateBadges();
 
-  setInterval(updateTargetCard, 5000);
-  setInterval(updateDeskHeader, 60000);
+  // Global Syllabus modal fallback
+  if (!window.toggleSyllabusModal) {
+    window.toggleSyllabusModal = () => {
+      if (window.akOpenScreen) window.akOpenScreen('today');
+    };
+  }
 })();

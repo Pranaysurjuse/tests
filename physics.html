@@ -59,7 +59,7 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
 <div class="search-section fade" style="animation-delay:.11s">
   <div class="search-box">
     <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    <input type="text" id="chapterSearch" placeholder="Search test marks by chapter (e.g. Laws of Motion, Kinematics)..." autocomplete="off" spellcheck="false">
+    <input type="text" id="chapterSearch" placeholder="Search tests by chapter, test #, date..." autocomplete="off" spellcheck="false">
     <button type="button" id="clearSearch" class="search-clear" style="display:none;">&times;</button>
   </div>
   <div id="searchResults" class="results-box" style="display:none;"></div>
@@ -74,12 +74,18 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
 </div>
 <script>
   const PHYSICS_TESTS = [
-    {date:"2026-10-10", label:"10 Oct 2026", score:55, max:100, acc:"64% Acc", rank:null, chapter:"Laws of Motion & Friction", q:"laws+of+motion"},
-    {date:"2026-09-26", label:"26 Sep 2026", score:72, max:100, acc:"100% Acc", rank:null, chapter:"Work, Power & Energy", q:"work"},
-    {date:"2026-08-17", label:"17 Aug 2026", score:45, max:100, acc:null, rank:null, chapter:"Kinematics: 2D & Projectiles", q:"kinematics"},
-    {date:"2026-07-04", label:"04 Jul 2026", score:60, max:100, acc:null, rank:"Rank #1/38", chapter:"Kinematics: 1D Motion", q:"kinematics"},
-    {date:"2026-06-24", label:"24 Jun 2026", score:30, max:100, acc:null, rank:"Rank #5/33", chapter:"Units & Dimensions", q:"units"}
+    {id: 5, date:"2026-10-10", label:"10 Oct 2026", score:55, max:100, acc:"64% Acc", rank:null, title:"Test #05", chapter:""},
+    {id: 4, date:"2026-09-26", label:"26 Sep 2026", score:72, max:100, acc:"100% Acc", rank:null, title:"Test #04", chapter:""},
+    {id: 3, date:"2026-08-17", label:"17 Aug 2026", score:45, max:100, acc:null, rank:null, title:"Test #03", chapter:""},
+    {id: 2, date:"2026-07-04", label:"04 Jul 2026", score:60, max:100, acc:null, rank:"Rank #1/38", title:"Test #02", chapter:""},
+    {id: 1, date:"2026-06-24", label:"24 Jun 2026", score:30, max:100, acc:null, rank:"Rank #5/33", title:"Test #01", chapter:""}
   ];
+
+  // Retrieve user-assigned chapters if any
+  PHYSICS_TESTS.forEach(t => {
+    const saved = localStorage.getItem('user_ch_phy_' + t.id);
+    if (saved) t.chapter = saved;
+  });
 
   const searchInput = document.getElementById('chapterSearch');
   const clearBtn = document.getElementById('clearSearch');
@@ -96,7 +102,8 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
     resultsBox.style.display = 'flex';
 
     const matches = PHYSICS_TESTS.filter(t =>
-      t.chapter.toLowerCase().includes(q) ||
+      (t.chapter && t.chapter.toLowerCase().includes(q)) ||
+      t.title.toLowerCase().includes(q) ||
       t.date.toLowerCase().includes(q) ||
       t.label.toLowerCase().includes(q)
     );
@@ -106,18 +113,22 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
       return;
     }
 
-    resultsBox.innerHTML = matches.map(t => `
-      <a class="res-card" href="physics/overview/index.html?q=${encodeURIComponent(t.chapter)}">
-        <div class="res-info">
-          <span class="res-ch">${t.chapter}</span>
-          <span class="res-dt">${t.label}${t.rank ? ' &bull; ' + t.rank : ''}</span>
-        </div>
-        <div class="res-score">
-          ${t.score} / ${t.max}
-          ${t.acc ? '<div class="res-acc">' + t.acc + '</div>' : ''}
-        </div>
-      </a>
-    `).join('');
+    resultsBox.innerHTML = matches.map(t => {
+      const displayTitle = t.chapter ? t.chapter : t.title;
+      const subtitle = t.chapter ? (t.title + ' &bull; ' + t.label) : t.label;
+      return `
+        <a class="res-card" href="physics/overview/index.html?q=${encodeURIComponent(t.chapter || t.title)}">
+          <div class="res-info">
+            <span class="res-ch">${displayTitle}</span>
+            <span class="res-dt">${subtitle}${t.rank ? ' &bull; ' + t.rank : ''}</span>
+          </div>
+          <div class="res-score">
+            ${t.score} / ${t.max}
+            ${t.acc ? '<div class="res-acc">' + t.acc + '</div>' : ''}
+          </div>
+        </a>
+      `;
+    }).join('');
   }
 
   searchInput.addEventListener('input', e => renderQuickSearch(e.target.value));
@@ -126,5 +137,5 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
     renderQuickSearch('');
   });
 </script>
-<script defer src="studyhub.js?v=6"></script>
+<script defer src="studyhub.js?v=7"></script>
 </body></html>
