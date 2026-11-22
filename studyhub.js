@@ -1208,11 +1208,15 @@
           </div>
         </div>
 
-        <!-- Quick 4 Navigation Pills -->
+        <!-- Quick 5 Navigation Pills -->
         <div class="akiva-quick-nav">
           <div class="akiva-nav-chip" data-view="today">
             <span style="display:flex; align-items:center; gap:6px;"><span>📋</span> Today</span>
             <span class="akiva-badge" id="akBadgeToday">0</span>
+          </div>
+          <div class="akiva-nav-chip" data-view="calendar">
+            <span style="display:flex; align-items:center; gap:6px;"><span>🎯</span> Test Radar</span>
+            <span class="akiva-badge" id="akBadgeCalendar" style="background:rgba(245,158,11,0.2); color:#fbbf24;">3</span>
           </div>
           <div class="akiva-nav-chip" data-view="future">
             <span style="display:flex; align-items:center; gap:6px;"><span>🗓️</span> Future</span>
@@ -1222,8 +1226,8 @@
             <span style="display:flex; align-items:center; gap:6px;"><span>⏳</span> Backlog</span>
             <span class="akiva-badge" id="akBadgeBacklog" style="background:rgba(239,68,68,0.2); color:#f87171;">0</span>
           </div>
-          <div class="akiva-nav-chip" data-view="progress">
-            <span style="display:flex; align-items:center; gap:6px;"><span>📈</span> Matrix</span>
+          <div class="akiva-nav-chip" data-view="progress" style="grid-column: 1 / -1;">
+            <span style="display:flex; align-items:center; gap:6px;"><span>📈</span> 83 JEE Chapters Matrix</span>
             <span class="akiva-badge" id="akBadgeProgress">0%</span>
           </div>
         </div>
