@@ -70,6 +70,14 @@ Eliminated the monotone black/amber UI in favor of vibrant, distinct colors:
   - If `chapter` is empty, overview log views do not show fake chapter headers/badges; they show clean dates, scores, and ranks as originally logged.
   - Supports dynamic assignment via `localStorage` keys: `user_ch_phy_<id>`, `user_ch_chem_<id>`, `user_ch_math_<id>`, and `user_ch_comb_<id>`.
 
+### F. 1-Turn Test Scoring Protocol & Auto-Submit Bridge
+- **Trigger**: "Today was my Physics/Chemistry/Maths test" or "Today was my Mains paper".
+- **Bridge Daemon**: `http://127.0.0.1:5055/api/submit` (script: `C:\Users\piyus\Desktop\TESTS\tools\auto_submit_bridge.py`).
+- **Interactive OMR Widget**:
+  - Script: `C:\Users\piyus\Desktop\TESTS\tools\generate_omr.py` -> `Desktop\Keys auto\Active_OMR.html`.
+  - **In-Widget Test Name Selector**: Has an interactive test name input with datalist presets (`Class Test #01`, `#02`, `#03`, `Part Test`, `Mains Mock`, and custom text) plus 1-click quick-select pills.
+  - When the user clicks "Calculate & Push to GitHub", the selected test name is sent in the payload and logged into `afterdiwali.html` as `{date:"...", name:"<chosen name>", subjects:{...}}` before silent Git commit and push to `origin/main`.
+
 ---
 
 ## 3. Sidebar Configuration
