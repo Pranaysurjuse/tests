@@ -1106,23 +1106,17 @@
           </div>
 
           <nav class="akiva-nav-list" style="width:100%;">
-            <!-- 1. JEE Study Tracker Mini Gauge Widget -->
-            <div class="akiva-nav-item" data-view="today" title="JEE Study Tracker">
+            <!-- 1. Today's Tasks & Study Tracker -->
+            <div class="akiva-nav-item" data-view="today" title="Today's Study Tracker & Tasks">
               <div style="position:relative; width:28px; height:28px; display:grid; place-items:center;">
                 <svg style="width:100%; height:100%;" viewBox="0 0 36 36">
                   <circle cx="18" cy="18" r="14" stroke="rgba(255,255,255,0.12)" stroke-width="3.5" fill="none"/>
                   <circle id="mini-circle-arc" cx="18" cy="18" r="14" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" fill="none"
                           stroke-dasharray="87.96" stroke-dashoffset="87.96" style="transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.4s;"/>
                 </svg>
-                <span style="position:absolute; font-size:11px;">🔥</span>
+                <span style="position:absolute; font-size:11px;">📋</span>
               </div>
-              <div class="akiva-flyout">🔥 JEE Study Tracker &bull; Target (<span id="mini-ratio-text">0/3 Done</span>)</div>
-            </div>
-
-            <!-- 2. Today's Tasks -->
-            <div class="akiva-nav-item" data-view="today" title="Today's Tasks">
-              <span class="akiva-icon">📋</span>
-              <div class="akiva-flyout">Today's Tasks</div>
+              <div class="akiva-flyout">📋 Today's Tasks (<span id="mini-ratio-text">0/3 Done</span>)</div>
             </div>
 
             <!-- 3. Test Radar & Calendar -->
@@ -1349,10 +1343,15 @@
     saveState(state);
   };
 
-  // Nav Item & Nav Chip click
+  // Nav Item & Nav Chip click with toggle (minimize on re-click)
   document.querySelectorAll('.akiva-nav-item, .akiva-nav-chip').forEach(item => {
     item.onclick = () => {
-      openView(item.dataset.view);
+      const v = item.dataset.view;
+      if (panel.classList.contains('open') && currentView === v) {
+        closePanel();
+      } else {
+        openView(v);
+      }
     };
   });
 
