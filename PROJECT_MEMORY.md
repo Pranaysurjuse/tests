@@ -18,45 +18,32 @@
 
 ### A. `dashboard.html`
 - **Main Entrypoint:** Cards leading to After Diwali Live Tracker, Physics, Chemistry, Maths, and Combine menus.
-- **JEE Study Tracker Sidebar Component:** Integrated the exact dark-gradient sidebar component:
-  - Dynamic Time & Desk header (Morning/Afternoon/Evening/Night Desk)
-  - Active Streak badge (`🔥 14 Days`)
-  - Circular Gauge Target Card with dynamic SVG arc (`0 / 3 Done`, completion %, and countdown guidance)
-  - Coaching Lecture Revision list with PHY/CHEM/MATH subject badges, lecture notes, and one-tap completion toggle
-  - Dedicated `toggleSyllabusModal()` manager dialog for updating coaching revisions and one-click launch of the full Akiva Study Hub drawer.
+- **Clean Centered Page Layout:** Removed the temporary inline floating card column; the page layout is now clean, centered, and beautifully spaced with desktop padding-left (`@media (min-width: 800px) { body { padding-left: 90px; } }`) to accommodate the macOS left sidebar.
 - **Upgraded Vector Badges:** Replaced boring text emojis with custom glowing SVGs:
   - ⚛️ **Physics**: Quantum Rutherford-Bohr Atom with electron orbital paths (Electric Cyan glow)
   - 🧪 **Chemistry**: Molecular Benzene Hexagonal Lattice with delocalized pi ring (Emerald Mint glow)
   - 🧊 **Mathematics**: 3D Isometric Hypercube tesseract (Radiant Purple glow)
   - 💎 **Combine**: Layered Crystalline Prism stack (Amber glow)
   - 🚀 **Diwali Tracker**: Supersonic Starburst badge
-- **Desktop Layout Fix:** Added responsive padding (`@media (min-width: 800px) { body { padding-left: 90px; } }`) to prevent the left sidebar from ever covering dashboard cards.
 
-### B. `studyhub.js`
-- **Exact 1:1 Akiva Mobile Replication:**
-  1. **📋 Today's Progress:**
-     - Circular Speedo dial ring (% completion meter)
-     - Planned and Completed metric boxes
-     - Task items with `[ L ]` (Lecture), `[ P ]` (Practice), `[ R ]` (Revision) mode pills
-     - Exam level selector (`JEE Mains`, `JEE Advanced`, `JEE Mains + Advanced`)
-     - Countdown timer (`⏱ 23 hrs`)
-     - Edit Task modal (`Move to Backlog`, `Move to Future`, `Delete Task`)
-     - Custom Fox mascot empty state vector illustration
-  2. **➕ Add Topics:**
-     - Subject filter tabs (`All`, `Chemistry`, `Mathematics`, `Physics`)
-     - Live chapter search with branch hierarchy (e.g. `Physics >> Mechanics`)
-     - Mode selection chips and level selector
-  3. **⏳ Backlogs Recovery:**
-     - 7-day backlog tracking range
-     - Overdue task counter
-     - 1-click `⚡ Move to Today` rescue button
-  4. **🗓️ Future Tasks:**
-     - 7-day horizontal scrollable day calendar strip (`22 SUN`, `23 MON`...)
-     - Scheduled task manager
-  5. **📈 Progress Bar & 83 JEE Chapters Matrix:**
-     - Restored the authentic syllabus progress visualizer (completely removed the AI Mentor chatbot/quiz/picks per user preference).
-     - **Dual Circular Gauges:** JEE Mains and JEE Advanced syllabus coverage gauges with orbiting subject nodes for Chemistry, Physics, and Mathematics.
-     - **83 JEE Chapters Checklist:** Interactive checklist covering all 83 chapters across Physics (28), Chemistry (30), and Mathematics (25) with branch breakdown, completion checkmarks, live stats, and 1-tap `+ Plan` task scheduler.
+### B. `studyhub.js` & Unified macOS Sidebar Component
+- **Unified Sidebar (`.akiva-mac-sidebar`):**
+  - Integrated the exact dark-gradient **JEE Study Tracker Component** directly *inside* the sidebar:
+    - Dynamic macOS 3-dot window controls and Pranay Surjuse profile avatar.
+    - Dynamic Time & Desk header (Morning/Afternoon/Evening/Night Desk) and active streak badge (`🔥 14 Days`).
+    - Circular Gauge Target Card with SVG arc (`Today's Target`, `0 / 3 Done`, completion %, and countdown guidance). Clicking opens Today's Tasks in the drawer.
+    - 4-Item Quick Nav chips (`Today's Tasks`, `Future Tasks`, `Backlogs`, `Progress Bar`).
+    - Coaching Lecture Revision list with interactive subject badges (PHY, CHEM, MATH), lecture notes, and one-tap completion toggle that automatically syncs with the circular target arc.
+    - `+ Update` button opening the Lecture Revision Manager dialog.
+    - `+ Add New Topic / Task` button launching the topic planner drawer.
+  - Defaults to expanded (`350px`) on desktop for instant tracking, and collapses smoothly to a `62px` rail via the toggle edge chevron (`‹` / `›`).
+- **Exact 1:1 Akiva Mobile Drawer Replication:**
+  1. **📋 Today's Progress:** Circular Speedo dial ring, task cards with `[L]`, `[P]`, `[R]` mode tags, level selector, and edit modal.
+  2. **➕ Add Topics:** Chapter search across all 83 chapters with mode and level selectors.
+  3. **⏳ Backlogs Recovery:** 7-day backlog tracking range with `⚡ Move to Today`.
+  4. **🗓️ Future Tasks:** 7-day horizontal scrollable calendar strip.
+  5. **📈 Progress Bar & 83 JEE Chapters Matrix:** Dual circular gauges (JEE Mains and Advanced) and interactive 83-chapter syllabus checklist.
+- **AI Mentor:** 100% removed.
 
 ### C. Multi-Color Subject & Category Theme System
 Eliminated the monotone black/amber UI in favor of vibrant, distinct colors:
