@@ -261,51 +261,53 @@
     `<div class="legend-item"><span class="legend-dot" style="background:${subjColors[k]};"></span>${subjLabels[k]}</div>`
   ).join('');
 
-  const trendEl = document.getElementById('trendChart');
-  if (DATA.length < 2) {
-    trendEl.innerHTML = `<div class="empty-msg">Trend needs at least two tests &mdash; will build up as more are logged.</div>`;
-  } else {
-    const W = 700, H = 440, padL = 46, padR = 20, padT = 20, padB = 34;
-    const n = DATA.length;
-    const xFor = i => padL + (n === 1 ? 0 : i * ((W - padL - padR) / (n - 1)));
-    const yFor = v => (H - padB) - (v / 100) * (H - padB - padT);
+  function renderTrend() {
+    const trendEl = document.getElementById('trendChart');
+    if (DATA.length < 2) {
+      trendEl.innerHTML = `<div class="empty-msg">Trend needs at least two tests &mdash; will build up as more are logged.</div>`;
+    } else {
+      const W = 700, H = 440, padL = 46, padR = 20, padT = 20, padB = 34;
+      const n = DATA.length;
+      const xFor = i => padL + (n === 1 ? 0 : i * ((W - padL - padR) / (n - 1)));
+      const yFor = v => (H - padB) - (v / 100) * (H - padB - padT);
 
-    let gridLines = '';
-    [0, 25, 50, 75, 100].forEach(v => {
-      const y = yFor(v);
-      gridLines += `<line class="trend-grid" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"></line>`;
-      gridLines += `<text class="trend-axis" x="8" y="${y + 4}">${v}</text>`;
-    });
-
-    let xLabels = '';
-    DATA.forEach((d, i) => {
-      xLabels += `<text class="trend-axis" x="${xFor(i) - 18}" y="${H - 10}">${d.label}</text>`;
-    });
-
-    let lines = '';
-    Object.keys(subjColors).forEach(key => {
-      const color = subjColors[key];
-      const pts = DATA.map((d, i) => ({ x: xFor(i), y: yFor(d.subjects[key].score), v: d.subjects[key].score }));
-      const pathD = pts.map((p, i) => (i === 0 ? 'M' : 'L') + ' ' + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-      lines += `<path d="${pathD}" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="800" stroke-dashoffset="800" style="animation: drawLine 1.2s ease forwards;"></path>`;
-      pts.forEach((p, i) => {
-        lines += `<circle cx="${p.x}" cy="${p.y}" r="7" fill="#141414" stroke="${color}" stroke-width="3.5" style="opacity:0; animation: popIn 0.3s ease ${0.9 + i * 0.15}s forwards;"></circle>`;
-        lines += `<text class="trend-val" fill="${color}" x="${p.x - 9}" y="${p.y - 12}" style="opacity:0; animation: popIn 0.3s ease ${0.9 + i * 0.15}s forwards;">${p.v}</text>`;
+      let gridLines = '';
+      [0, 25, 50, 75, 100].forEach(v => {
+        const y = yFor(v);
+        gridLines += `<line class="trend-grid" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}"></line>`;
+        gridLines += `<text class="trend-axis" x="8" y="${y + 4}">${v}</text>`;
       });
-    });
 
-    trendEl.innerHTML = `
-      <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;">
-        <style>
-          @keyframes drawLine { to { stroke-dashoffset: 0; } }
-          @keyframes popIn { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
-        </style>
-        ${gridLines}
-        <line class="trend-grid" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"></line>
-        ${lines}
-        ${xLabels}
-      </svg>
-    `;
+      let xLabels = '';
+      DATA.forEach((d, i) => {
+        xLabels += `<text class="trend-axis" x="${xFor(i) - 18}" y="${H - 10}">${d.label}</text>`;
+      });
+
+      let lines = '';
+      Object.keys(subjColors).forEach(key => {
+        const color = subjColors[key];
+        const pts = DATA.map((d, i) => ({ x: xFor(i), y: yFor(d.subjects[key].score), v: d.subjects[key].score }));
+        const pathD = pts.map((p, i) => (i === 0 ? 'M' : 'L') + ' ' + p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
+        lines += `<path d="${pathD}" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="800" stroke-dashoffset="800" style="animation: drawLine 1.2s ease forwards;"></path>`;
+        pts.forEach((p, i) => {
+          lines += `<circle cx="${p.x}" cy="${p.y}" r="7" fill="#141414" stroke="${color}" stroke-width="3.5" style="opacity:0; animation: popIn 0.3s ease ${0.9 + i * 0.15}s forwards;"></circle>`;
+          lines += `<text class="trend-val" fill="${color}" x="${p.x - 9}" y="${p.y - 12}" style="opacity:0; animation: popIn 0.3s ease ${0.9 + i * 0.15}s forwards;">${p.v}</text>`;
+        });
+      });
+
+      trendEl.innerHTML = `
+        <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;">
+          <style>
+            @keyframes drawLine { to { stroke-dashoffset: 0; } }
+            @keyframes popIn { from { opacity: 0; transform: scale(0); } to { opacity: 1; transform: scale(1); } }
+          </style>
+          ${gridLines}
+          <line class="trend-grid" x1="${padL}" y1="${padT}" x2="${padL}" y2="${H - padB}"></line>
+          ${lines}
+          ${xLabels}
+        </svg>
+      `;
+    }
   }
 
   let searchQuery = '';
