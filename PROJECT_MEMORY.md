@@ -76,6 +76,7 @@ Eliminated the monotone black/amber UI in favor of vibrant, distinct colors:
 - **Interactive OMR Widget**:
   - Script: `C:\Users\piyus\Desktop\TESTS\tools\generate_omr.py` -> `Desktop\Keys auto\Active_OMR.html`.
   - **In-Widget Test Name Selector**: Has an interactive test name input with datalist presets (`Class Test #01`, `#02`, `#03`, `Part Test`, `Mains Mock`, and custom text) plus 1-click quick-select pills.
+  - **Clean Matte Design**: Solid cream/white bubble fills for selected answers, zero neon blue glows or harsh box shadows, subtle theme accents.
   - When the user clicks "Calculate & Push to GitHub", the selected test name is sent in the payload and logged into `afterdiwali.html` as `{date:"...", name:"<chosen name>", subjects:{...}}` before silent Git commit and push to `origin/main`.
 
 ---
