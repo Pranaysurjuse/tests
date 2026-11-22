@@ -1143,17 +1143,7 @@
               <div class="akiva-flyout">Backlogs</div>
             </div>
 
-            <!-- 5. Progress Bar / Matrix -->
-            <div class="akiva-nav-item" data-view="progress" title="Progress Bar">
-              <span class="akiva-icon">📈</span>
-              <div class="akiva-flyout">83 JEE Chapters Matrix</div>
-            </div>
 
-            <!-- 6. Coaching Revision Widget -->
-            <div class="akiva-nav-item" onclick="toggleSyllabusModal()" title="Coaching Lecture Revision">
-              <span class="akiva-icon">📚</span>
-              <div class="akiva-flyout">📚 Coaching Revision (+ Update)</div>
-            </div>
           </nav>
         </div>
 
