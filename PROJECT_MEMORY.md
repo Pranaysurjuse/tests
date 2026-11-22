@@ -37,6 +37,11 @@
     - `+ Update` button opening the Lecture Revision Manager dialog.
     - `+ Add New Topic / Task` button launching the topic planner drawer.
   - Defaults to expanded (`350px`) on desktop for instant tracking, and collapses smoothly to a `62px` rail via the toggle edge chevron (`‹` / `›`).
+  - **Minimized Rail Widgets (`62px` Rail View):**
+    - **JEE Study Tracker Mini Gauge Widget**: Mini SVG progress arc around the `🔥` flame icon with hover flyout (`🔥 JEE Study Tracker • Target (X/Y Done)`). Clicking it opens the full Study Hub drawer.
+    - **Coaching Revision Widget**: `📚` icon with hover flyout opening the Revision Manager dialog.
+    - All widgets in the minimized rail have matching active borders, icons, and hover flyouts.
+  - **Collapsible In-Sidebar Widgets:** Coaching Lecture Revision list can be minimized/expanded with a one-tap `▾` / `▸` toggle.
 - **Exact 1:1 Akiva Mobile Drawer Replication:**
   1. **📋 Today's Progress:** Circular Speedo dial ring, task cards with `[L]`, `[P]`, `[R]` mode tags, level selector, and edit modal.
   2. **➕ Add Topics:** Chapter search across all 83 chapters with mode and level selectors.
