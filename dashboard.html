@@ -286,7 +286,7 @@
     font-family: monospace;
   }
 
-  /* Tabs */
+  /* Akiva Segmented Tabs: To-do List & Backlogs */
   .d1-tabs {
     display: flex;
     background: rgba(255, 255, 255, 0.03);
@@ -298,8 +298,8 @@
   .d1-tab {
     flex: 1;
     text-align: center;
-    padding: 5px 0;
-    font-size: 11px;
+    padding: 6px 0;
+    font-size: 11.5px;
     font-weight: 600;
     border-radius: 7px;
     color: #94a3b8;
@@ -307,12 +307,22 @@
     border: none;
     background: transparent;
     transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
   .d1-tab:hover { color: #fff; }
   .d1-tab.active {
     background: #14b8a6;
     color: #042f2e;
     font-weight: 700;
+  }
+  .d1-tab-pill {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.25);
   }
 
   /* Progress Ring Box */
@@ -333,6 +343,19 @@
   }
   .d1-ring-circle {
     transition: stroke-dashoffset 0.4s ease;
+  }
+
+  /* Backlog Info Banner */
+  .akiva-backlog-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 12px;
+    font-size: 11px;
+    color: #fcd34d;
   }
 
   /* Tasks list */
@@ -408,6 +431,24 @@
   .subj-chem { background: rgba(52, 211, 153, 0.15); color: #34d399; }
   .subj-math { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
 
+  /* Rescue button to move backlog task to today */
+  .btn-move-today {
+    background: rgba(20, 184, 166, 0.15);
+    border: 1px solid rgba(20, 184, 166, 0.35);
+    color: #14b8a6;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .btn-move-today:hover {
+    background: #14b8a6;
+    color: #042f2e;
+  }
+
   .d1-task-del {
     background: none;
     border: none;
@@ -469,12 +510,10 @@
 <div class="akiva-dock-wrapper" id="midnightDockWrap">
   <!-- Slim Icon Rail -->
   <div class="d1-rail">
-    <div class="d1-avatar" title="Pranay Surjuse">P</div>
-    <button class="d1-btn active" id="btn-rail-todo" onclick="toggleMidnightRail('today')" title="To-do List">📋</button>
-    <button class="d1-btn" id="btn-rail-cal" onclick="toggleMidnightRail('future')" title="Test Schedule">🗓️</button>
-    <button class="d1-btn" id="btn-rail-backlog" onclick="toggleMidnightRail('backlog')" title="Backlogs">⏳</button>
-    <button class="d1-btn" id="btn-rail-progress" onclick="toggleMidnightRail('today')" title="Progress Bar">📈</button>
-    <div class="d1-bottom-flame" title="14 Days Streak" onclick="toggleMidnightRail('today')">
+    <div class="d1-avatar" onclick="toggleMidnightRail('todo')" title="Akiva JEE &bull; Pranay">P</div>
+    <button class="d1-btn active" id="btn-rail-todo" onclick="toggleMidnightRail('todo')" title="To-do List">📋</button>
+    <button class="d1-btn" id="btn-rail-backlog" onclick="toggleMidnightRail('backlog')" title="Backlogs Recovery">⏳</button>
+    <div class="d1-bottom-flame" title="14 Days Streak" onclick="toggleMidnightRail('todo')">
       <span>🔥</span>
       <span class="d1-flame-txt">14d</span>
     </div>
@@ -483,19 +522,23 @@
   <!-- Slideout Panel -->
   <div class="d1-panel closed" id="midnightPanel">
     <div class="d1-header">
-      <span class="d1-title" id="panelHeaderTitle">To-do List</span>
+      <span class="d1-title" id="panelHeaderTitle">Akiva To-do Hub</span>
       <span class="d1-date" id="panelHeaderDate">Today</span>
     </div>
 
-    <!-- Segmented Tabs -->
+    <!-- Akiva 2 Tabs: Today's To-do vs Backlogs -->
     <div class="d1-tabs">
-      <button class="d1-tab active" id="tab-btn-today" onclick="setMidnightTab('today')">Today</button>
-      <button class="d1-tab" id="tab-btn-future" onclick="setMidnightTab('future')">Future</button>
-      <button class="d1-tab" id="tab-btn-backlog" onclick="setMidnightTab('backlog')">Backlog <span id="backlog-pill" style="opacity:0.8;">(0)</span></button>
+      <button class="d1-tab active" id="tab-btn-todo" onclick="setMidnightTab('todo')">
+        <span>📋 To-do List</span>
+      </button>
+      <button class="d1-tab" id="tab-btn-backlog" onclick="setMidnightTab('backlog')">
+        <span>⏳ Backlogs</span>
+        <span class="d1-tab-pill" id="backlog-pill">0</span>
+      </button>
     </div>
 
-    <!-- Progress Dial Box -->
-    <div class="d1-ring-box">
+    <!-- Progress Dial Box (Shown on To-do List) -->
+    <div class="d1-ring-box" id="midnightRingBox">
       <svg class="d1-ring-svg" viewBox="0 0 36 36">
         <circle cx="18" cy="18" r="14" stroke="rgba(255,255,255,0.1)" stroke-width="3.5" fill="none"/>
         <circle id="midnight-ring-arc" cx="18" cy="18" r="14" stroke="#14b8a6" stroke-width="3.5" stroke-linecap="round" fill="none"
@@ -505,6 +548,12 @@
         <div id="midnight-ratio-txt" style="font-size:13px; font-weight:700; color:#fff;">0 / 0 done</div>
         <div id="midnight-sub-txt" style="font-size:10.5px; color:#64748b;">0 left today &bull; Target: 99%ile</div>
       </div>
+    </div>
+
+    <!-- Backlog Rescue Info Banner (Shown on Backlogs) -->
+    <div class="akiva-backlog-banner" id="midnightBacklogBanner" style="display:none;">
+      <span>⏳ Missed tasks &bull; 7-day range</span>
+      <button class="btn-move-today" onclick="moveAllBacklogsToToday()">+ Move All to Today</button>
     </div>
 
     <!-- Tasks list -->
@@ -517,7 +566,7 @@
 
     <!-- Inline Add Box -->
     <div class="d1-add-box" id="midnightAddBox">
-      <input type="text" class="d1-add-inp" id="midnightInTitle" placeholder="e.g. Limits PYQs, Rotation Practice...">
+      <input type="text" class="d1-add-inp" id="midnightInTitle" placeholder="e.g. Current Electricity Lec 4, PYQs...">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <select id="midnightInSubj" style="background:#090d16; border:1px solid #334155; color:#cbd5e1; border-radius:6px; padding:3px 6px; font-size:10.5px;">
           <option value="Physics">Physics</option>
@@ -535,7 +584,7 @@
 
 <script>
   (function() {
-    const STORAGE_KEY = 'akiva_midnight_tasks_direct_v2';
+    const STORAGE_KEY = 'akiva_midnight_tasks_direct_v3';
     const today = new Date().toISOString().split('T')[0];
     function shiftDate(n) {
       const d = new Date();
@@ -544,11 +593,11 @@
     }
 
     const defaultTasks = [
-      { id: '1', title: 'Maths: Limits PYQs', subject: 'Maths', date: today, done: true },
-      { id: '2', title: 'Physics: Rotation Q1-25', subject: 'Physics', date: today, done: false },
-      { id: '3', title: 'Chem: Periodic Trends', subject: 'Chemistry', date: today, done: false },
-      { id: '4', title: 'Physics: EMI Notes Revision', subject: 'Physics', date: shiftDate(1), done: false },
-      { id: '5', title: 'Chem: Kinetics Revision', subject: 'Chemistry', date: shiftDate(-1), done: false }
+      { id: '1', title: 'Physics: Current Electricity Lec 4', subject: 'Physics', date: today, done: false },
+      { id: '2', title: 'Chemistry: Chemical Kinetics Lec 2', subject: 'Chemistry', date: today, done: false },
+      { id: '3', title: 'Maths: Matrices & Determinants Lec 3', subject: 'Maths', date: today, done: false },
+      { id: '4', title: 'Physics: Rotation Exercise 1', subject: 'Physics', date: shiftDate(-1), done: false },
+      { id: '5', title: 'Chemistry: Ionic Equilibrium Formulas', subject: 'Chemistry', date: shiftDate(-2), done: false }
     ];
 
     function loadTasks() {
@@ -562,7 +611,7 @@
     }
 
     let tasks = loadTasks();
-    let currentTab = 'today';
+    let currentTab = 'todo'; // 'todo' | 'backlog'
     let isOpen = false;
 
     // Set Date Header
@@ -578,6 +627,8 @@
       if (isOpen && currentTab === tab) {
         panel.classList.add('closed');
         isOpen = false;
+        document.getElementById('btn-rail-todo').classList.remove('active');
+        document.getElementById('btn-rail-backlog').classList.remove('active');
       } else {
         window.setMidnightTab(tab);
         panel.classList.remove('closed');
@@ -587,10 +638,25 @@
 
     window.setMidnightTab = function(tab) {
       currentTab = tab;
-      ['today', 'future', 'backlog'].forEach(t => {
-        const b = document.getElementById('tab-btn-' + t);
-        if (b) b.classList.toggle('active', t === tab);
-      });
+      document.getElementById('tab-btn-todo').classList.toggle('active', tab === 'todo');
+      document.getElementById('tab-btn-backlog').classList.toggle('active', tab === 'backlog');
+      document.getElementById('btn-rail-todo').classList.toggle('active', tab === 'todo');
+      document.getElementById('btn-rail-backlog').classList.toggle('active', tab === 'backlog');
+
+      const ringBox = document.getElementById('midnightRingBox');
+      const backlogBanner = document.getElementById('midnightBacklogBanner');
+      const addBtn = document.getElementById('midnightAddBtn');
+
+      if (tab === 'todo') {
+        if (ringBox) ringBox.style.display = 'flex';
+        if (backlogBanner) backlogBanner.style.display = 'none';
+        if (addBtn) addBtn.style.display = 'flex';
+      } else {
+        if (ringBox) ringBox.style.display = 'none';
+        if (backlogBanner) backlogBanner.style.display = 'flex';
+        if (addBtn) addBtn.style.display = 'none';
+      }
+
       const box = document.getElementById('midnightAddBox');
       if (box) box.style.display = 'none';
       render();
@@ -607,6 +673,25 @@
 
     window.deleteTaskItem = function(id) {
       tasks = tasks.filter(x => x.id !== id);
+      saveTasks(tasks);
+      render();
+    };
+
+    window.moveTaskToToday = function(id) {
+      const t = tasks.find(x => x.id === id);
+      if (t) {
+        t.date = today;
+        saveTasks(tasks);
+        render();
+      }
+    };
+
+    window.moveAllBacklogsToToday = function() {
+      tasks.forEach(t => {
+        if (t.date < today && !t.done) {
+          t.date = today;
+        }
+      });
       saveTasks(tasks);
       render();
     };
@@ -628,15 +713,12 @@
       const title = inp ? inp.value.trim() : '';
       if (!title) return;
       const subj = sel ? sel.value : 'Physics';
-      let d = today;
-      if (currentTab === 'future') d = shiftDate(1);
-      else if (currentTab === 'backlog') d = shiftDate(-1);
 
       tasks.push({
         id: 't_' + Date.now(),
         title: title,
         subject: subj,
-        date: d,
+        date: today,
         done: false
       });
       saveTasks(tasks);
@@ -649,16 +731,14 @@
       if (!container) return;
 
       let filtered = [];
-      if (currentTab === 'today') {
-        filtered = tasks.filter(t => t.date === today);
-      } else if (currentTab === 'future') {
-        filtered = tasks.filter(t => t.date > today);
+      if (currentTab === 'todo') {
+        filtered = tasks.filter(t => t.date >= today);
       } else if (currentTab === 'backlog') {
         filtered = tasks.filter(t => t.date < today && !t.done);
       }
 
       // Today's completion ring
-      const todayTasks = tasks.filter(t => t.date === today);
+      const todayTasks = tasks.filter(t => t.date >= today);
       const total = todayTasks.length;
       const done = todayTasks.filter(t => t.done).length;
       const pct = total ? Math.round((done / total) * 100) : 0;
@@ -672,13 +752,14 @@
       const subTxt = document.getElementById('midnight-sub-txt');
       if (subTxt) subTxt.textContent = `${total - done} left today • Target: 99%ile`;
 
-      // Backlog badge
+      // Backlog badge count
       const backlogCount = tasks.filter(t => t.date < today && !t.done).length;
       const bPill = document.getElementById('backlog-pill');
-      if (bPill) bPill.textContent = `(${backlogCount})`;
+      if (bPill) bPill.textContent = `${backlogCount}`;
 
       if (!filtered.length) {
-        container.innerHTML = `<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; color:#64748b; font-size:11.5px;">✨ No ${currentTab} tasks</div>`;
+        const emptyMsg = currentTab === 'todo' ? '✨ No tasks for today! Click "+ Add New Task" below.' : '🎉 Great job! No pending backlogs found.';
+        container.innerHTML = `<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:30px 10px; color:#64748b; font-size:11.5px; text-align:center;">${emptyMsg}</div>`;
         return;
       }
 
@@ -688,14 +769,25 @@
         if (t.subject === 'Chemistry') { subClass = 'subj-chem'; subTxt = 'Chem'; }
         else if (t.subject === 'Maths') { subClass = 'subj-math'; subTxt = 'Math'; }
 
-        return `
-          <div class="d1-task-row ${t.done ? 'done' : ''}">
-            <input type="checkbox" class="d1-check" ${t.done ? 'checked' : ''} onchange="toggleTaskDone('${t.id}')">
-            <div class="d1-task-title">${t.title}</div>
-            <span class="d1-task-badge ${subClass}">${subTxt}</span>
-            <button class="d1-task-del" onclick="deleteTaskItem('${t.id}')">&times;</button>
-          </div>
-        `;
+        if (currentTab === 'backlog') {
+          return `
+            <div class="d1-task-row">
+              <span class="d1-task-badge ${subClass}">${subTxt}</span>
+              <div class="d1-task-title" title="${t.title}">${t.title}</div>
+              <button class="btn-move-today" onclick="moveTaskToToday('${t.id}')">+ Today</button>
+              <button class="d1-task-del" onclick="deleteTaskItem('${t.id}')">&times;</button>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="d1-task-row ${t.done ? 'done' : ''}">
+              <input type="checkbox" class="d1-check" ${t.done ? 'checked' : ''} onchange="toggleTaskDone('${t.id}')">
+              <div class="d1-task-title" title="${t.title}">${t.title}</div>
+              <span class="d1-task-badge ${subClass}">${subTxt}</span>
+              <button class="d1-task-del" onclick="deleteTaskItem('${t.id}')">&times;</button>
+            </div>
+          `;
+        }
       }).join('');
     }
 
@@ -707,6 +799,8 @@
         if (panel) {
           panel.classList.add('closed');
           isOpen = false;
+          document.getElementById('btn-rail-todo').classList.remove('active');
+          document.getElementById('btn-rail-backlog').classList.remove('active');
         }
       }
     });
