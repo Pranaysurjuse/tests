@@ -1106,21 +1106,47 @@
           </div>
 
           <nav class="akiva-nav-list" style="width:100%;">
+            <!-- 1. JEE Study Tracker Mini Gauge Widget -->
+            <div class="akiva-nav-item" data-view="today" title="JEE Study Tracker">
+              <div style="position:relative; width:28px; height:28px; display:grid; place-items:center;">
+                <svg style="width:100%; height:100%;" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="14" stroke="rgba(255,255,255,0.12)" stroke-width="3.5" fill="none"/>
+                  <circle id="mini-circle-arc" cx="18" cy="18" r="14" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" fill="none"
+                          stroke-dasharray="87.96" stroke-dashoffset="87.96" style="transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.4s;"/>
+                </svg>
+                <span style="position:absolute; font-size:11px;">🔥</span>
+              </div>
+              <div class="akiva-flyout">🔥 JEE Study Tracker &bull; Target (<span id="mini-ratio-text">0/3 Done</span>)</div>
+            </div>
+
+            <!-- 2. Today's Tasks -->
             <div class="akiva-nav-item" data-view="today" title="Today's Tasks">
               <span class="akiva-icon">📋</span>
               <div class="akiva-flyout">Today's Tasks</div>
             </div>
+
+            <!-- 3. Future Tasks -->
             <div class="akiva-nav-item" data-view="future" title="Future Tasks">
               <span class="akiva-icon">🗓️</span>
               <div class="akiva-flyout">Future Tasks</div>
             </div>
+
+            <!-- 4. Backlogs -->
             <div class="akiva-nav-item" data-view="backlog" title="Backlogs">
               <span class="akiva-icon">⏳</span>
               <div class="akiva-flyout">Backlogs</div>
             </div>
+
+            <!-- 5. Progress Bar / Matrix -->
             <div class="akiva-nav-item" data-view="progress" title="Progress Bar">
               <span class="akiva-icon">📈</span>
-              <div class="akiva-flyout">83 JEE Chapters</div>
+              <div class="akiva-flyout">83 JEE Chapters Matrix</div>
+            </div>
+
+            <!-- 6. Coaching Revision Widget -->
+            <div class="akiva-nav-item" onclick="toggleSyllabusModal()" title="Coaching Lecture Revision">
+              <span class="akiva-icon">📚</span>
+              <div class="akiva-flyout">📚 Coaching Revision (+ Update)</div>
             </div>
           </nav>
         </div>
@@ -1199,11 +1225,17 @@
         <!-- Coaching Revision List -->
         <div style="padding-top:6px; border-top:1px solid rgba(255,255,255,0.06);">
           <div style="display:flex; align-items:center; justify-content:space-between; padding:0 2px 6px;">
-            <span style="font-size:10px; text-transform:uppercase; font-weight:700; letter-spacing:0.06em; color:#a1a1aa;">Coaching Lecture Revision</span>
+            <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" onclick="window.toggleCoachingCollapse()" title="Minimize / Expand Coaching Revision">
+              <span style="font-size:10px; text-transform:uppercase; font-weight:700; letter-spacing:0.06em; color:#a1a1aa;">Coaching Lecture Revision</span>
+              <span id="coachingCollapseIcon" style="font-size:11px; color:#a1a1aa; font-weight:bold;">▾</span>
+            </div>
             <button onclick="toggleSyllabusModal()" style="font-size:10.5px; color:#fbbf24; font-weight:700; cursor:pointer; background:none; border:none; padding:0;">+ Update</button>
           </div>
           <div style="display:flex; flex-direction:column; gap:5px;" id="lecture-container">
             <!-- Chapters render here -->
+          </div>
+          <div id="lecture-collapsed-summary" style="display:none; font-size:10.5px; color:var(--ak-muted); padding:5px 8px; background:rgba(255,255,255,0.03); border-radius:8px; cursor:pointer;" onclick="window.toggleCoachingCollapse()">
+            3 Lectures Tracked &bull; Click to expand
           </div>
         </div>
 
@@ -2133,6 +2165,22 @@
     }
   };
 
+  let coachingCollapsed = false;
+  window.toggleCoachingCollapse = function() {
+    coachingCollapsed = !coachingCollapsed;
+    const container = document.getElementById('lecture-container');
+    const summary = document.getElementById('lecture-collapsed-summary');
+    const icon = document.getElementById('coachingCollapseIcon');
+    if (container) container.style.display = coachingCollapsed ? 'none' : 'flex';
+    if (summary) {
+      summary.style.display = coachingCollapsed ? 'block' : 'none';
+      const list = getLectures();
+      const doneCount = list.filter(x => x.done).length;
+      summary.innerHTML = `${list.length} Lectures Tracked (${doneCount} Done) &bull; Click to expand`;
+    }
+    if (icon) icon.textContent = coachingCollapsed ? '▸' : '▾';
+  };
+
   function updateTargetCard() {
     const streakEl = document.getElementById('streak-num');
     let streak = 14;
@@ -2163,16 +2211,24 @@
 
     const pct = totalPlanned > 0 ? Math.round((totalDone / totalPlanned) * 100) : 0;
     const arc = document.getElementById('circle-arc');
+    const miniArc = document.getElementById('mini-circle-arc');
     const pctEl = document.getElementById('circle-percent');
     const ratioEl = document.getElementById('ratio-text');
+    const miniRatioEl = document.getElementById('mini-ratio-text');
     const subGuideEl = document.getElementById('sub-guidance');
 
     if (pctEl) pctEl.textContent = pct + '%';
     if (ratioEl) ratioEl.textContent = `${totalDone} / ${totalPlanned} Done`;
+    if (miniRatioEl) miniRatioEl.textContent = `${totalDone}/${totalPlanned} Done`;
     if (arc) {
       const totalCircumference = 163.36;
       const offset = (totalCircumference * (1 - (pct / 100))).toFixed(2);
       arc.style.strokeDashoffset = offset;
+    }
+    if (miniArc) {
+      const miniCircumference = 87.96;
+      const offset = (miniCircumference * (1 - (pct / 100))).toFixed(2);
+      miniArc.style.strokeDashoffset = offset;
     }
     if (subGuideEl) {
       const remaining = totalPlanned - totalDone;
