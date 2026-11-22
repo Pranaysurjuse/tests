@@ -22,17 +22,100 @@ h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
 .ic svg{width:20px;height:20px}
 .tile b{font-size:16px;margin-top:14px;display:block}
 .tile.wide{grid-column:1/-1;min-height:96px;background:linear-gradient(135deg,rgba(167,139,250,.17),rgba(167,139,250,.04));border-color:rgba(167,139,250,.38)}
-.foot{margin-top:30px;text-align:center;font-size:11.5px;color:#5c5a56}</style><!--theme--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap"><link rel="stylesheet" href="theme.css"><script defer src="theme.js?v=3"></script><!--/theme--></head>
+.foot{margin-top:30px;text-align:center;font-size:11.5px;color:#5c5a56}
+
+/* Chapter Search Bar */
+.search-section{margin-bottom:18px}
+.search-box{position:relative;display:flex;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:2px 14px;transition:.2s}
+.search-box:focus-within{border-color:var(--a);box-shadow:0 0 0 1px var(--a) inset,0 4px 18px rgba(167,139,250,.18)}
+.search-icon{width:16px;height:16px;color:var(--m);flex-shrink:0;margin-right:10px}
+.search-box input{width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--t);padding:11px 0}
+.search-box input::placeholder{color:var(--m);font-size:12px}
+.search-clear{background:transparent;border:none;color:var(--m);font-size:18px;line-height:1;cursor:pointer;padding:4px;border-radius:6px}
+.search-clear:hover{color:var(--t)}
+.results-box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.res-card{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);text-decoration:none;color:var(--t);transition:.2s}
+.res-card:hover{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3)}
+.res-info{display:flex;flex-direction:column;gap:2px}
+.res-ch{font-size:13px;font-weight:700;color:#fff}
+.res-dt{font-size:11px;color:var(--m);font-family:ui-monospace,monospace}
+.res-score{font-family:ui-monospace,monospace;font-size:15px;font-weight:700;color:var(--a);text-align:right}
+.res-acc{font-size:10px;color:var(--m);font-weight:400}
+.no-res{padding:14px;text-align:center;font-size:12px;color:var(--m)}</style><!--theme--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap"><link rel="stylesheet" href="theme.css"><script defer src="theme.js?v=3"></script><!--/theme--></head>
 <body><div class="wrap">
 <a class="back" href="dashboard.html">&#8592; Home</a>
 <p class="eyebrow fade"><i></i>Combine &middot; Choose a type</p>
 <h1 class="fade" style="animation-delay:.05s">Combine</h1>
 <p class="sub fade" style="animation-delay:.09s">Regular combined tests or JEE Advanced tests.</p>
+
+<div class="search-section fade" style="animation-delay:.11s">
+  <div class="search-box">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="chapterSearch" placeholder="Search combine test marks by chapter or topic..." autocomplete="off" spellcheck="false">
+    <button type="button" id="clearSearch" class="search-clear" style="display:none;">&times;</button>
+  </div>
+  <div id="searchResults" class="results-box" style="display:none;"></div>
+</div>
+
 <div class="grid">
-<a class="tile fade" style="animation-delay:0.12s" href="combine.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/></svg></div><b>Combine</b></a>
+<a class="tile fade" style="animation-delay:0.14s" href="combine.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2zM4 19a2 2 0 012-2h13"/></svg></div><b>Combine</b></a>
 <a class="tile fade" style="animation-delay:0.18s" href="adv.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></div><b>Adv</b></a>
 <a class="tile wide fade" style="animation-delay:0.26s" href="afterdiwali.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></div><b>After Diwali</b></a>
 </div>
 <p class="foot">Cognition Test Tracker &middot; Combine</p>
-</div><script defer src="studyhub.js?v=6"></script>
+</div>
+<script>
+  const COMBINE_TESTS = [
+    {date: "2026-10-17", label: "17 Oct 2026", score: 108, max: 300, acc: null, chapter: "Part Test 4: Work-Energy, States of Matter, Straight Lines & Circles", p: 64, c: 22, m: 22},
+    {date: "2026-09-12", label: "12 Sep 2026", score: 146, max: 300, acc: "85.7% Acc", chapter: "Part Test 3: NLM & Friction, Chemical Bonding, Sequences & Series", p: 29, c: 71, m: 46},
+    {date: "2026-08-23", label: "23 Aug 2026", score: 95, max: 300, acc: "56% Acc", chapter: "Part Test 2: Kinematics (2D), Atomic Structure, Trigonometry", p: 33, c: 54, m: 8},
+    {date: "2026-08-08", label: "08 Aug 2026", score: 143, max: 300, acc: "62.5% Acc", chapter: "Part Test 1: Kinematics, Mole Concept, Quadratic Equations", p: 57, c: 61, m: 25}
+  ];
+
+  const searchInput = document.getElementById('chapterSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  const resultsBox = document.getElementById('searchResults');
+
+  function renderQuickSearch(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      resultsBox.style.display = 'none';
+      clearBtn.style.display = 'none';
+      return;
+    }
+    clearBtn.style.display = 'block';
+    resultsBox.style.display = 'flex';
+
+    const matches = COMBINE_TESTS.filter(t =>
+      t.chapter.toLowerCase().includes(q) ||
+      t.date.toLowerCase().includes(q) ||
+      t.label.toLowerCase().includes(q)
+    );
+
+    if (matches.length === 0) {
+      resultsBox.innerHTML = '<div class="no-res">No tests found for "<b>' + q + '</b>"</div>';
+      return;
+    }
+
+    resultsBox.innerHTML = matches.map(t => `
+      <a class="res-card" href="combine/overview/index.html?q=${encodeURIComponent(t.chapter)}">
+        <div class="res-info">
+          <span class="res-ch">${t.chapter}</span>
+          <span class="res-dt">${t.label} &bull; P:${t.p} C:${t.c} M:${t.m}</span>
+        </div>
+        <div class="res-score">
+          ${t.score} / ${t.max}
+          ${t.acc ? '<div class="res-acc">' + t.acc + '</div>' : ''}
+        </div>
+      </a>
+    `).join('');
+  }
+
+  searchInput.addEventListener('input', e => renderQuickSearch(e.target.value));
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    renderQuickSearch('');
+  });
+</script>
+<script defer src="studyhub.js?v=6"></script>
 </body></html>

@@ -29,17 +29,103 @@ h1{font-family:Georgia,'Times New Roman',serif;font-style:italic}
 .deco svg{bottom:-4%;right:-6%;width:90vmin;height:60vmin;opacity:.5}
 .papers{position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(239,139,124,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(239,139,124,.06) 1px,transparent 1px);background-size:32px 32px}
 .curve{stroke-dasharray:900;stroke-dashoffset:900;animation:dr 4s ease forwards}
-@keyframes dr{to{stroke-dashoffset:0}}</style><!--theme--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap"><link rel="stylesheet" href="theme.css"><script defer src="theme.js?v=3"></script><!--/theme--></head>
+@keyframes dr{to{stroke-dashoffset:0}}
+
+/* Chapter Search Bar */
+.search-section{margin-bottom:18px}
+.search-box{position:relative;display:flex;align-items:center;background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:2px 14px;transition:.2s;border-left:3px solid var(--a)}
+.search-box:focus-within{border-color:var(--a);box-shadow:0 0 0 1px var(--a) inset,0 4px 18px rgba(239,139,124,.18)}
+.search-icon{width:16px;height:16px;color:var(--m);flex-shrink:0;margin-right:10px}
+.search-box input{width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--t);padding:11px 0}
+.search-box input::placeholder{color:var(--m);font-size:12px}
+.search-clear{background:transparent;border:none;color:var(--m);font-size:18px;line-height:1;cursor:pointer;padding:4px;border-radius:6px}
+.search-clear:hover{color:var(--t)}
+.results-box{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px;margin-top:8px;display:flex;flex-direction:column;gap:6px;border-left:3px solid var(--a)}
+.res-card{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);text-decoration:none;color:var(--t);transition:.2s}
+.res-card:hover{background:rgba(239,139,124,.1);border-color:rgba(239,139,124,.3)}
+.res-info{display:flex;flex-direction:column;gap:2px}
+.res-ch{font-size:13px;font-weight:700;color:#fff}
+.res-dt{font-size:11px;color:var(--m);font-family:ui-monospace,monospace}
+.res-score{font-family:ui-monospace,monospace;font-size:15px;font-weight:700;color:var(--a);text-align:right}
+.res-acc{font-size:10px;color:var(--m);font-weight:400}
+.no-res{padding:14px;text-align:center;font-size:12px;color:var(--m)}</style><!--theme--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@500;600;700&display=swap"><link rel="stylesheet" href="theme.css"><script defer src="theme.js?v=3"></script><!--/theme--></head>
 <body><div class="glow"></div><div class="papers"></div><div class="deco"><svg viewBox="0 0 400 200" fill="none" stroke="#ef8b7c" stroke-width="2"><path class="curve" d="M0 100 C 50 0, 100 0, 150 100 S 250 200, 300 100 S 370 20, 400 90"/><path class="curve" style="animation-delay:.6s;opacity:.5" d="M0 140 C 60 60, 120 60, 180 140 S 300 220, 400 130"/><line x1="0" y1="100" x2="400" y2="100" stroke-opacity=".3" stroke-dasharray="4 6"/></svg></div><div class="wrap">
 <a class="back" href="dashboard.html">&#8592; Home</a>
 <p class="eyebrow fade">Maths &middot; Choose a period</p>
 <h1 class="fade" style="animation-delay:.05s">Maths dashboards</h1>
 <p class="sub fade" style="animation-delay:.09s">Before Diwali, after Diwali, or the full trend across everything.</p>
+
+<div class="search-section fade" style="animation-delay:.11s">
+  <div class="search-box">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <input type="text" id="chapterSearch" placeholder="Search test marks by chapter (e.g. Quadratic Equations, Straight Lines)..." autocomplete="off" spellcheck="false">
+    <button type="button" id="clearSearch" class="search-clear" style="display:none;">&times;</button>
+  </div>
+  <div id="searchResults" class="results-box" style="display:none;"></div>
+</div>
+
 <div class="grid">
-<a class="tile fade" style="animation-delay:.12s" href="maths-before.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>Before Diwali</b></a>
+<a class="tile fade" style="animation-delay:.14s" href="maths-before.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>Before Diwali</b></a>
 <a class="tile fade" style="animation-delay:.18s" href="afterdiwali.html?subject=Maths"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></div><b>After Diwali</b></a>
-<a class="tile wide fade" style="animation-delay:.26s" href="maths/overview/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><b>All months</b></a>
+<a class="tile wide fade" style="animation-delay:.26s" href="maths/overview/index.html"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><b>All months &middot; Full Test Log</b></a>
 </div>
 <p class="foot">Cognition Test Tracker &middot; Maths</p>
-</div><script defer src="studyhub.js?v=6"></script>
+</div>
+<script>
+  const MATHS_TESTS = [
+    {date: "2026-10-07", label: "07 Oct 2026", score: 25, max: 100, acc: null, rank: null, chapter: "Permutations & Combinations (P&C)"},
+    {date: "2026-09-23", label: "23 Sep 2026", score: 37, max: 100, acc: "76.9% Acc", rank: null, chapter: "Circles & System of Circles"},
+    {date: "2026-09-05", label: "05 Sep 2026", score: 48, max: 100, acc: "70.6% Acc", rank: null, chapter: "Straight Lines & Linear Equations"},
+    {date: "2026-08-01", label: "01 Aug 2026", score: 18, max: 100, acc: "40% Acc", rank: null, chapter: "Sequences & Series (AP, GP)"},
+    {date: "2026-07-18", label: "18 Jul 2026", score: 37, max: 100, acc: "55% Acc", rank: null, chapter: "Trigonometric Functions & Identities"},
+    {date: "2026-07-08", label: "08 Jul 2026", score: 70, max: 100, acc: null, rank: "Rank #3/36", chapter: "Quadratic Equations & Complex Numbers"},
+    {date: "2026-06-27", label: "27 Jun 2026", score: 58, max: 100, acc: null, rank: "Rank #1/28", chapter: "Sets, Relations & Functions"}
+  ];
+
+  const searchInput = document.getElementById('chapterSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  const resultsBox = document.getElementById('searchResults');
+
+  function renderQuickSearch(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      resultsBox.style.display = 'none';
+      clearBtn.style.display = 'none';
+      return;
+    }
+    clearBtn.style.display = 'block';
+    resultsBox.style.display = 'flex';
+
+    const matches = MATHS_TESTS.filter(t =>
+      t.chapter.toLowerCase().includes(q) ||
+      t.date.toLowerCase().includes(q) ||
+      t.label.toLowerCase().includes(q)
+    );
+
+    if (matches.length === 0) {
+      resultsBox.innerHTML = '<div class="no-res">No tests found for "<b>' + q + '</b>"</div>';
+      return;
+    }
+
+    resultsBox.innerHTML = matches.map(t => `
+      <a class="res-card" href="maths/overview/index.html?q=${encodeURIComponent(t.chapter)}">
+        <div class="res-info">
+          <span class="res-ch">${t.chapter}</span>
+          <span class="res-dt">${t.label}${t.rank ? ' &bull; ' + t.rank : ''}</span>
+        </div>
+        <div class="res-score">
+          ${t.score} / ${t.max}
+          ${t.acc ? '<div class="res-acc">' + t.acc + '</div>' : ''}
+        </div>
+      </a>
+    `).join('');
+  }
+
+  searchInput.addEventListener('input', e => renderQuickSearch(e.target.value));
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    renderQuickSearch('');
+  });
+</script>
+<script defer src="studyhub.js?v=6"></script>
 </body></html>
