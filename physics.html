@@ -74,6 +74,10 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
 </div>
 <script>
   const PHYSICS_TESTS = [
+    // After Diwali Tests
+    {id: "ad_2026-11-21", date: "2026-11-21", label: "21 Nov 2026", score: 42, max: 100, acc: null, rank: null, title: "Physics Class Test", chapter: "", period: "after", link: "afterdiwali.html?subject=Physics&q=Physics%20Class%20Test"},
+    {id: "ad_2026-11-16", date: "2026-11-16", label: "16 Nov 2026", score: 46, max: 100, acc: null, rank: null, title: "Mains Test 1", chapter: "", period: "after", link: "afterdiwali.html?subject=Physics&q=mains"},
+    // Before Diwali Tests
     {id: 5, date:"2026-10-10", label:"10 Oct 2026", score:55, max:100, acc:"64% Acc", rank:null, title:"Test #05", chapter:""},
     {id: 4, date:"2026-09-26", label:"26 Sep 2026", score:72, max:100, acc:"100% Acc", rank:null, title:"Test #04", chapter:""},
     {id: 3, date:"2026-08-17", label:"17 Aug 2026", score:45, max:100, acc:null, rank:null, title:"Test #03", chapter:""},
@@ -91,6 +95,49 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
   const clearBtn = document.getElementById('clearSearch');
   const resultsBox = document.getElementById('searchResults');
 
+  // Dynamically sync any newer tests from afterdiwali.html
+  function syncAfterDiwali() {
+    fetch('afterdiwali.html')
+      .then(r => r.text())
+      .then(html => {
+        const m = html.match(/const\s+TESTS\s*=\s*(\[[\s\S]*?\]);/);
+        if (!m) return;
+        try {
+          const raw = (new Function("return " + m[1]))();
+          raw.forEach(t => {
+            if (t.subjects && t.subjects.Physics) {
+              const s = t.subjects.Physics;
+              const chMatch = t.name.match(/\(([^)]+)\)/);
+              const ch = chMatch ? chMatch[1] : '';
+              const existing = PHYSICS_TESTS.find(x => x.date === t.date && x.title === t.name);
+              if (!existing) {
+                const dObj = new Date(t.date);
+                const label = isNaN(dObj.getTime()) ? t.date : dObj.toLocaleDateString("en-IN", {day:"2-digit", month:"short", year:"numeric"});
+                PHYSICS_TESTS.unshift({
+                  id: 'ad_' + t.date + '_' + t.name.replace(/\W+/g, ''),
+                  date: t.date,
+                  label: label,
+                  score: s.score,
+                  max: s.max || 100,
+                  acc: null,
+                  rank: null,
+                  title: t.name,
+                  chapter: ch,
+                  period: 'after',
+                  link: 'afterdiwali.html?subject=Physics&q=' + encodeURIComponent(ch || t.name)
+                });
+              }
+            }
+          });
+          if (searchInput && searchInput.value.trim()) {
+            renderQuickSearch(searchInput.value);
+          }
+        } catch(e) {}
+      })
+      .catch(() => {});
+  }
+  syncAfterDiwali();
+
   function renderQuickSearch(query) {
     const q = query.trim().toLowerCase();
     if (!q) {
@@ -105,7 +152,8 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
       (t.chapter && t.chapter.toLowerCase().includes(q)) ||
       t.title.toLowerCase().includes(q) ||
       t.date.toLowerCase().includes(q) ||
-      t.label.toLowerCase().includes(q)
+      t.label.toLowerCase().includes(q) ||
+      String(t.score).includes(q)
     );
 
     if (matches.length === 0) {
@@ -114,13 +162,17 @@ h1,.tile b{font-family:ui-monospace,'SF Mono',Consolas,monospace}
     }
 
     resultsBox.innerHTML = matches.map(t => {
-      const displayTitle = t.chapter ? t.chapter : t.title;
-      const subtitle = t.chapter ? (t.title + ' &bull; ' + t.label) : t.label;
+      const displayTitle = t.title || t.chapter;
+      const subtitle = (t.chapter && t.chapter !== t.title) ? (t.chapter + ' &bull; ' + t.label) : t.label;
+      const targetUrl = t.link || ('physics/overview/index.html?q=' + encodeURIComponent(t.chapter || t.title));
+      const badge = t.period === 'after'
+        ? '<span style="font-size:9.5px; padding:1px 6px; border-radius:4px; background:rgba(111,207,151,0.15); color:#6fcf97; border:1px solid rgba(111,207,151,0.3); margin-left:6px; font-weight:600;">After Diwali</span>'
+        : '';
       return `
-        <a class="res-card" href="physics/overview/index.html?q=${encodeURIComponent(t.chapter || t.title)}">
+        <a class="res-card" href="${targetUrl}">
           <div class="res-info">
             <span class="res-ch">${displayTitle}</span>
-            <span class="res-dt">${subtitle}${t.rank ? ' &bull; ' + t.rank : ''}</span>
+            <span class="res-dt">${subtitle}${t.rank ? ' &bull; ' + t.rank : ''}${badge}</span>
           </div>
           <div class="res-score">
             ${t.score} / ${t.max}

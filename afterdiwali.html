@@ -29,7 +29,15 @@ h1{font-size:28px;margin:0 0 4px;font-weight:800}
 .bar{flex:1;height:10px;background:#232323;border-radius:5px;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:5px}
 .sv{width:84px;text-align:right;font-family:'Courier New',monospace;flex-shrink:0}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}.chip{font-family:'Courier New',monospace;font-size:12px;padding:6px 13px;border-radius:16px;border:1px solid #2a2a2a;color:#8a8a8a;text-decoration:none}.chip.on{color:#c9a4ff;border-color:#7c5cf9;background:#1c1530}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}.chip{font-family:'Courier New',monospace;font-size:12px;padding:6px 13px;border-radius:16px;border:1px solid #2a2a2a;color:#8a8a8a;text-decoration:none}.chip.on{color:#c9a4ff;border-color:#7c5cf9;background:#1c1530}
+.search-box{position:relative;display:flex;align-items:center;background:#141414;border:1px solid #2a2a2a;border-radius:14px;padding:2px 14px;margin-bottom:20px;transition:.2s}
+.search-box:focus-within{border-color:#7c5cf9}
+.search-icon{width:16px;height:16px;color:#949494;flex-shrink:0;margin-right:10px}
+.search-box input{width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;color:#f2f5f3;padding:11px 0}
+.search-box input::placeholder{color:#8a8a95;font-size:12px}
+.search-clear{background:transparent;border:none;color:#8a8a95;font-size:18px;line-height:1;cursor:pointer;padding:4px;border-radius:6px}
+.search-clear:hover{color:#f2f5f3}
+.test.highlight{border-color:#7c5cf9;background:#181326}
 .empty{text-align:center;padding:48px 20px;border:1px dashed #7c5cf9;border-radius:18px;color:#c9a4ff;background:#120e1f}
 .empty b{display:block;font-size:18px;margin-bottom:6px;color:#f2f5f3}
 .empty span{font-size:13.5px;color:#8a8a95}
@@ -45,6 +53,11 @@ h1{font-size:28px;margin:0 0 4px;font-weight:800}
 <h1 id="ttl">After Diwali</h1>
 <p class="sub">Fresh page, fresh tests. Only tests after Diwali show up here.</p>
 <div class="chips" id="chips"></div>
+<div class="search-box">
+  <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+  <input type="text" id="testSearch" placeholder="Search tests by chapter, test name, date..." autocomplete="off" spellcheck="false">
+  <button type="button" id="clearSearch" class="search-clear" style="display:none;">&times;</button>
+</div>
 <div id="app"></div>
 </div>
 <script>
@@ -59,31 +72,69 @@ const TESTS = [
 ];
 
 const SUBJ=new URLSearchParams(location.search).get("subject");
+const INIT_Q=new URLSearchParams(location.search).get("q") || "";
 const VIEW=SUBJ?TESTS.filter(t=>t.subjects[SUBJ]).map(t=>({...t,subjects:{[SUBJ]:t.subjects[SUBJ]}})):TESTS;
 if(SUBJ){document.getElementById("ttl").textContent=SUBJ+" \u00b7 After Diwali";const b=document.getElementById("back");b.href=SUBJ.toLowerCase()+".html";b.innerHTML="&larr; "+SUBJ}
 document.getElementById("chips").innerHTML=[["All",""],["Physics","Physics"],["Chemistry","Chemistry"],["Maths","Maths"],["Adv","Adv"]].map(([n,v])=>`<a class="chip${(SUBJ||"")===v?" on":""}" href="afterdiwali.html${v?"?subject="+v:""}">${n}</a>`).join("");
 const COL={Physics:'#6fcf97',Chemistry:'#3b9dff',Maths:'#ef8b7c',Adv:'#f5c451'};
 const fmt=d=>new Date(d).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
 const app=document.getElementById("app");
+const searchInput=document.getElementById("testSearch");
+const clearBtn=document.getElementById("clearSearch");
+
+if (INIT_Q) {
+  searchInput.value = INIT_Q;
+  clearBtn.style.display = "block";
+}
+
 const tot=t=>{let s=0,m=0;for(const k in t.subjects){s+=t.subjects[k].score;m+=t.subjects[k].max}return{s,m,p:m?s/m*100:0}};
 
-if(!VIEW.length){
-  app.innerHTML=`<div class="empty"><b>No tests yet</b><span>Your first test after Diwali (16 Nov) will show up here once the marks are added.</span></div>`;
-}else{
-  const T=VIEW.map(t=>({...t,...tot(t)}));
+function render() {
+  const q = (searchInput.value || "").trim().toLowerCase();
+  clearBtn.style.display = q ? "block" : "none";
+
+  let list = VIEW;
+  if (q) {
+    list = VIEW.filter(t => {
+      const matchName = t.name && t.name.toLowerCase().includes(q);
+      const matchDate = t.date && t.date.toLowerCase().includes(q);
+      const matchFmt = fmt(t.date).toLowerCase().includes(q);
+      const matchSubj = Object.keys(t.subjects).some(s => s.toLowerCase().includes(q) || String(t.subjects[s].score).includes(q));
+      return matchName || matchDate || matchFmt || matchSubj;
+    });
+  }
+
+  if(!list.length){
+    app.innerHTML=`<div class="empty"><b>${q ? 'No tests found for "' + q + '"' : 'No tests yet'}</b><span>${q ? 'Try searching another chapter, test name, or date.' : 'Your first test after Diwali will show up here once the marks are added.'}</span></div>`;
+    return;
+  }
+
+  const T=list.map(t=>({...t,...tot(t)}));
   const best=T.reduce((a,b)=>b.p>a.p?b:a),last=T[T.length-1];
   const avg=T.reduce((a,b)=>a+b.p,0)/T.length;
   let h=`<div class="kpis">
-   <div class="kpi"><p class="kl">Tests given</p><p class="kv">${T.length}</p></div>
+   <div class="kpi"><p class="kl">Tests ${q ? 'found' : 'given'}</p><p class="kv">${T.length}</p></div>
    <div class="kpi"><p class="kl">Latest</p><p class="kv">${last.s}<small>/${last.m}</small></p></div>
    <div class="kpi"><p class="kl">Average</p><p class="kv">${avg.toFixed(0)}<small>%</small></p></div>
    <div class="kpi"><p class="kl">Best</p><p class="kv">${best.p.toFixed(0)}<small>% &middot; ${best.name}</small></p></div></div>`;
-  if(T.length>1) h+=`<div class="label">Trend</div><div class="spark">${T.map(t=>`<div style="height:${Math.max(t.p,3)}%"><em>${t.p.toFixed(0)}</em></div>`).join("")}</div>`;
-  h+=`<div class="label">Tests</div>`+T.slice().reverse().map(t=>`<div class="test">
+  if(!q && T.length>1) h+=`<div class="label">Trend</div><div class="spark">${T.map(t=>`<div style="height:${Math.max(t.p,3)}%"><em>${t.p.toFixed(0)}</em></div>`).join("")}</div>`;
+  h+=`<div class="label">${q ? 'Matching Tests (' + T.length + ')' : 'Tests'}</div>`+T.slice().reverse().map(t=>{
+    const isHighlighted = q && (t.name.toLowerCase().includes(q) || fmt(t.date).toLowerCase().includes(q));
+    return `<div class="test${isHighlighted ? ' highlight' : ''}">
    <div class="th"><div><div class="tn">${t.name}</div><div class="td">${fmt(t.date)}</div></div><div class="tt">${t.s}/${t.m} &middot; ${t.p.toFixed(0)}%</div></div>
-   ${Object.entries(t.subjects).map(([k,v])=>`<div class="sr"><span class="sn" style="color:${COL[k]||'#a78bfa'}">${k}</span><span class="bar"><i style="width:${Math.max(v.score/v.max*100,2)}%;background:${COL[k]||'#a78bfa'}"></i></span><span class="sv">${v.score}/${v.max}</span></div>`).join("")}</div>`).join("");
+   ${Object.entries(t.subjects).map(([k,v])=>`<div class="sr"><span class="sn" style="color:${COL[k]||'#a78bfa'}">${k}</span><span class="bar"><i style="width:${Math.max(v.score/v.max*100,2)}%;background:${COL[k]||'#a78bfa'}"></i></span><span class="sv">${v.score}/${v.max}</span></div>`).join("")}</div>`;
+  }).join("");
   app.innerHTML=h;
 }
+
+render();
+
+searchInput.addEventListener("input", () => render());
+clearBtn.addEventListener("click", () => {
+  searchInput.value = "";
+  render();
+  searchInput.focus();
+});
 </script>
 <script defer src="studyhub.js?v=7"></script>
 </body>

@@ -66,6 +66,9 @@ h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
 </div>
 <script>
   const COMBINE_TESTS = [
+    // After Diwali Tests
+    {id: "ad_2026-11-16", date: "2026-11-16", label: "16 Nov 2026", score: 101, max: 300, acc: null, title: "Mains Test 1", chapter: "", p: 46, c: 43, m: 12, period: "after", link: "afterdiwali.html?q=mains"},
+    // Before Diwali Tests
     {id: 4, date: "2026-10-17", label: "17 Oct 2026", score: 108, max: 300, acc: null, title: "Combine Test #04", chapter: "", p: 64, c: 22, m: 22},
     {id: 3, date: "2026-09-12", label: "12 Sep 2026", score: 146, max: 300, acc: "85.7% Acc", title: "Combine Test #03", chapter: "", p: 29, c: 71, m: 46},
     {id: 2, date: "2026-08-23", label: "23 Aug 2026", score: 95, max: 300, acc: "56% Acc", title: "Combine Test #02", chapter: "", p: 33, c: 54, m: 8},
@@ -82,6 +85,56 @@ h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
   const clearBtn = document.getElementById('clearSearch');
   const resultsBox = document.getElementById('searchResults');
 
+  // Dynamically sync any newer combine/full tests from afterdiwali.html
+  function syncAfterDiwali() {
+    fetch('afterdiwali.html')
+      .then(r => r.text())
+      .then(html => {
+        const m = html.match(/const\s+TESTS\s*=\s*(\[[\s\S]*?\]);/);
+        if (!m) return;
+        try {
+          const raw = (new Function("return " + m[1]))();
+          raw.forEach(t => {
+            if (!t.subjects) return;
+            const subKeys = Object.keys(t.subjects);
+            // Include tests that have multiple subjects or Adv
+            if (subKeys.length > 1 || t.subjects.Adv) {
+              const existing = COMBINE_TESTS.find(x => x.date === t.date && x.title === t.name);
+              if (!existing) {
+                let score = 0, max = 0;
+                subKeys.forEach(k => { score += t.subjects[k].score; max += (t.subjects[k].max || 100); });
+                const p = t.subjects.Physics ? t.subjects.Physics.score : '-';
+                const c = t.subjects.Chemistry ? t.subjects.Chemistry.score : '-';
+                const mMarks = t.subjects.Maths ? t.subjects.Maths.score : '-';
+                const dObj = new Date(t.date);
+                const label = isNaN(dObj.getTime()) ? t.date : dObj.toLocaleDateString("en-IN", {day:"2-digit", month:"short", year:"numeric"});
+                COMBINE_TESTS.unshift({
+                  id: 'ad_' + t.date + '_' + t.name.replace(/\W+/g, ''),
+                  date: t.date,
+                  label: label,
+                  score: score,
+                  max: max,
+                  acc: null,
+                  title: t.name,
+                  chapter: "",
+                  p: p,
+                  c: c,
+                  m: mMarks,
+                  period: 'after',
+                  link: 'afterdiwali.html?q=' + encodeURIComponent(t.name)
+                });
+              }
+            }
+          });
+          if (searchInput && searchInput.value.trim()) {
+            renderQuickSearch(searchInput.value);
+          }
+        } catch(e) {}
+      })
+      .catch(() => {});
+  }
+  syncAfterDiwali();
+
   function renderQuickSearch(query) {
     const q = query.trim().toLowerCase();
     if (!q) {
@@ -96,7 +149,8 @@ h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
       (t.chapter && t.chapter.toLowerCase().includes(q)) ||
       t.title.toLowerCase().includes(q) ||
       t.date.toLowerCase().includes(q) ||
-      t.label.toLowerCase().includes(q)
+      t.label.toLowerCase().includes(q) ||
+      String(t.score).includes(q)
     );
 
     if (matches.length === 0) {
@@ -105,13 +159,18 @@ h1{font-size:28px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:
     }
 
     resultsBox.innerHTML = matches.map(t => {
-      const displayTitle = t.chapter ? t.chapter : t.title;
-      const subtitle = t.chapter ? (t.title + ' &bull; ' + t.label) : t.label;
+      const displayTitle = t.title || t.chapter;
+      const subScores = (t.p !== '-' && t.c !== '-' && t.m !== '-') ? ` &bull; P:${t.p} C:${t.c} M:${t.m}` : '';
+      const subtitle = (t.chapter && t.chapter !== t.title) ? (t.chapter + ' &bull; ' + t.label) : (t.label + subScores);
+      const targetUrl = t.link || ('combine/overview/index.html?q=' + encodeURIComponent(t.chapter || t.title));
+      const badge = t.period === 'after'
+        ? '<span style="font-size:9.5px; padding:1px 6px; border-radius:4px; background:rgba(167,139,250,0.15); color:#a78bfa; border:1px solid rgba(167,139,250,0.3); margin-left:6px; font-weight:600;">After Diwali</span>'
+        : '';
       return `
-        <a class="res-card" href="combine/overview/index.html?q=${encodeURIComponent(t.chapter || t.title)}">
+        <a class="res-card" href="${targetUrl}">
           <div class="res-info">
             <span class="res-ch">${displayTitle}</span>
-            <span class="res-dt">${subtitle} &bull; P:${t.p} C:${t.c} M:${t.m}</span>
+            <span class="res-dt">${subtitle}${badge}</span>
           </div>
           <div class="res-score">
             ${t.score} / ${t.max}
