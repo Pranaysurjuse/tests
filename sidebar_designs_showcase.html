@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5 Sidebar Designs — Interactive Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --background: #06080c;
+      --foreground: #f1f5f9;
+      --card: #0f131b;
+      --border: rgba(255, 255, 255, 0.1);
+      --secondary: #1e293b;
+      --muted-foreground: #94a3b8;
+    }
+    .stage-bg {
+      background-color: #07090d;
+      background-image:
+        radial-gradient(circle at 18% 20%, rgba(245, 158, 11, 0.08), transparent 40%),
+        radial-gradient(circle at 82% 80%, rgba(37, 99, 235, 0.08), transparent 40%),
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+    }
+    .dock-item { transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.15s; }
+    .dock-item:hover { transform: scale(1.18) translateX(4px); }
+    .rail-btn { position: relative; }
+    .rail-tooltip {
+      position: absolute; left: calc(100% + 10px); top: 50%;
+      transform: translateY(-50%) translateX(-4px);
+      background: #111827; color: #f8fafc; border: 1px solid rgba(255,255,255,0.12);
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+      white-space: nowrap; opacity: 0; pointer-events: none; transition: all 0.15s ease; z-index: 50;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+    .rail-btn:hover .rail-tooltip { opacity: 1; transform: translateY(-50%) translateX(0); }
+    .rev-check {
+      appearance: none; -webkit-appearance: none; width: 18px; height: 18px;
+      border: 1.5px solid #475569; border-radius: 9999px; cursor: pointer;
+      display: grid; place-content: center; flex-shrink: 0; transition: all 0.2s;
+    }
+    .rev-check:checked { background: #f59e0b; border-color: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.45); }
+    .rev-check:checked::before { content: ""; width: 5px; height: 5px; background: #0c1017; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen p-4 md:p-6">
+
+  <div class="max-w-6xl mx-auto space-y-5">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="text-xs font-bold uppercase tracking-widest text-amber-500">Sidebar Architecture Lab</div>
+        <h1 class="text-xl font-extrabold mt-0.5">5 Sidebar Designs for Your Study Desk</h1>
+        <p class="text-xs text-[var(--muted-foreground)] mt-1">
+          Switch between styles below, click the <span class="text-blue-400 font-semibold">🔄 Revision</span> button in any sidebar to test its drawer behavior, then export your favorite.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="btnCopyDesign" onclick="copyCurrentSidebar()" class="px-3.5 py-2 rounded-xl text-xs font-bold border border-[var(--border)] hover:bg-[var(--secondary)] transition cursor-pointer">
+          📋 Copy HTML
+        </button>
+        <button onclick="downloadCurrentSidebar()" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 text-black hover:bg-amber-400 transition cursor-pointer shadow-lg shadow-amber-500/20">
+          📥 Download Design
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5" id="selectorGrid"></div>
+
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-2xl">
+      <div class="px-4 py-2.5 border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+          <span id="stageLabel" class="ml-2 font-mono font-bold text-[var(--muted-foreground)]">01 / Midnight Slim Rail</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="designSpecBadge" class="px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-400 font-mono text-[11px] font-bold border border-amber-500/30">
+            58px Fixed + Slideout
+          </span>
+          <button onclick="toggleRevisionDrawer()" class="px-2.5 py-1 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 font-bold hover:bg-blue-600/30 transition cursor-pointer">
+            Toggle Revision Drawer
+          </button>
+        </div>
+      </div>
+
+      <div id="previewStage" class="stage-bg relative h-[540px] w-full overflow-hidden flex text-slate-200 select-none">
+        <div id="sidebarMount" class="relative z-20 flex h-full"></div>
+        <div id="drawerMount" class="relative z-10 h-full transition-all duration-300"></div>
+
+        <div class="flex-1 p-6 md:p-8 overflow-y-auto flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <div class="text-[11px] font-bold uppercase tracking-widest text-slate-500">Main Workspace Canvas</div>
+                <h2 id="conceptHeadline" class="text-lg font-extrabold text-white mt-0.5">Midnight Slim Rail</h2>
+              </div>
+              <div class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-[11px] font-bold">
+                ● Study Session Active
+              </div>
+            </div>
+
+            <p id="conceptSummary" class="text-xs text-slate-400 max-w-xl leading-relaxed mb-6"></p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl">
+              <div class="p-3.5 rounded-xl bg-slate-900/70 border border-white/10">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-400 mb-1">Footprint</div>
+                <div id="specFootprint" class="text-xs font-bold text-white">58px Ultra-Slim</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-slate-900/70 border border-white/10">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-sky-400 mb-1">Drawer Motion</div>
+                <div id="specMotion" class="text-xs font-bold text-white">Left Slideout Overlay</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-slate-900/70 border border-white/10">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1">Best For</div>
+                <div id="specBestFor" class="text-xs font-bold text-white">Maximum Screen Space</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-between gap-3 max-w-2xl">
+            <div class="text-xs text-amber-200/90">
+              <strong class="text-amber-400">Try it:</strong> Click the blue <span class="px-1.5 py-0.5 rounded bg-blue-600 text-white font-bold text-[10px]">🔄</span> icon in the sidebar or check off lectures inside the Revision Drawer.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DESIGNS = [
+      { id: 'midnight', num: '01', name: 'Midnight Slim Rail', tagline: '58px + Slideout', footprint: '58px Fixed Edge Rail', motion: 'Smooth Slideout Drawer', bestFor: 'Maximum canvas room + tooltips', summary: 'Refined version of your current vertical rail. Rounded capsule edge, subtle amber border glow, glowing active indicators, hover tooltips, and a slideout Lecture Revision drawer that opens right beside the rail.' },
+      { id: 'command', num: '02', name: 'Collapsible Command', tagline: '64px ↔ 230px', footprint: '64px Collapsed / 230px Open', motion: 'Inline Accordion + Popout', bestFor: 'Clear labels & quick stats', summary: 'Inspired by Notion and ChatGPT. Includes an expand/collapse toggle button (⇄), grouped sections (STUDY DESK, TRACKERS), live unread count badges next to labels, and an embedded mini target meter.' },
+      { id: 'glass', num: '03', name: 'Floating Glass Dock', tagline: 'Detached Capsule', footprint: 'Floating 56px Pill', motion: 'Detached Popover Card', bestFor: 'Clean aesthetic & focus mode', summary: 'visionOS / macOS inspired frosted-glass dock floating cleanly off the left edge with vertical centering, hover icon zoom magnification, ambient glow behind the selected icon, and a floating glass revision card.' },
+      { id: 'dual', num: '04', name: 'Dual-Pane Workspace', tagline: 'Rail + Subject Subbar', footprint: '52px Rail + 260px Docked', motion: 'Docked Side-by-Side Pane', bestFor: 'Always-visible revision list', summary: 'Discord / VS Code style 2-column sidebar. A narrow far-left switcher lets you jump between All / Physics / Chemistry / Maths contexts while keeping your Lecture Revision checklist docked alongside without overlapping content.' },
+      { id: 'hud', num: '05', name: 'Tactical Corner HUD', tagline: 'Telemetry Grid', footprint: '68px Precision Rail', motion: 'Sharp Technical Overlay', bestFor: 'Monospace JEE ranker vibe', summary: 'High-contrast technical HUD inspired by Nothing OS & gaming telemetry. Features crisp 1px hairline grid dividers, monospace index tags (01–05), a vertical live progress edge bar, and fast keyboard-ready triggers.' }
+    ];
+
+    let activeDesignId = 'midnight';
+    let drawerOpen = true;
+    let commandExpanded = true;
+    let dualSubjectFilter = 'All';
+
+    let lectures = [
+      { id: '1', title: 'Rotational Motion', subject: 'Physics', desc: 'Revise notes & class illustrations', done: false },
+      { id: '2', title: 'Ionic Equilibrium', subject: 'Chemistry', desc: 'Buffer solutions & Hydrolysis formulas', done: false },
+      { id: '3', title: 'Definite Integration', subject: 'Maths', desc: 'Properties 1 to 4 formulas review', done: false }
+    ];
+
+    function renderSelectorCards() {
+      const grid = document.getElementById('selectorGrid');
+      grid.innerHTML = DESIGNS.map(d => {
+        const active = d.id === activeDesignId;
+        return `
+          <button onclick="selectDesign('${d.id}')" class="text-left p-3 rounded-xl border transition cursor-pointer ${active ? 'bg-amber-500/15 border-amber-500 shadow-sm' : 'bg-[var(--card)] border-[var(--border)] hover:border-amber-500/40'}">
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-mono text-[11px] font-bold ${active ? 'text-amber-400' : 'text-[var(--muted-foreground)]'}">${d.num}</span>
+              <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-black/20 text-[var(--muted-foreground)]">${d.tagline}</span>
+            </div>
+            <div class="text-xs font-extrabold truncate">${d.name}</div>
+          </button>`;
+      }).join('');
+    }
+
+    function revisionIconSvg() {
+      return `
+        <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white relative shadow-[0_0_12px_rgba(37,99,235,0.5)]">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-black text-[9px] font-black flex items-center justify-center shadow-[0_0_6px_#f59e0b]">!</span>
+        </div>`;
+    }
+
+    function buildRevisionCardHTML(variantClass = 'bg-[#0c1017] border-white/10') {
+      const filtered = dualSubjectFilter === 'All' && activeDesignId === 'dual' ? lectures : (activeDesignId === 'dual' ? lectures.filter(l => l.subject === dualSubjectFilter) : lectures);
+      const total = lectures.length;
+      const done = lectures.filter(l => l.done).length;
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      const circ = 163.36;
+      const offset = circ - (circ * pct / 100);
+
+      const itemsHtml = filtered.map(item => {
+        const subCol = item.subject === 'Chemistry' ? 'text-emerald-400' : (item.subject === 'Maths' ? 'text-purple-400' : 'text-sky-400');
+        return `
+          <label class="flex items-start justify-between gap-2.5 p-2 rounded-xl hover:bg-white/5 cursor-pointer transition">
+            <div class="flex items-start gap-2.5 min-w-0">
+              <input type="checkbox" class="rev-check mt-0.5" ${item.done ? 'checked' : ''} onchange="toggleDemoLecture('${item.id}')">
+              <div class="min-w-0">
+                <div class="text-xs font-bold truncate ${item.done ? 'line-through text-slate-500' : 'text-slate-100'}">${item.title}</div>
+                <div class="text-[10px] text-slate-500 truncate">${item.desc}</div>
+              </div>
+            </div>
+            <span class="text-[10px] font-bold shrink-0 ${subCol}">${item.subject}</span>
+          </label>`;
+      }).join('');
+
+      return `
+        <div class="w-[310px] h-full flex flex-col justify-between p-4 border-r ${variantClass}">
+          <div>
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">EVENING DESK &bull; 6:30 PM</div>
+                <div class="text-base font-extrabold text-white">Lecture Revision</div>
+              </div>
+              <button onclick="toggleRevisionDrawer()" class="text-slate-400 hover:text-white text-base leading-none px-1 cursor-pointer">&times;</button>
+            </div>
+            <div class="p-3.5 rounded-2xl bg-[#111622] border border-white/10 flex items-center gap-3.5 mb-5">
+              <div class="relative w-12 h-12 shrink-0">
+                <svg class="w-12 h-12 -rotate-90" viewBox="0 0 64 64">
+                  <circle cx="32" cy="32" r="26" stroke="rgba(255,255,255,0.08)" stroke-width="5" fill="none" />
+                  <circle cx="32" cy="32" r="26" stroke="${pct === 100 ? '#10b981' : '#f59e0b'}" stroke-width="5" stroke-linecap="round" fill="none" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" style="transition:stroke-dashoffset 0.35s ease;" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center font-mono text-[11px] font-extrabold text-white">${pct}%</div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xs font-extrabold text-white">Today's Target</span>
+                  <span class="font-mono text-xs font-extrabold text-amber-400">${done} / ${total} Done</span>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-0.5 leading-snug">${total - done === 0 ? 'All revised! Ready for Qs ⚡' : `${total - done} left before question practice`}</div>
+                <div class="text-[10px] font-bold text-amber-400 mt-1 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Active <span class="text-slate-500 font-normal">&bull; Target: 99%ile</span></div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between px-1 mb-2">
+              <span class="text-[10px] font-extrabold tracking-wider uppercase text-slate-400">${activeDesignId === 'dual' && dualSubjectFilter !== 'All' ? dualSubjectFilter + ' Lectures' : 'Ongoing Class Lectures'}</span>
+              <span class="text-[11px] font-bold text-amber-400">+ Update</span>
+            </div>
+            <div class="space-y-1.5">${itemsHtml}</div>
+          </div>
+          <button onclick="addQuickDemoLecture()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 text-black font-extrabold text-xs shadow-lg shadow-amber-500/25 hover:opacity-95 transition cursor-pointer">+ Add Topic For Revision</button>
+        </div>`;
+    }
+
+    function renderStage() {
+      const d = DESIGNS.find(x => x.id === activeDesignId);
+      document.getElementById('stageLabel').textContent = `${d.num} / ${d.name}`;
+      document.getElementById('designSpecBadge').textContent = d.tagline;
+      document.getElementById('conceptHeadline').textContent = d.name;
+      document.getElementById('conceptSummary').textContent = d.summary;
+      document.getElementById('specFootprint').textContent = d.footprint;
+      document.getElementById('specMotion').textContent = d.motion;
+      document.getElementById('specBestFor').textContent = d.bestFor;
+
+      const sMount = document.getElementById('sidebarMount');
+      const dMount = document.getElementById('drawerMount');
+      const leftCount = lectures.filter(l => !l.done).length;
+
+      if (activeDesignId === 'midnight') {
+        sMount.innerHTML = `
+          <div class="w-[58px] h-full bg-[#130e0a] border-r border-amber-500/20 flex flex-col items-center py-3.5 justify-between">
+            <div class="flex flex-col items-center gap-3 w-full">
+              <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center font-extrabold text-white relative">P<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-[#130e0a] absolute -top-0.5 -right-0.5"></span><span class="px-1 rounded bg-black border border-slate-700 text-[8px] font-bold absolute -bottom-1 -right-1">20</span></div>
+              <div class="px-1.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[8px] font-bold">● LIVE</div>
+              <div class="w-7 h-px bg-white/10 my-1"></div>
+              <button class="rail-btn w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/5 text-base cursor-pointer">📋<span class="rail-tooltip">Daily Tasks</span></button>
+              <button class="rail-btn w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/5 text-base cursor-pointer">📅<span class="rail-tooltip">Test Calendar</span></button>
+              <button class="rail-btn w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/5 text-base relative cursor-pointer">⏳<span class="absolute top-1 right-1 bg-amber-500 text-black text-[8px] font-black px-1 rounded-full">0</span><span class="rail-tooltip">Backlogs</span></button>
+              <button onclick="toggleRevisionDrawer()" class="rail-btn w-10 h-10 rounded-xl flex items-center justify-center cursor-pointer transition ${drawerOpen ? 'bg-amber-500/15 border border-amber-500/60 shadow-[0_0_15px_rgba(245,158,11,0.25)]' : 'hover:bg-white/5'}">${revisionIconSvg()}<span class="rail-tooltip">🔄 Lecture Revision (${leftCount})</span></button>
+            </div>
+            <div class="flex flex-col items-center gap-2">
+              <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300">🦊 FOX</span>
+              <div class="flex flex-col items-center text-amber-400 font-extrabold text-[10px]"><span class="text-sm">🔥</span><span>14d</span></div>
+            </div>
+          </div>`;
+        dMount.innerHTML = drawerOpen ? buildRevisionCardHTML('bg-[#0f0c09] border-amber-500/20') : '';
+      } else if (activeDesignId === 'command') {
+        const w = commandExpanded ? 'w-[228px]' : 'w-[64px]';
+        sMount.innerHTML = `
+          <div class="${w} h-full bg-[#0f131c] border-r border-white/10 flex flex-col justify-between p-3 transition-all duration-200">
+            <div class="space-y-4">
+              <div class="flex items-center ${commandExpanded ? 'justify-between' : 'justify-center'}">
+                ${commandExpanded ? `<div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-amber-500 text-black font-black flex items-center justify-center text-xs">P</div><div><div class="text-xs font-extrabold text-white">Akiva Desk</div><div class="text-[9px] text-emerald-400 font-bold">● LIVE • Lvl 20</div></div></div>` : ''}
+                <button onclick="toggleCommandExpand()" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-xs text-slate-300 cursor-pointer">${commandExpanded ? '«' : '»'}</button>
+              </div>
+              <div class="space-y-1">
+                ${commandExpanded ? `<div class="text-[9px] font-bold uppercase tracking-widest text-slate-500 px-2 pb-1">Study Desk</div>` : ''}
+                <button class="w-full flex items-center ${commandExpanded ? 'gap-2.5 px-2.5' : 'justify-center'} py-2 rounded-xl hover:bg-white/5 text-xs text-slate-300 cursor-pointer"><span>📋</span>${commandExpanded ? '<span class="font-semibold">Daily Tasks</span>' : ''}</button>
+                <button class="w-full flex items-center ${commandExpanded ? 'gap-2.5 px-2.5' : 'justify-center'} py-2 rounded-xl hover:bg-white/5 text-xs text-slate-300 cursor-pointer"><span>📅</span>${commandExpanded ? '<span class="font-semibold">Test Calendar</span>' : ''}</button>
+                <button onclick="toggleRevisionDrawer()" class="w-full flex items-center ${commandExpanded ? 'justify-between px-2.5' : 'justify-center'} py-2 rounded-xl text-xs cursor-pointer transition ${drawerOpen ? 'bg-blue-600/20 border border-blue-500/40 text-white' : 'hover:bg-white/5 text-slate-300'}"><div class="flex items-center gap-2.5">${revisionIconSvg()}${commandExpanded ? '<span class="font-bold">Lecture Revision</span>' : ''}</div>${commandExpanded ? `<span class="px-1.5 py-0.5 rounded-full bg-amber-500 text-black text-[9px] font-black">${leftCount}</span>` : ''}</button>
+                <button class="w-full flex items-center ${commandExpanded ? 'gap-2.5 px-2.5' : 'justify-center'} py-2 rounded-xl hover:bg-white/5 text-xs text-slate-300 cursor-pointer"><span>⏳</span>${commandExpanded ? '<span class="font-semibold">Backlogs</span>' : ''}</button>
+              </div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white/5 border border-white/10 flex items-center ${commandExpanded ? 'justify-between' : 'justify-center'}"><div class="flex items-center gap-2"><span>🔥</span>${commandExpanded ? '<span class="text-xs font-extrabold text-amber-400">14d Streak</span>' : ''}</div>${commandExpanded ? '<span class="text-[10px] text-slate-400 font-mono">99%ile</span>' : ''}</div>
+          </div>`;
+        dMount.innerHTML = drawerOpen ? buildRevisionCardHTML('bg-[#0d111a] border-white/10') : '';
+      } else if (activeDesignId === 'glass') {
+        sMount.innerHTML = `
+          <div class="h-full flex items-center pl-4 pr-2">
+            <div class="w-[56px] py-3.5 rounded-full bg-white/[0.06] backdrop-blur-xl border border-white/15 shadow-[0_16px_40px_rgba(0,0,0,0.65)] flex flex-col items-center gap-3">
+              <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center font-extrabold text-white text-xs shadow-lg">P</div>
+              <div class="w-6 h-px bg-white/15"></div>
+              <button class="dock-item w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm cursor-pointer">📋</button>
+              <button class="dock-item w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm cursor-pointer">📅</button>
+              <button onclick="toggleRevisionDrawer()" class="dock-item w-10 h-10 rounded-full flex items-center justify-center cursor-pointer ${drawerOpen ? 'bg-blue-500/25 ring-2 ring-amber-400/70' : 'bg-white/5'}">${revisionIconSvg()}</button>
+              <button class="dock-item w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm cursor-pointer">⏳</button>
+              <div class="w-6 h-px bg-white/15"></div>
+              <div class="text-[10px] font-black text-amber-400">🔥14</div>
+            </div>
+          </div>`;
+        dMount.innerHTML = drawerOpen ? `<div class="h-full py-5 pl-2"><div class="h-full rounded-3xl overflow-hidden backdrop-blur-xl bg-[#0e131e]/90 border border-white/15 shadow-2xl">${buildRevisionCardHTML('bg-transparent border-none')}</div></div>` : '';
+      } else if (activeDesignId === 'dual') {
+        const subs = [
+          { k: 'All', label: 'ALL', color: 'bg-amber-500 text-black' },
+          { k: 'Physics', label: 'PHY', color: 'bg-sky-500 text-black' },
+          { k: 'Chemistry', label: 'CHEM', color: 'bg-emerald-500 text-black' },
+          { k: 'Maths', label: 'MATH', color: 'bg-purple-500 text-black' }
+        ];
+        sMount.innerHTML = `
+          <div class="w-[54px] h-full bg-[#090c12] border-r border-white/10 flex flex-col items-center py-4 justify-between">
+            <div class="flex flex-col items-center gap-2.5">
+              <button onclick="toggleRevisionDrawer()" class="w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer ${drawerOpen ? 'ring-2 ring-amber-400' : ''}">${revisionIconSvg()}</button>
+              <div class="w-6 h-px bg-white/10 my-1"></div>
+              ${subs.map(s => `<button onclick="setDualSubject('${s.k}')" class="w-9 h-9 rounded-xl text-[10px] font-black transition cursor-pointer ${dualSubjectFilter === s.k ? s.color : 'bg-white/5 text-slate-400 hover:bg-white/10'}">${s.label}</button>`).join('')}
+            </div>
+            <div class="text-[10px] font-bold text-amber-400">🔥14d</div>
+          </div>`;
+        dMount.innerHTML = drawerOpen ? buildRevisionCardHTML('bg-[#0d1118] border-white/10') : '';
+      } else if (activeDesignId === 'hud') {
+        const donePct = lectures.length ? Math.round((lectures.filter(l => l.done).length / lectures.length) * 100) : 0;
+        sMount.innerHTML = `
+          <div class="w-[68px] h-full bg-[#080a0e] border-r border-amber-500/30 flex flex-col justify-between py-3 px-2 font-mono relative">
+            <div class="absolute right-0 top-0 bottom-0 w-[3px] bg-white/5"><div class="w-full bg-amber-500 transition-all duration-300" style="height:${donePct}%"></div></div>
+            <div class="space-y-3 flex flex-col items-center">
+              <div class="w-full text-center pb-2 border-b border-white/10"><div class="text-[9px] text-amber-500 font-bold">SYS.20</div><div class="text-[8px] text-emerald-400">ONLINE</div></div>
+              <button class="w-full py-2 rounded border border-white/10 hover:border-amber-500/50 flex flex-col items-center gap-0.5 cursor-pointer"><span class="text-xs">📋</span><span class="text-[8px] text-slate-400">01/TSK</span></button>
+              <button class="w-full py-2 rounded border border-white/10 hover:border-amber-500/50 flex flex-col items-center gap-0.5 cursor-pointer"><span class="text-xs">📅</span><span class="text-[8px] text-slate-400">02/CAL</span></button>
+              <button onclick="toggleRevisionDrawer()" class="w-full py-2 rounded border transition flex flex-col items-center gap-1 cursor-pointer ${drawerOpen ? 'bg-amber-500/15 border-amber-500' : 'border-white/10 hover:border-amber-500/50'}">${revisionIconSvg()}<span class="text-[8px] text-amber-400 font-bold">03/REV</span></button>
+            </div>
+            <div class="text-center pt-2 border-t border-white/10"><div class="text-[10px] font-bold text-amber-400">${donePct}%</div><div class="text-[8px] text-slate-500">14D STRK</div></div>
+          </div>`;
+        dMount.innerHTML = drawerOpen ? buildRevisionCardHTML('bg-[#090c11] border-amber-500/30 font-sans') : '';
+      }
+    }
+
+    window.selectDesign = id => { activeDesignId = id; renderSelectorCards(); renderStage(); };
+    window.toggleRevisionDrawer = () => { drawerOpen = !drawerOpen; renderStage(); };
+    window.toggleCommandExpand = () => { commandExpanded = !commandExpanded; renderStage(); };
+    window.setDualSubject = sub => { dualSubjectFilter = sub; drawerOpen = true; renderStage(); };
+    window.toggleDemoLecture = id => { const it = lectures.find(x => x.id === id); if (it) { it.done = !it.done; renderStage(); } };
+    window.addQuickDemoLecture = () => {
+      const samples = [
+        { title: 'Electrostatics Gauss Law', subject: 'Physics', desc: 'Flux cases & cavity problems' },
+        { title: 'Aldehydes & Ketones', subject: 'Chemistry', desc: 'Aldol & Cannizzaro mechanisms' },
+        { title: 'Vector 3D Planes', subject: 'Maths', desc: 'Shortest distance & family of planes' }
+      ];
+      lectures.push({ id: 'n_' + Date.now(), ...samples[lectures.length % samples.length], done: false });
+      renderStage();
+    };
+
+    function generateStandaloneExport() {
+      const sHtml = document.getElementById('sidebarMount').innerHTML;
+      const dHtml = buildRevisionCardHTML('bg-[#0c1017] border-white/10');
+      const d = DESIGNS.find(x => x.id === activeDesignId);
+      return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${d.name} + Lecture Revision</title>
+  <script src="https://cdn.tailwindcss.com"><\/script>
+</head>
+<body class="bg-[#07090d] text-slate-200 flex h-screen overflow-hidden">
+  <aside class="flex h-full">${sHtml}</aside>
+  <section id="revision-drawer" class="h-full">${dHtml}</section>
+  <main class="flex-1 p-8"><h1 class="text-xl font-bold text-white">${d.name} Active</h1></main>
+</body>
+</html>`;
+    }
+
+    window.downloadCurrentSidebar = () => {
+      const code = generateStandaloneExport();
+      const blob = new Blob([code], { type: 'text/html' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `sidebar_${activeDesignId}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
+    window.copyCurrentSidebar = () => {
+      const code = generateStandaloneExport();
+      const btn = document.getElementById('btnCopyDesign');
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy HTML', 2000);
+      });
+    };
+
+    renderSelectorCards();
+    renderStage();
+  </script>
+</body>
+</html>
