@@ -1017,8 +1017,8 @@
   }
   .cal-grid-cells {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
     text-align: center;
     font-family: 'JetBrains Mono', monospace;
   }
@@ -1740,11 +1740,11 @@
     background: var(--bg-recessed);
     border: 1px solid rgba(255,255,255,0.05);
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
   }
   .hm-cell {
-    height: 24px;
+    height: 18px;
     display: grid;
     place-items: center;
     font-size: 9.5px;
@@ -3566,9 +3566,9 @@
   // 11. HUB COCKPIT: PCM CALCULATOR, HEATMAP & SCOREBOARD
   // =========================================================
   const PCM_KEY = 'akiva_pcm_questions_v1';
-  const HM_KEY = 'akiva_dec1_sprint_v1';
+  const HM_KEY = 'akiva_jan1_sprint_v1';
   const SPRINT_START = '2026-11-26';
-  const TARGET_END = '2026-12-01';
+  const TARGET_END = '2027-01-01';
   const sprintDates = [];
   (function buildSprintDates() {
     let cur = new Date(SPRINT_START + 'T00:00:00');
@@ -3578,7 +3578,7 @@
       cur.setDate(cur.getDate() + 1);
     }
   })();
-  const SPRINT_DAYS = sprintDates.length; // 6 days (Nov 26 - Dec 1)
+  const SPRINT_DAYS = sprintDates.length; // 37 days (Nov 26 - Jan 1)
   const todayIdx = Math.max(0, sprintDates.indexOf(todayStr));
 
   let hmLevels = new Array(SPRINT_DAYS).fill(0);
@@ -3661,15 +3661,15 @@
         const cls = lvl > 0 ? `l${lvl}` : '';
         const td = i === todayIdx ? 'today-cell' : '';
         const dayNum = parseInt(dStr.split('-')[2], 10);
-        const label = (dStr === TARGET_END) ? '1🎯' : dayNum;
+        const label = (dStr === TARGET_END) ? '🎯' : dayNum;
         const fire = lvl === 3 ? '🔥' : label;
-        return `<div class="hm-cell ${cls} ${td} ${lvl === 3 ? 'has-fire' : ''}" onclick="cycleHmCell(${i})" title="${dStr}${dStr === TARGET_END ? ' (Target: 1 Dec)' : ''}">${fire}</div>`;
+        return `<div class="hm-cell ${cls} ${td} ${lvl === 3 ? 'has-fire' : ''}" onclick="cycleHmCell(${i})" title="${dStr}${dStr === TARGET_END ? ' (Target: 1 Jan)' : ''}">${fire}</div>`;
       }).join('');
     }
     const activeCount = hmLevels.filter(x => x > 0).length;
     const consistPct = Math.round((activeCount / SPRINT_DAYS) * 100);
     setTxt('hmActiveDays', `${activeCount}/${SPRINT_DAYS}`);
-    setTxt('hmConsistBadge', `Target: 1 Dec • ${consistPct}%`);
+    setTxt('hmConsistBadge', `Target: 1 Jan • ${consistPct}%`);
     if (typeof renderStreakUI === 'function') renderStreakUI();
 
     // Daily Scoreboard (Tasks + Revision + Questions)
