@@ -3546,7 +3546,7 @@
     };
     saveStreak();
     hmLevels = new Array(SPRINT_DAYS).fill(0);
-    hmLevels[todayIdx] = 2;
+    for (let k = 0; k <= todayIdx; k++) hmLevels[k] = 2;
     try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     render();
   };
@@ -3566,8 +3566,8 @@
   // 11. HUB COCKPIT: PCM CALCULATOR, HEATMAP & SCOREBOARD
   // =========================================================
   const PCM_KEY = 'akiva_pcm_questions_v1';
-  const HM_KEY = 'akiva_jan1_sprint_v1';
-  const SPRINT_START = '2026-11-26';
+  const HM_KEY = 'akiva_jan1_full_v2';
+  const SPRINT_START = '2026-11-19';
   const TARGET_END = '2027-01-01';
   const sprintDates = [];
   (function buildSprintDates() {
@@ -3578,11 +3578,11 @@
       cur.setDate(cur.getDate() + 1);
     }
   })();
-  const SPRINT_DAYS = sprintDates.length; // 37 days (Nov 26 - Jan 1)
+  const SPRINT_DAYS = sprintDates.length; // 44 days (Nov 19 Day 1 -> Nov 26 Day 8 -> Jan 1 Day 44)
   const todayIdx = Math.max(0, sprintDates.indexOf(todayStr));
 
   let hmLevels = new Array(SPRINT_DAYS).fill(0);
-  hmLevels[todayIdx] = 2; // Today (Day 8) active
+  for (let k = 0; k <= todayIdx; k++) hmLevels[k] = 2; // Days 1..8 active
   try {
     const savedHm = JSON.parse(localStorage.getItem(HM_KEY) || 'null');
     if (Array.isArray(savedHm) && savedHm.length === SPRINT_DAYS) hmLevels = savedHm;
@@ -3653,7 +3653,7 @@
     setW('pcmBarMath', pcmState.Math);
 
     // Heatmap (Nov 26 -> Dec 1 Target Sprint)
-    if (hmLevels.every(x => x === 0)) { hmLevels[todayIdx] = 2; }
+    if (hmLevels.every(x => x === 0)) { for (let k = 0; k <= todayIdx; k++) hmLevels[k] = 2; }
     const hmGrid = document.getElementById('hubHeatmapGrid');
     if (hmGrid) {
       hmGrid.innerHTML = sprintDates.map((dStr, i) => {
