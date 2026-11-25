@@ -1013,8 +1013,8 @@
   }
   .cal-grid-cells {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
     text-align: center;
     font-family: 'JetBrains Mono', monospace;
   }
@@ -1735,11 +1735,17 @@
     background: var(--bg-recessed);
     border: 1px solid rgba(255,255,255,0.05);
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
   }
   .hm-cell {
-    height: 14px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    font-size: 9.5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--text-muted);
     border-radius: 4px;
     background: rgba(255,255,255,0.05);
     cursor: pointer;
@@ -1747,8 +1753,8 @@
   }
   .hm-cell:hover { transform: scale(1.12); }
   .hm-cell.l1 { background: color-mix(in srgb, var(--hub-accent) 30%, transparent); }
-  .hm-cell.l2 { background: color-mix(in srgb, var(--hub-accent) 60%, transparent); }
-  .hm-cell.l3 { background: var(--hub-accent); box-shadow: 0 0 6px var(--hub-glow); }
+  .hm-cell.l2 { background: color-mix(in srgb, var(--hub-accent) 60%, transparent); color: var(--text-primary); }
+  .hm-cell.l3 { background: var(--hub-accent); color: var(--accent-text); box-shadow: 0 0 6px var(--hub-glow); }
   .hm-cell.today-cell { outline: 1.5px solid var(--complement); }
   .hm-stats-row {
     display: grid;
@@ -3478,8 +3484,7 @@
     streakState.bestStreak = Math.max(streakState.bestStreak || 0, streakState.streak);
     saveStreak();
     // Keep Day 8+ heatmap cell active today
-    const dayOffset = Math.max(0, Math.min(20, streakState.activeDates.length - 1));
-    const cellIdx = START_DAY_INDEX + dayOffset;
+    const cellIdx = todayIdx;
     if (hmLevels[cellIdx] === 0) {
       hmLevels[cellIdx] = 2;
       try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
@@ -3508,8 +3513,8 @@
       activeDates: [todayStr]
     };
     saveStreak();
-    hmLevels = new Array(28).fill(0);
-    hmLevels[START_DAY_INDEX] = 2;
+    hmLevels = new Array(SPRINT_DAYS).fill(0);
+    hmLevels[todayIdx] = 2;
     try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     render();
   };
@@ -3529,22 +3534,26 @@
   // 11. HUB COCKPIT: PCM CALCULATOR, HEATMAP & SCOREBOARD
   // =========================================================
   const PCM_KEY = 'akiva_pcm_questions_v1';
-  const HM_KEY = 'akiva_consistency_d8_v2';
-  const START_DAY_INDEX = 7; // Day 8 (0-indexed: Days 1-7 are pre-start, Day 8 is index 7)
+  const HM_KEY = 'akiva_dec1_sprint_v1';
+  const SPRINT_START = '2026-11-26';
+  const TARGET_END = '2026-12-01';
+  const sprintDates = [];
+  (function buildSprintDates() {
+    let cur = new Date(SPRINT_START + 'T00:00:00');
+    const end = new Date(TARGET_END + 'T00:00:00');
+    while (cur <= end) {
+      sprintDates.push(cur.toISOString().split('T')[0]);
+      cur.setDate(cur.getDate() + 1);
+    }
+  })();
+  const SPRINT_DAYS = sprintDates.length; // 6 days (Nov 26 - Dec 1)
+  const todayIdx = Math.max(0, sprintDates.indexOf(todayStr));
 
-  let pcmState = { date: todayStr, aim: 30, Phy: 18, Chem: 16, Math: 14, focusMins: 90 };
-  try {
-    const savedPcm = JSON.parse(localStorage.getItem(PCM_KEY) || 'null');
-    if (savedPcm && savedPcm.date === todayStr) pcmState = savedPcm;
-    else if (savedPcm && savedPcm.aim) pcmState.aim = savedPcm.aim;
-  } catch(e) {}
-
-  // Days 1-7 (indices 0-6) remain 0 (before Day 8 start); tracking begins at Day 8 (index 7)
-  let hmLevels = new Array(28).fill(0);
-  hmLevels[START_DAY_INDEX] = 2; // Day 8 active today
+  let hmLevels = new Array(SPRINT_DAYS).fill(0);
+  hmLevels[todayIdx] = 2; // Today (Day 8) active
   try {
     const savedHm = JSON.parse(localStorage.getItem(HM_KEY) || 'null');
-    if (Array.isArray(savedHm) && savedHm.length === 28) hmLevels = savedHm;
+    if (Array.isArray(savedHm) && savedHm.length === SPRINT_DAYS) hmLevels = savedHm;
   } catch(e) {}
 
   function savePcm() {
@@ -3572,7 +3581,7 @@
     // Automatically update Day 8+ live cell based on total questions solved
     const tot = pcmState.Phy + pcmState.Chem + pcmState.Math;
     const totAim = pcmState.aim * 3;
-    hmLevels[START_DAY_INDEX] = tot >= totAim * 0.75 ? 3 : (tot >= totAim * 0.35 ? 2 : (tot > 0 ? 1 : 0));
+    hmLevels[todayIdx] = tot >= totAim * 0.75 ? 3 : (tot >= totAim * 0.35 ? 2 : (tot > 0 ? 1 : 0));
     try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
     renderHubWidgets();
@@ -3611,23 +3620,24 @@
     setW('pcmBarChem', pcmState.Chem);
     setW('pcmBarMath', pcmState.Math);
 
-    // Heatmap (Starting from Day 8)
+    // Heatmap (Nov 26 -> Dec 1 Target Sprint)
+    if (hmLevels.every(x => x === 0)) { hmLevels[todayIdx] = 2; }
     const hmGrid = document.getElementById('hubHeatmapGrid');
     if (hmGrid) {
-      hmGrid.innerHTML = hmLevels.map((lvl, i) => {
+      hmGrid.innerHTML = sprintDates.map((dStr, i) => {
+        const lvl = hmLevels[i] || 0;
         const cls = lvl > 0 ? `l${lvl}` : '';
-        const td = i === START_DAY_INDEX ? 'today-cell' : '';
-        const pre = i < START_DAY_INDEX ? 'opacity:0.35;' : '';
-        const fire = lvl === 3 ? '🔥' : '';
-        return `<div class="hm-cell ${cls} ${td} ${fire ? 'has-fire' : ''}" style="${pre}" onclick="cycleHmCell(${i})" title="Day ${i + 1}${i < START_DAY_INDEX ? ' (Before Day 8)' : ' (Click to toggle)'}">${fire}</div>`;
+        const td = i === todayIdx ? 'today-cell' : '';
+        const dayNum = parseInt(dStr.split('-')[2], 10);
+        const label = (dStr === TARGET_END) ? '1🎯' : dayNum;
+        const fire = lvl === 3 ? '🔥' : label;
+        return `<div class="hm-cell ${cls} ${td} ${lvl === 3 ? 'has-fire' : ''}" onclick="cycleHmCell(${i})" title="${dStr}${dStr === TARGET_END ? ' (Target: 1 Dec)' : ''}">${fire}</div>`;
       }).join('');
     }
-    if (hmLevels.slice(START_DAY_INDEX).every(x => x === 0)) { hmLevels[START_DAY_INDEX] = 2; }
-    const trackedSlice = hmLevels.slice(START_DAY_INDEX);
-    const activeCount = trackedSlice.filter(x => x > 0).length;
-    const consistPct = Math.round((activeCount / trackedSlice.length) * 100);
-    setTxt('hmActiveDays', `${activeCount}/21`);
-    setTxt('hmConsistBadge', `From Day 8 • ${consistPct}%`);
+    const activeCount = hmLevels.filter(x => x > 0).length;
+    const consistPct = Math.round((activeCount / SPRINT_DAYS) * 100);
+    setTxt('hmActiveDays', `${activeCount}/${SPRINT_DAYS}`);
+    setTxt('hmConsistBadge', `Target: 1 Dec • ${consistPct}%`);
     if (typeof renderStreakUI === 'function') renderStreakUI();
 
     // Daily Scoreboard (Tasks + Revision + Questions)
