@@ -633,12 +633,11 @@
 (function() {
   'use strict';
 
-  // Base Data Set: Post-Diwali & Pre-Diwali Topic Tests
+  // Base Data Set: Only tests that actually have a test name
   const TOPIC_DATABASE = [
-    // Post-Diwali Tests (Live)
     {
       id: "ad_chem_isomerism",
-      topic: "Isomerism in Organic Compounds",
+      topic: "Chemistry Test (ISOMERISM - 1)",
       subject: "Chemistry",
       score: 64,
       max: 100,
@@ -695,302 +694,6 @@
       testName: "Mains Test 1",
       period: "after",
       link: "afterdiwali.html?subject=Maths&q=mains"
-    },
-
-    // Pre-Diwali Physics Tests
-    {
-      id: "phy_t4",
-      topic: "Work, Power & Energy",
-      subject: "Physics",
-      score: 72,
-      max: 100,
-      accuracy: 100,
-      date: "2026-09-26",
-      testName: "Test #04",
-      period: "before",
-      link: "physics/overview/index.html?q=Work"
-    },
-    {
-      id: "phy_t2",
-      topic: "Kinematics: 1D Motion",
-      subject: "Physics",
-      score: 60,
-      max: 100,
-      accuracy: null,
-      date: "2026-07-04",
-      testName: "Test #02 (Rank #1/38)",
-      period: "before",
-      link: "physics/overview/index.html?q=Kinematics"
-    },
-    {
-      id: "phy_t5",
-      topic: "Laws of Motion & Friction",
-      subject: "Physics",
-      score: 55,
-      max: 100,
-      accuracy: 64,
-      date: "2026-10-10",
-      testName: "Test #05",
-      period: "before",
-      link: "physics/overview/index.html?q=Motion"
-    },
-    {
-      id: "phy_t3",
-      topic: "Kinematics: 2D & Projectiles",
-      subject: "Physics",
-      score: 45,
-      max: 100,
-      accuracy: null,
-      date: "2026-08-17",
-      testName: "Test #03",
-      period: "before",
-      link: "physics/overview/index.html?q=Projectiles"
-    },
-    {
-      id: "phy_t1",
-      topic: "Units & Dimensions",
-      subject: "Physics",
-      score: 30,
-      max: 100,
-      accuracy: null,
-      date: "2026-06-24",
-      testName: "Test #01 (Rank #5/33)",
-      period: "before",
-      link: "physics/overview/index.html?q=Units"
-    },
-
-    // Pre-Diwali Chemistry Tests
-    {
-      id: "chem_t4",
-      topic: "Chemical Kinetics",
-      subject: "Chemistry",
-      score: 85,
-      max: 100,
-      accuracy: 78.6,
-      date: "2026-08-05",
-      testName: "Test #04",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Kinetics"
-    },
-    {
-      id: "chem_t5",
-      topic: "Solutions & Colligative Properties",
-      subject: "Chemistry",
-      score: 80,
-      max: 100,
-      accuracy: 84,
-      date: "2026-08-27",
-      testName: "Test #05",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Solutions"
-    },
-    {
-      id: "chem_t3",
-      topic: "Thermodynamics & Thermochemistry",
-      subject: "Chemistry",
-      score: 78,
-      max: 100,
-      accuracy: 80,
-      date: "2026-07-22",
-      testName: "Test #03",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Thermodynamics"
-    },
-    {
-      id: "chem_t7",
-      topic: "Chemical Equilibrium",
-      subject: "Chemistry",
-      score: 72,
-      max: 100,
-      accuracy: 76,
-      date: "2026-09-30",
-      testName: "Test #07",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Equilibrium"
-    },
-    {
-      id: "chem_t8",
-      topic: "Periodic Table & Periodicity",
-      subject: "Chemistry",
-      score: 64,
-      max: 100,
-      accuracy: null,
-      date: "2026-10-14",
-      testName: "Test #08",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Periodic"
-    },
-    {
-      id: "chem_t1",
-      topic: "Mole Concept & Stoichiometry",
-      subject: "Chemistry",
-      score: 58,
-      max: 100,
-      accuracy: null,
-      date: "2026-06-20",
-      testName: "Test #01",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Mole"
-    },
-    {
-      id: "chem_t6",
-      topic: "Ionic Equilibrium",
-      subject: "Chemistry",
-      score: 57,
-      max: 100,
-      accuracy: 56,
-      date: "2026-09-19",
-      testName: "Test #06",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Ionic"
-    },
-    {
-      id: "chem_t2",
-      topic: "Atomic Structure",
-      subject: "Chemistry",
-      score: 53,
-      max: 100,
-      accuracy: null,
-      date: "2026-07-01",
-      testName: "Test #02",
-      period: "before",
-      link: "chemistry/overview/index.html?q=Atomic"
-    },
-
-    // Pre-Diwali Maths Tests
-    {
-      id: "math_t2",
-      topic: "Quadratic Equations",
-      subject: "Maths",
-      score: 70,
-      max: 100,
-      accuracy: null,
-      date: "2026-07-08",
-      testName: "Test #02 (Rank #3/36)",
-      period: "before",
-      link: "maths/overview/index.html?q=Quadratic"
-    },
-    {
-      id: "math_t1",
-      topic: "Sets, Relations & Functions",
-      subject: "Maths",
-      score: 58,
-      max: 100,
-      accuracy: null,
-      date: "2026-06-27",
-      testName: "Test #01 (Rank #1/28)",
-      period: "before",
-      link: "maths/overview/index.html?q=Sets"
-    },
-    {
-      id: "math_t5",
-      topic: "Straight Lines & Pair of Lines",
-      subject: "Maths",
-      score: 48,
-      max: 100,
-      accuracy: 70.6,
-      date: "2026-09-05",
-      testName: "Test #05",
-      period: "before",
-      link: "maths/overview/index.html?q=Straight"
-    },
-    {
-      id: "math_t6",
-      topic: "Circles & System of Circles",
-      subject: "Maths",
-      score: 37,
-      max: 100,
-      accuracy: 76.9,
-      date: "2026-09-23",
-      testName: "Test #06",
-      period: "before",
-      link: "maths/overview/index.html?q=Circles"
-    },
-    {
-      id: "math_t3",
-      topic: "Trigonometric Functions & Identities",
-      subject: "Maths",
-      score: 37,
-      max: 100,
-      accuracy: 55,
-      date: "2026-07-18",
-      testName: "Test #03",
-      period: "before",
-      link: "maths/overview/index.html?q=Trigonometric"
-    },
-    {
-      id: "math_t7",
-      topic: "Binomial Theorem",
-      subject: "Maths",
-      score: 25,
-      max: 100,
-      accuracy: null,
-      date: "2026-10-07",
-      testName: "Test #07",
-      period: "before",
-      link: "maths/overview/index.html?q=Binomial"
-    },
-    {
-      id: "math_t4",
-      topic: "Complex Numbers",
-      subject: "Maths",
-      score: 18,
-      max: 100,
-      accuracy: 40,
-      date: "2026-08-01",
-      testName: "Test #04",
-      period: "before",
-      link: "maths/overview/index.html?q=Complex"
-    },
-
-    // Combine Tests
-    {
-      id: "comb_t3",
-      topic: "Full Test: Mechanics + Kinetics + Calc",
-      subject: "Combine",
-      score: 146,
-      max: 300,
-      accuracy: 85.7,
-      date: "2026-09-12",
-      testName: "Combine Test #03 (P:29 C:71 M:46)",
-      period: "before",
-      link: "combine/overview/index.html"
-    },
-    {
-      id: "comb_t1",
-      topic: "Full Test: Early Syllabus Revision",
-      subject: "Combine",
-      score: 143,
-      max: 300,
-      accuracy: 62.5,
-      date: "2026-08-08",
-      testName: "Combine Test #01 (P:57 C:61 M:25)",
-      period: "before",
-      link: "combine/overview/index.html"
-    },
-    {
-      id: "comb_t4",
-      topic: "Full Test: October Advanced Mock",
-      subject: "Combine",
-      score: 108,
-      max: 300,
-      accuracy: null,
-      date: "2026-10-17",
-      testName: "Combine Test #04 (P:64 C:22 M:22)",
-      period: "before",
-      link: "combine/overview/index.html"
-    },
-    {
-      id: "comb_t2",
-      topic: "Full Test: August Comprehensive",
-      subject: "Combine",
-      score: 95,
-      max: 300,
-      accuracy: 56,
-      date: "2026-08-23",
-      testName: "Combine Test #02 (P:33 C:54 M:8)",
-      period: "before",
-      link: "combine/overview/index.html"
     }
   ];
 
@@ -1006,9 +709,9 @@
   let currentSubj = 'all';
   let searchQuery = '';
   let selectedA = 'ad_chem_isomerism';
-  let selectedB = 'phy_t4';
+  let selectedB = 'ad_phy_classtest';
 
-  // Dynamic sync from afterdiwali.html
+  // Dynamic sync from afterdiwali.html — ignores any tests without a name
   function syncAfterDiwali() {
     fetch('afterdiwali.html')
       .then(r => r.text())
@@ -1018,13 +721,16 @@
         try {
           const raw = (new Function("return " + m[1]))();
           raw.forEach(t => {
+            // Ignore tests without a real name or empty
+            if (!t.name || !t.name.trim() || /^Test\s*#?\d+$/i.test(t.name.trim())) return;
             if (!t.subjects) return;
+
             Object.keys(t.subjects).forEach(subName => {
               const subData = t.subjects[subName];
-              const chMatch = t.name.match(/\(([^)]+)\)/);
-              const chName = chMatch ? chMatch[1] : (t.name + ': ' + subName);
-              const entryId = 'ad_' + t.date + '_' + subName.toLowerCase();
-              const existing = TOPIC_DATABASE.find(x => x.date === t.date && x.subject === subName);
+              const isMultiSub = Object.keys(t.subjects).length > 1;
+              const chName = isMultiSub ? (t.name + ': ' + subName) : t.name;
+              const entryId = 'ad_' + t.date + '_' + subName.toLowerCase() + '_' + t.name.replace(/\W+/g, '');
+              const existing = TOPIC_DATABASE.find(x => x.date === t.date && x.subject === subName && x.testName === t.name);
               if (!existing) {
                 TOPIC_DATABASE.unshift({
                   id: entryId,
@@ -1036,7 +742,7 @@
                   date: t.date,
                   testName: t.name,
                   period: 'after',
-                  link: 'afterdiwali.html?subject=' + encodeURIComponent(subName) + '&q=' + encodeURIComponent(chName)
+                  link: 'afterdiwali.html?subject=' + encodeURIComponent(subName) + '&q=' + encodeURIComponent(t.name)
                 });
               }
             });
