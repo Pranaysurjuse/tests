@@ -101,6 +101,26 @@
 
   // Storage keys
   const STORAGE_KEY = 'akiva_midnight_rail_tasks_v1';
+  const REVISION_STORAGE_KEY = 'akiva_coaching_revision_v1';
+
+  const DEFAULT_REVISIONS = [
+    { id: 'rev_1', title: 'Rotational Motion', subject: 'Physics', desc: 'Revise notes & class illustrations', done: false },
+    { id: 'rev_2', title: 'Ionic Equilibrium', subject: 'Chemistry', desc: 'Buffer solutions & Hydrolysis formulas', done: false },
+    { id: 'rev_3', title: 'Definite Integration', subject: 'Maths', desc: 'Properties 1 to 4 formulas review', done: false }
+  ];
+
+  function loadRevisions() {
+    try {
+      const s = localStorage.getItem(REVISION_STORAGE_KEY);
+      return s ? JSON.parse(s) : DEFAULT_REVISIONS;
+    } catch(e) { return DEFAULT_REVISIONS; }
+  }
+
+  function saveRevisions(revs) {
+    try { localStorage.setItem(REVISION_STORAGE_KEY, JSON.stringify(revs)); } catch(e) {}
+  }
+
+  let revisions = loadRevisions();
 
   function todayStr() {
     const d = new Date();
@@ -593,6 +613,17 @@
         <div class="d1-tooltip">⏳ Backlogs</div>
       </button>
 
+      <!-- Coaching Lecture Revision Button (Matches User Screenshot) -->
+      <button class="d1-rail-btn" id="btn-rail-revision" title="Coaching Lecture Revision" onclick="window.akToggleMidnightRail('revision')">
+        <div style="width:26px; height:26px; border-radius:7px; background:#2563eb; display:flex; align-items:center; justify-content:center; color:#fff; position:relative; box-shadow:0 0 10px rgba(37,99,235,0.45);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span style="position:absolute; top:-4px; right:-4px; width:12px; height:12px; background:#f59e0b; color:#000; font-size:8px; font-weight:800; border-radius:9999px; display:flex; align-items:center; justify-content:center; line-height:1; box-shadow:0 0 6px #f59e0b;">!</span>
+        </div>
+        <div class="d1-tooltip">🔄 Lecture Revision</div>
+      </button>
+
       <button class="d1-rail-btn" id="btn-rail-progress" title="Progress Bar" onclick="window.akToggleMidnightRail('progress')">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="20" x2="18" y2="10"/>
@@ -622,6 +653,7 @@
       <!-- Segmented Tabs -->
       <div class="d1-tabs">
         <button class="d1-tab active" id="tab-today" onclick="window.akSwitchMidnightTab('today')">Today</button>
+        <button class="d1-tab" id="tab-revision" onclick="window.akSwitchMidnightTab('revision')">Revision <span id="rev-count-badge" style="opacity:0.8;">(3)</span></button>
         <button class="d1-tab" id="tab-future" onclick="window.akSwitchMidnightTab('future')">Future</button>
         <button class="d1-tab" id="tab-backlog" onclick="window.akSwitchMidnightTab('backlog')">Backlog <span id="backlog-count-badge" style="opacity:0.8;">(0)</span></button>
       </div>
@@ -650,6 +682,7 @@
       <!-- Inline Add Form -->
       <div class="d1-add-form" id="d1AddForm">
         <input type="text" class="d1-add-input" id="d1InTitle" placeholder="e.g. Current Electricity PYQs...">
+        <input type="text" class="d1-add-input" id="d1InDesc" placeholder="e.g. Revise lecture notes & illustrations" style="display:none; margin-top:6px;">
         <div class="d1-add-row">
           <select class="d1-add-select" id="d1InSubj">
             <option value="Physics">Physics</option>
@@ -678,11 +711,30 @@
     const bCount = tasks.filter(t => t.date < today && !t.done).length;
     const badge = document.getElementById('backlog-count-badge');
     if (badge) badge.textContent = `(${bCount})`;
+
+    const rCount = revisions.filter(r => !r.done).length;
+    const rBadge = document.getElementById('rev-count-badge');
+    if (rBadge) rBadge.textContent = `(${rCount})`;
   }
 
   function renderList() {
     const container = document.getElementById('d1TasksList');
     if (!container) return;
+
+    const descInput = document.getElementById('d1InDesc');
+    const addBtn = document.getElementById('d1AddBtn');
+    if (currentTab === 'revision') {
+      if (descInput) descInput.style.display = 'block';
+      if (addBtn) addBtn.innerHTML = '<span>+</span> Add Ongoing Chapter';
+    } else {
+      if (descInput) descInput.style.display = 'none';
+      if (addBtn) addBtn.innerHTML = '<span>+</span> Add New Task';
+    }
+
+    if (currentTab === 'revision') {
+      renderRevisionList(container);
+      return;
+    }
 
     let filtered = [];
     if (currentTab === 'today') {
@@ -743,16 +795,100 @@
     }).join('');
   }
 
+  function renderRevisionList(container) {
+    const total = revisions.length;
+    const done = revisions.filter(r => r.done).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+
+    const arc = document.getElementById('d1-circle-arc');
+    if (arc) {
+      const circ = 87.96;
+      arc.style.strokeDashoffset = circ - (circ * pct / 100);
+      arc.style.stroke = '#f59e0b';
+    }
+
+    const ratioEl = document.getElementById('d1-ratio-text');
+    if (ratioEl) ratioEl.textContent = `${done} / ${total} revised`;
+
+    const subMsgEl = document.getElementById('d1-sub-msg');
+    if (subMsgEl) {
+      const left = total - done;
+      if (left === 0 && total > 0) {
+        subMsgEl.innerHTML = '<span style="color:#34d399; font-weight:600;">All lectures revised! Ready for Qs ⚡</span>';
+      } else {
+        subMsgEl.textContent = `${left} left to revise • Target: 99%ile`;
+      }
+    }
+
+    updateBacklogBadge();
+
+    if (!revisions.length) {
+      container.innerHTML = `
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 10px; color:#64748b; text-align:center;">
+          <div style="font-size:20px; margin-bottom:4px;">✨</div>
+          <div style="font-size:12px; font-weight:600; color:#94a3b8;">No ongoing coaching lectures</div>
+          <div style="font-size:10.5px; margin-top:2px;">Click "+ Add Ongoing Chapter" below.</div>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = revisions.map(r => {
+      let subClass = 'subj-phy';
+      let subLabel = 'Phy';
+      if (r.subject === 'Chemistry') { subClass = 'subj-chem'; subLabel = 'Chem'; }
+      else if (r.subject === 'Maths' || r.subject === 'Math') { subClass = 'subj-math'; subLabel = 'Math'; }
+
+      return `
+        <div class="d1-task-row ${r.done ? 'done' : ''}" style="align-items:flex-start; padding:8px 10px;">
+          <input type="checkbox" class="d1-check" ${r.done ? 'checked' : ''} onchange="window.akToggleRevision('${r.id}')" style="margin-top:2px;">
+          <div style="flex:1; min-width:0; padding-right:4px;">
+            <div class="d1-task-title" style="font-weight:600; ${r.done ? 'text-decoration:line-through; opacity:0.6;' : ''}" title="${r.title}">${r.title}</div>
+            <div style="font-size:9px; color:#64748b; margin-top:2px;">${r.desc || 'Revise notes & class illustrations'}</div>
+          </div>
+          <span class="d1-task-badge ${subClass}">${subLabel}</span>
+          <button class="d1-del-btn" onclick="window.akDeleteRevision('${r.id}')" title="Delete chapter" style="margin-top:2px;">&times;</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.akToggleRevision = function(id) {
+    const r = revisions.find(x => x.id === id);
+    if (r) {
+      r.done = !r.done;
+      saveRevisions(revisions);
+      renderList();
+    }
+  };
+
+  window.akDeleteRevision = function(id) {
+    revisions = revisions.filter(x => x.id !== id);
+    saveRevisions(revisions);
+    renderList();
+  };
+
   // Window functions
   window.akToggleMidnightRail = function(type) {
     const panel = document.getElementById('akMidnightPanel');
-    const headerTitle = document.getElementById('d1HeaderTitle');
+
+    if (type === 'revision') {
+      if (isPanelOpen && currentTab === 'revision') {
+        window.akCloseMidnightPanel();
+        return;
+      }
+      window.akSwitchMidnightTab('revision');
+      return;
+    }
 
     if (type === 'todo') {
+      if (isPanelOpen && currentTab === 'today') { window.akCloseMidnightPanel(); return; }
       window.akSwitchMidnightTab('today');
     } else if (type === 'cal') {
+      if (isPanelOpen && currentTab === 'future') { window.akCloseMidnightPanel(); return; }
       window.akSwitchMidnightTab('future');
     } else if (type === 'backlog') {
+      if (isPanelOpen && currentTab === 'backlog') { window.akCloseMidnightPanel(); return; }
       window.akSwitchMidnightTab('backlog');
     } else if (type === 'progress') {
       let target = 'track.html';
@@ -789,10 +925,34 @@
 
   window.akSwitchMidnightTab = function(tab) {
     currentTab = tab;
-    ['today', 'future', 'backlog'].forEach(t => {
+    ['today', 'revision', 'future', 'backlog'].forEach(t => {
       const el = document.getElementById(`tab-${t}`);
       if (el) el.classList.toggle('active', t === tab);
     });
+
+    // Sync Rail active states
+    const btnTodo = document.getElementById('btn-rail-todo');
+    const btnRev = document.getElementById('btn-rail-revision');
+    const btnCal = document.getElementById('btn-rail-cal');
+    const btnBacklog = document.getElementById('btn-rail-backlog');
+    if (btnTodo) btnTodo.classList.toggle('active', tab === 'today');
+    if (btnRev) btnRev.classList.toggle('active', tab === 'revision');
+    if (btnCal) btnCal.classList.toggle('active', tab === 'future');
+    if (btnBacklog) btnBacklog.classList.toggle('active', tab === 'backlog');
+
+    const headerTitle = document.getElementById('d1HeaderTitle');
+    const headerDate = document.getElementById('d1HeaderDate');
+    const arc = document.getElementById('d1-circle-arc');
+
+    if (tab === 'revision') {
+      if (headerTitle) headerTitle.textContent = 'Lecture Revision';
+      if (headerDate) headerDate.textContent = 'Evening Desk • 6:30 PM';
+      if (arc) arc.style.stroke = '#f59e0b';
+    } else {
+      if (headerTitle) headerTitle.textContent = 'To-do List';
+      if (headerDate) headerDate.textContent = dateFormatted;
+      if (arc) arc.style.stroke = '#14b8a6';
+    }
 
     const form = document.getElementById('d1AddForm');
     if (form) form.style.display = 'none';
@@ -829,25 +989,38 @@
 
   window.akSaveTask = function() {
     const inp = document.getElementById('d1InTitle');
+    const descInp = document.getElementById('d1InDesc');
     const sel = document.getElementById('d1InSubj');
     const title = inp ? inp.value.trim() : '';
+    const desc = descInp ? descInp.value.trim() : '';
     const subject = sel ? sel.value : 'Physics';
 
     if (!title) return;
 
-    let d = today;
-    if (currentTab === 'future') d = shiftDateStr(1);
-    else if (currentTab === 'backlog') d = shiftDateStr(-1);
+    if (currentTab === 'revision') {
+      revisions.push({
+        id: 'rev_' + Date.now(),
+        title: title,
+        subject: subject,
+        desc: desc || 'Revise notes & class illustrations',
+        done: false
+      });
+      saveRevisions(revisions);
+    } else {
+      let d = today;
+      if (currentTab === 'future') d = shiftDateStr(1);
+      else if (currentTab === 'backlog') d = shiftDateStr(-1);
 
-    tasks.push({
-      id: 'task_' + Date.now(),
-      title: title,
-      subject: subject,
-      date: d,
-      done: false
-    });
+      tasks.push({
+        id: 'task_' + Date.now(),
+        title: title,
+        subject: subject,
+        date: d,
+        done: false
+      });
+      saveTasks(tasks);
+    }
 
-    saveTasks(tasks);
     window.akToggleAddForm();
     renderList();
   };
