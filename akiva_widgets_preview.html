@@ -424,7 +424,7 @@
     top: 14px;
     bottom: 14px;
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
     z-index: 9999;
     user-select: none;
     -webkit-font-smoothing: antialiased;
@@ -438,14 +438,17 @@
   /* 58px SLIM ICON DOCK */
   .d1-rail {
     width: 58px;
+    height: calc(100vh - 28px);
+    min-height: 410px;
+    max-height: calc(100vh - 28px);
     background: var(--bg-mesh), var(--bg-recessed);
     border: 1px solid var(--border);
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 16px 0;
-    gap: 12px;
+    padding: 14px 0 18px;
+    gap: 10px;
     box-shadow: 0 15px 40px rgba(0,0,0,0.7);
     flex-shrink: 0;
     transition: all 0.3s ease;
@@ -573,6 +576,7 @@
   /* 3 SEPARATE WIDGET DRAWERS (Width: 330px each) */
   .akiva-drawer {
     width: 335px;
+    height: calc(100vh - 28px);
     margin-left: 10px;
     background: #090e18;
     background: var(--bg-mesh), linear-gradient(180deg, var(--bg-recessed) 0%, var(--bg-base) 100%);
@@ -1316,6 +1320,7 @@
   /* SLIDING LOGO HUB DRAWER */
   .hub-drawer {
     width: 340px;
+    height: calc(100vh - 28px);
     margin-left: 10px;
     border-radius: 20px;
     padding: 16px;
@@ -2006,6 +2011,32 @@
     box-shadow: 0 20px 50px rgba(0,0,0,0.85), 0 0 24px rgba(251, 113, 133, 0.16);
   }
 
+
+  /* Bottom Resize Handle for Rail Length Adjustment */
+  .rail-resize-handle {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: ns-resize;
+    z-index: 10;
+    opacity: 0.45;
+    transition: opacity 0.2s;
+  }
+  .rail-resize-handle::before {
+    content: '';
+    width: 20px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--secondary);
+  }
+  .rail-resize-handle:hover { opacity: 1; }
+
 </style>
 </head>
 <body data-theme="wed">
@@ -2097,6 +2128,7 @@
         <span class="d1-flame-txt" id="railFlameTxt">8d</span>
       </div>
     </div>
+    <div class="rail-resize-handle" id="railResizeHandle" title="Drag to resize rail length (Double-click to reset)"></div>
   </div>
 
   <!-- ======================================================= -->
@@ -3745,6 +3777,45 @@
   });
 
   window.openWidget('task');
+
+  // =========================================================
+  // RAIL VERTICAL LENGTH DRAG-RESIZE (From Bottom)
+  // =========================================================
+  const RAIL_H_KEY = 'akiva_rail_height_v1';
+  const railEl = document.querySelector('.d1-rail');
+  const resizeHandle = document.getElementById('railResizeHandle');
+
+  if (railEl) {
+    try {
+      const savedH = localStorage.getItem(RAIL_H_KEY);
+      if (savedH) railEl.style.height = savedH + 'px';
+    } catch(e) {}
+  }
+
+  if (railEl && resizeHandle) {
+    let dragging = false;
+    resizeHandle.addEventListener('mousedown', function(e) {
+      e.preventDefault();
+      dragging = true;
+      document.body.style.cursor = 'ns-resize';
+    });
+    document.addEventListener('mousemove', function(e) {
+      if (!dragging) return;
+      const newH = Math.max(410, Math.min(window.innerHeight - 28, e.clientY - 14));
+      railEl.style.height = newH + 'px';
+    });
+    document.addEventListener('mouseup', function() {
+      if (!dragging) return;
+      dragging = false;
+      document.body.style.cursor = '';
+      try { localStorage.setItem(RAIL_H_KEY, parseInt(railEl.style.height, 10)); } catch(e) {}
+    });
+    resizeHandle.addEventListener('dblclick', function() {
+      railEl.style.height = '';
+      try { localStorage.removeItem(RAIL_H_KEY); } catch(e) {}
+    });
+  }
+
 })();
 </script>
 </body>
