@@ -755,7 +755,13 @@
     } else if (type === 'backlog') {
       window.akSwitchMidnightTab('backlog');
     } else if (type === 'progress') {
-      window.akSwitchMidnightTab('today');
+      let target = 'track.html';
+      const p = location.pathname.toLowerCase();
+      if (p.includes('/overview') || p.includes('/august') || p.includes('/september') || p.includes('/october') || p.includes('/july') || p.includes('/june') || p.includes('/compare')) {
+        target = '../../track.html';
+      }
+      location.href = target;
+      return;
     }
 
     if (isPanelOpen && panel && !panel.classList.contains('closed')) {

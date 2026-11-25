@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Cognition Tracker — Topic Track & Comparison</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --bg0: #05060d;
+    --acc: #14b8a6;
+    --t-text: #f2f5f3;
+    --t-muted: #8b93a7;
+    --t-glass: rgba(255, 255, 255, 0.045);
+    --t-glass2: rgba(255, 255, 255, 0.075);
+    --t-line: rgba(255, 255, 255, 0.09);
+    --phy: #6fcf97;
+    --chem: #3b9dff;
+    --math: #ef8b7c;
+    --comb: #a78bfa;
+    --gold: #f5c451;
+  }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: radial-gradient(circle at 20% 0%, #16101f 0%, #000 45%), #05060d;
+    color: var(--t-text);
+    padding: 24px 18px 100px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .home-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid var(--t-line);
+    color: var(--t-text);
+    font-size: 12.5px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    text-decoration: none;
+    margin-bottom: 16px;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .home-pill:active { transform: scale(0.96); }
+  .home-pill:hover { background: rgba(255, 255, 255, 0.08); }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--acc);
+    margin: 0 0 6px;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 30px;
+    margin: 0 0 6px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(92deg, #fff 30%, var(--acc));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sub {
+    color: var(--t-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 24px;
+  }
+
+  /* KPI Summary Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 720px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .kpi-card {
+    background: var(--t-glass);
+    border: 1px solid var(--t-line);
+    border-radius: 16px;
+    padding: 14px 16px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(20, 184, 166, 0.4);
+  }
+  .kpi-title {
+    font-size: 11.5px;
+    color: var(--t-muted);
+    margin: 0 0 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    margin: 0;
+    color: #fff;
+  }
+  .kpi-value small {
+    font-size: 13px;
+    color: var(--t-muted);
+    font-weight: 400;
+  }
+  .kpi-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 5px;
+    margin-top: 6px;
+  }
+  .badge-green { background: rgba(111, 207, 151, 0.15); color: #6fcf97; border: 1px solid rgba(111, 207, 151, 0.3); }
+  .badge-blue { background: rgba(59, 157, 255, 0.15); color: #3b9dff; border: 1px solid rgba(59, 157, 255, 0.3); }
+  .badge-coral { background: rgba(239, 139, 124, 0.15); color: #ef8b7c; border: 1px solid rgba(239, 139, 124, 0.3); }
+  .badge-gold { background: rgba(245, 196, 81, 0.15); color: #f5c451; border: 1px solid rgba(245, 196, 81, 0.3); }
+
+  /* Section Headers */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--acc);
+    border-bottom: 1px solid var(--t-line);
+    padding-bottom: 8px;
+    margin: 32px 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* HEAD-TO-HEAD DIRECT COMPARATOR */
+  .comparator-box {
+    background: linear-gradient(145deg, rgba(20, 27, 42, 0.7) 0%, rgba(12, 16, 26, 0.8) 100%);
+    border: 1px solid rgba(20, 184, 166, 0.35);
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 28px;
+    box-shadow: 0 16px 40px -16px rgba(0,0,0,0.7);
+    position: relative;
+    overflow: hidden;
+  }
+  .comparator-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .comparator-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .comparator-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+  @media (max-width: 680px) {
+    .comparator-grid { grid-template-columns: 1fr; }
+    .vs-circle { margin: 8px auto !important; }
+  }
+  .cmp-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--t-line);
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .cmp-select {
+    width: 100%;
+    background: #090e18;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 12.5px;
+    font-family: inherit;
+    padding: 8px 10px;
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+  }
+  .cmp-select:focus { border-color: var(--acc); }
+  .vs-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #090e18;
+    border: 1px solid rgba(20, 184, 166, 0.4);
+    display: grid;
+    place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--acc);
+    align-self: center;
+    box-shadow: 0 0 20px -4px rgba(20, 184, 166, 0.35);
+  }
+  .cmp-delta-banner {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--t-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .delta-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .delta-up { background: rgba(111, 207, 151, 0.15); color: #6fcf97; border: 1px solid rgba(111, 207, 151, 0.3); }
+  .delta-down { background: rgba(239, 139, 124, 0.15); color: #ef8b7c; border: 1px solid rgba(239, 139, 124, 0.3); }
+  .delta-tie { background: rgba(255, 255, 255, 0.1); color: #cbd5e1; }
+
+  /* Filter Controls */
+  .controls-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    border: 1px solid var(--t-line);
+    color: var(--t-muted);
+    background: var(--t-glass);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .chip:hover { color: #fff; border-color: rgba(255,255,255,0.25); }
+  .chip.on {
+    color: #042f2e;
+    background: var(--acc);
+    border-color: var(--acc);
+    font-weight: 700;
+    box-shadow: 0 4px 14px -4px rgba(20, 184, 166, 0.45);
+  }
+
+  /* Search & Sort */
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--t-glass);
+    border: 1px solid var(--t-line);
+    border-radius: 12px;
+    padding: 2px 12px;
+    min-width: 260px;
+    transition: border-color 0.2s;
+  }
+  .search-wrap:focus-within { border-color: var(--acc); }
+  .search-wrap input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 12.5px;
+    font-family: inherit;
+    padding: 8px 0;
+    width: 100%;
+  }
+  .search-wrap input::placeholder { color: var(--t-muted); font-size: 11.5px; }
+
+  /* SVG Topic Matrix Graph */
+  .chart-card {
+    background: var(--t-glass);
+    border: 1px solid var(--t-line);
+    border-radius: 18px;
+    padding: 20px 18px 12px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow-x: auto;
+  }
+  .chart-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 12.5px;
+  }
+  .legend-strip {
+    display: flex;
+    gap: 16px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--t-muted);
+    flex-wrap: wrap;
+  }
+  .legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  /* Topic Cards List */
+  .topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  .topic-card {
+    background: var(--t-glass);
+    border: 1px solid var(--t-line);
+    border-radius: 16px;
+    padding: 16px 18px;
+    transition: transform 0.2s, border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .topic-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .topic-card.highlight {
+    border-color: var(--acc) !important;
+    background: rgba(20, 184, 166, 0.08) !important;
+  }
+  .t-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .t-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .t-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--t-muted);
+    margin-top: 2px;
+  }
+  .t-score-box {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .t-score-num {
+    font-size: 19px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .t-pct {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Progress comparison bar */
+  .bar-rail {
+    position: relative;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .target-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #f5c451;
+    z-index: 2;
+    box-shadow: 0 0 6px #f5c451;
+  }
+  .t-bot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--t-muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 6px;
+  }
+  .btn-cmp-sm {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--t-line);
+    color: #cbd5e1;
+    font-size: 10px;
+    font-family: inherit;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-cmp-sm:hover {
+    background: var(--acc);
+    color: #042f2e;
+    border-color: var(--acc);
+    font-weight: 700;
+  }
+
+  /* Subject Comparison Matrix */
+  .subjs-card {
+    background: var(--t-glass);
+    border: 1px solid var(--t-line);
+    border-radius: 18px;
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+  .subj-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 90px;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .subj-row:last-child { border-bottom: none; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    background: var(--t-glass);
+    border: 1px dashed var(--acc);
+    border-radius: 18px;
+    color: var(--t-muted);
+  }
+  .empty-state b { display: block; font-size: 16px; color: #fff; margin-bottom: 6px; }
+
+  /* Tooltip */
+  .chart-tooltip {
+    position: absolute;
+    background: #0d121f;
+    border: 1px solid var(--acc);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+    z-index: 100;
+    white-space: nowrap;
+  }
+</style>
+<!--theme-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="theme.css">
+<script defer src="theme.js?v=3"></script>
+<!--/theme-->
+</head>
+<body>
+<div class="wrap">
+  <a class="home-pill" href="dashboard.html">&larr; Home</a>
+  <p class="eyebrow">Topic Track &bull; Cognition Test Tracker</p>
+  <h1>Topic Mastery &amp; Comparison</h1>
+  <p class="sub">Direct comparison graphs of each tested chapter, mastery benchmarks, and head-to-head score analytics.</p>
+
+  <!-- 1. KPI SUMMARY -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-title">Tested Topics</div>
+      <div class="kpi-value" id="kpiTopics">0</div>
+      <span class="kpi-badge badge-blue" id="kpiTests">0 test entries</span>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Mastered (&#8805; 70%)</div>
+      <div class="kpi-value" id="kpiMastered" style="color:var(--phy);">0</div>
+      <span class="kpi-badge badge-green" id="kpiMasteredPct">0% of topics</span>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Developing (45-69%)</div>
+      <div class="kpi-value" id="kpiDeveloping" style="color:var(--chem);">0</div>
+      <span class="kpi-badge badge-blue" id="kpiDevelopingPct">0% of topics</span>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Critical Focus (&lt; 45%)</div>
+      <div class="kpi-value" id="kpiCritical" style="color:var(--math);">0</div>
+      <span class="kpi-badge badge-coral" id="kpiCriticalPct">Needs revision</span>
+    </div>
+  </div>
+
+  <!-- 2. DIRECT COMPARISON TOOL (HEAD-TO-HEAD) -->
+  <div class="comparator-box">
+    <div class="comparator-header">
+      <div class="comparator-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Direct Topic Comparison
+      </div>
+      <span style="font-size:11.5px; color:var(--t-muted); font-family:'JetBrains Mono', monospace;">Pick any 2 topics to compare side-by-side</span>
+    </div>
+
+    <div class="comparator-grid">
+      <!-- Topic A -->
+      <div class="cmp-card" id="cmpCardA">
+        <div>
+          <label style="font-size:10.5px; font-family:'JetBrains Mono', monospace; text-transform:uppercase; color:var(--acc); display:block; margin-bottom:6px;">Topic A</label>
+          <select class="cmp-select" id="selectTopicA" onchange="renderComparison()"></select>
+        </div>
+        <div id="cmpDetailsA" style="font-family:'JetBrains Mono', monospace;"></div>
+      </div>
+
+      <!-- VS Badge -->
+      <div class="vs-circle">VS</div>
+
+      <!-- Topic B -->
+      <div class="cmp-card" id="cmpCardB">
+        <div>
+          <label style="font-size:10.5px; font-family:'JetBrains Mono', monospace; text-transform:uppercase; color:#c9a4ff; display:block; margin-bottom:6px;">Topic B</label>
+          <select class="cmp-select" id="selectTopicB" onchange="renderComparison()"></select>
+        </div>
+        <div id="cmpDetailsB" style="font-family:'JetBrains Mono', monospace;"></div>
+      </div>
+    </div>
+
+    <!-- Comparative Delta Breakdown -->
+    <div class="cmp-delta-banner" id="cmpDeltaBanner"></div>
+  </div>
+
+  <!-- 3. SUBJECT-LEVEL DIRECT COMPARISON -->
+  <div class="section-label">
+    <span>Subject Direct Comparison</span>
+    <span style="font-size:10px; color:var(--t-muted);">Overall Average &amp; Mastery</span>
+  </div>
+  <div class="subjs-card" id="subjCompBox"></div>
+
+  <!-- 4. INTERACTIVE TOPIC GRAPH -->
+  <div class="section-label">
+    <span>Topic Performance Graph</span>
+    <span style="font-size:10px; color:var(--t-muted);">&#9733; 75% 99th-Percentile Benchmark</span>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-row">
+      <span style="font-weight:700; color:#fff;" id="chartHeaderTxt">All Topics &bull; Ranked by Score</span>
+      <div class="legend-strip">
+        <span><i class="legend-dot" style="background:var(--phy);"></i>Physics</span>
+        <span><i class="legend-dot" style="background:var(--chem);"></i>Chemistry</span>
+        <span><i class="legend-dot" style="background:var(--math);"></i>Maths</span>
+        <span><i class="legend-dot" style="background:var(--comb);"></i>Combine</span>
+      </div>
+    </div>
+    <!-- Interactive SVG Graph Container -->
+    <div id="svgChartWrap" style="min-height:220px; width:100%; position:relative;"></div>
+    <div class="chart-tooltip" id="chartTooltip"></div>
+  </div>
+
+  <!-- 5. TOPIC BREAKDOWN LIST & CONTROLS -->
+  <div class="section-label">
+    <span>Detailed Topic Matrix</span>
+    <span id="topicCountLabel" style="font-size:10px; color:var(--t-muted);">Showing 0 topics</span>
+  </div>
+
+  <div class="controls-row">
+    <!-- Subject Filter Chips -->
+    <div class="chips" id="subjChips">
+      <button class="chip on" data-filter="all" onclick="setSubjFilter('all')">All</button>
+      <button class="chip" data-filter="Physics" onclick="setSubjFilter('Physics')">Physics</button>
+      <button class="chip" data-filter="Chemistry" onclick="setSubjFilter('Chemistry')">Chemistry</button>
+      <button class="chip" data-filter="Maths" onclick="setSubjFilter('Maths')">Maths</button>
+      <button class="chip" data-filter="Combine" onclick="setSubjFilter('Combine')">Combine</button>
+    </div>
+
+    <!-- Search Box -->
+    <div class="search-wrap">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--t-muted); flex-shrink:0;">
+        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="topicSearch" placeholder="Search topic by name, marks, date..." autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Topic Cards Container -->
+  <div class="topic-list" id="topicCardsList"></div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // Base Data Set: Post-Diwali & Pre-Diwali Topic Tests
+  const TOPIC_DATABASE = [
+    // Post-Diwali Tests (Live)
+    {
+      id: "ad_chem_isomerism",
+      topic: "Isomerism in Organic Compounds",
+      subject: "Chemistry",
+      score: 64,
+      max: 100,
+      accuracy: null,
+      date: "2026-11-25",
+      testName: "Chemistry Test (ISOMERISM - 1)",
+      period: "after",
+      link: "afterdiwali.html?subject=Chemistry&q=isomerism"
+    },
+    {
+      id: "ad_phy_classtest",
+      topic: "Physics Class Test",
+      subject: "Physics",
+      score: 42,
+      max: 100,
+      accuracy: null,
+      date: "2026-11-21",
+      testName: "Physics Class Test",
+      period: "after",
+      link: "afterdiwali.html?subject=Physics&q=Physics%20Class%20Test"
+    },
+    {
+      id: "ad_mains_phy",
+      topic: "Mains Test 1: Physics",
+      subject: "Physics",
+      score: 46,
+      max: 100,
+      accuracy: null,
+      date: "2026-11-16",
+      testName: "Mains Test 1",
+      period: "after",
+      link: "afterdiwali.html?subject=Physics&q=mains"
+    },
+    {
+      id: "ad_mains_chem",
+      topic: "Mains Test 1: Chemistry",
+      subject: "Chemistry",
+      score: 43,
+      max: 100,
+      accuracy: null,
+      date: "2026-11-16",
+      testName: "Mains Test 1",
+      period: "after",
+      link: "afterdiwali.html?subject=Chemistry&q=mains"
+    },
+    {
+      id: "ad_mains_math",
+      topic: "Mains Test 1: Maths",
+      subject: "Maths",
+      score: 12,
+      max: 100,
+      accuracy: null,
+      date: "2026-11-16",
+      testName: "Mains Test 1",
+      period: "after",
+      link: "afterdiwali.html?subject=Maths&q=mains"
+    },
+
+    // Pre-Diwali Physics Tests
+    {
+      id: "phy_t4",
+      topic: "Work, Power & Energy",
+      subject: "Physics",
+      score: 72,
+      max: 100,
+      accuracy: 100,
+      date: "2026-09-26",
+      testName: "Test #04",
+      period: "before",
+      link: "physics/overview/index.html?q=Work"
+    },
+    {
+      id: "phy_t2",
+      topic: "Kinematics: 1D Motion",
+      subject: "Physics",
+      score: 60,
+      max: 100,
+      accuracy: null,
+      date: "2026-07-04",
+      testName: "Test #02 (Rank #1/38)",
+      period: "before",
+      link: "physics/overview/index.html?q=Kinematics"
+    },
+    {
+      id: "phy_t5",
+      topic: "Laws of Motion & Friction",
+      subject: "Physics",
+      score: 55,
+      max: 100,
+      accuracy: 64,
+      date: "2026-10-10",
+      testName: "Test #05",
+      period: "before",
+      link: "physics/overview/index.html?q=Motion"
+    },
+    {
+      id: "phy_t3",
+      topic: "Kinematics: 2D & Projectiles",
+      subject: "Physics",
+      score: 45,
+      max: 100,
+      accuracy: null,
+      date: "2026-08-17",
+      testName: "Test #03",
+      period: "before",
+      link: "physics/overview/index.html?q=Projectiles"
+    },
+    {
+      id: "phy_t1",
+      topic: "Units & Dimensions",
+      subject: "Physics",
+      score: 30,
+      max: 100,
+      accuracy: null,
+      date: "2026-06-24",
+      testName: "Test #01 (Rank #5/33)",
+      period: "before",
+      link: "physics/overview/index.html?q=Units"
+    },
+
+    // Pre-Diwali Chemistry Tests
+    {
+      id: "chem_t4",
+      topic: "Chemical Kinetics",
+      subject: "Chemistry",
+      score: 85,
+      max: 100,
+      accuracy: 78.6,
+      date: "2026-08-05",
+      testName: "Test #04",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Kinetics"
+    },
+    {
+      id: "chem_t5",
+      topic: "Solutions & Colligative Properties",
+      subject: "Chemistry",
+      score: 80,
+      max: 100,
+      accuracy: 84,
+      date: "2026-08-27",
+      testName: "Test #05",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Solutions"
+    },
+    {
+      id: "chem_t3",
+      topic: "Thermodynamics & Thermochemistry",
+      subject: "Chemistry",
+      score: 78,
+      max: 100,
+      accuracy: 80,
+      date: "2026-07-22",
+      testName: "Test #03",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Thermodynamics"
+    },
+    {
+      id: "chem_t7",
+      topic: "Chemical Equilibrium",
+      subject: "Chemistry",
+      score: 72,
+      max: 100,
+      accuracy: 76,
+      date: "2026-09-30",
+      testName: "Test #07",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Equilibrium"
+    },
+    {
+      id: "chem_t8",
+      topic: "Periodic Table & Periodicity",
+      subject: "Chemistry",
+      score: 64,
+      max: 100,
+      accuracy: null,
+      date: "2026-10-14",
+      testName: "Test #08",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Periodic"
+    },
+    {
+      id: "chem_t1",
+      topic: "Mole Concept & Stoichiometry",
+      subject: "Chemistry",
+      score: 58,
+      max: 100,
+      accuracy: null,
+      date: "2026-06-20",
+      testName: "Test #01",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Mole"
+    },
+    {
+      id: "chem_t6",
+      topic: "Ionic Equilibrium",
+      subject: "Chemistry",
+      score: 57,
+      max: 100,
+      accuracy: 56,
+      date: "2026-09-19",
+      testName: "Test #06",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Ionic"
+    },
+    {
+      id: "chem_t2",
+      topic: "Atomic Structure",
+      subject: "Chemistry",
+      score: 53,
+      max: 100,
+      accuracy: null,
+      date: "2026-07-01",
+      testName: "Test #02",
+      period: "before",
+      link: "chemistry/overview/index.html?q=Atomic"
+    },
+
+    // Pre-Diwali Maths Tests
+    {
+      id: "math_t2",
+      topic: "Quadratic Equations",
+      subject: "Maths",
+      score: 70,
+      max: 100,
+      accuracy: null,
+      date: "2026-07-08",
+      testName: "Test #02 (Rank #3/36)",
+      period: "before",
+      link: "maths/overview/index.html?q=Quadratic"
+    },
+    {
+      id: "math_t1",
+      topic: "Sets, Relations & Functions",
+      subject: "Maths",
+      score: 58,
+      max: 100,
+      accuracy: null,
+      date: "2026-06-27",
+      testName: "Test #01 (Rank #1/28)",
+      period: "before",
+      link: "maths/overview/index.html?q=Sets"
+    },
+    {
+      id: "math_t5",
+      topic: "Straight Lines & Pair of Lines",
+      subject: "Maths",
+      score: 48,
+      max: 100,
+      accuracy: 70.6,
+      date: "2026-09-05",
+      testName: "Test #05",
+      period: "before",
+      link: "maths/overview/index.html?q=Straight"
+    },
+    {
+      id: "math_t6",
+      topic: "Circles & System of Circles",
+      subject: "Maths",
+      score: 37,
+      max: 100,
+      accuracy: 76.9,
+      date: "2026-09-23",
+      testName: "Test #06",
+      period: "before",
+      link: "maths/overview/index.html?q=Circles"
+    },
+    {
+      id: "math_t3",
+      topic: "Trigonometric Functions & Identities",
+      subject: "Maths",
+      score: 37,
+      max: 100,
+      accuracy: 55,
+      date: "2026-07-18",
+      testName: "Test #03",
+      period: "before",
+      link: "maths/overview/index.html?q=Trigonometric"
+    },
+    {
+      id: "math_t7",
+      topic: "Binomial Theorem",
+      subject: "Maths",
+      score: 25,
+      max: 100,
+      accuracy: null,
+      date: "2026-10-07",
+      testName: "Test #07",
+      period: "before",
+      link: "maths/overview/index.html?q=Binomial"
+    },
+    {
+      id: "math_t4",
+      topic: "Complex Numbers",
+      subject: "Maths",
+      score: 18,
+      max: 100,
+      accuracy: 40,
+      date: "2026-08-01",
+      testName: "Test #04",
+      period: "before",
+      link: "maths/overview/index.html?q=Complex"
+    },
+
+    // Combine Tests
+    {
+      id: "comb_t3",
+      topic: "Full Test: Mechanics + Kinetics + Calc",
+      subject: "Combine",
+      score: 146,
+      max: 300,
+      accuracy: 85.7,
+      date: "2026-09-12",
+      testName: "Combine Test #03 (P:29 C:71 M:46)",
+      period: "before",
+      link: "combine/overview/index.html"
+    },
+    {
+      id: "comb_t1",
+      topic: "Full Test: Early Syllabus Revision",
+      subject: "Combine",
+      score: 143,
+      max: 300,
+      accuracy: 62.5,
+      date: "2026-08-08",
+      testName: "Combine Test #01 (P:57 C:61 M:25)",
+      period: "before",
+      link: "combine/overview/index.html"
+    },
+    {
+      id: "comb_t4",
+      topic: "Full Test: October Advanced Mock",
+      subject: "Combine",
+      score: 108,
+      max: 300,
+      accuracy: null,
+      date: "2026-10-17",
+      testName: "Combine Test #04 (P:64 C:22 M:22)",
+      period: "before",
+      link: "combine/overview/index.html"
+    },
+    {
+      id: "comb_t2",
+      topic: "Full Test: August Comprehensive",
+      subject: "Combine",
+      score: 95,
+      max: 300,
+      accuracy: 56,
+      date: "2026-08-23",
+      testName: "Combine Test #02 (P:33 C:54 M:8)",
+      period: "before",
+      link: "combine/overview/index.html"
+    }
+  ];
+
+  // Colors dictionary
+  const SUBJ_COLORS = {
+    Physics: '#6fcf97',
+    Chemistry: '#3b9dff',
+    Maths: '#ef8b7c',
+    Combine: '#a78bfa'
+  };
+
+  // State
+  let currentSubj = 'all';
+  let searchQuery = '';
+  let selectedA = 'ad_chem_isomerism';
+  let selectedB = 'phy_t4';
+
+  // Dynamic sync from afterdiwali.html
+  function syncAfterDiwali() {
+    fetch('afterdiwali.html')
+      .then(r => r.text())
+      .then(html => {
+        const m = html.match(/const\s+TESTS\s*=\s*(\[[\s\S]*?\]);/);
+        if (!m) return;
+        try {
+          const raw = (new Function("return " + m[1]))();
+          raw.forEach(t => {
+            if (!t.subjects) return;
+            Object.keys(t.subjects).forEach(subName => {
+              const subData = t.subjects[subName];
+              const chMatch = t.name.match(/\(([^)]+)\)/);
+              const chName = chMatch ? chMatch[1] : (t.name + ': ' + subName);
+              const entryId = 'ad_' + t.date + '_' + subName.toLowerCase();
+              const existing = TOPIC_DATABASE.find(x => x.date === t.date && x.subject === subName);
+              if (!existing) {
+                TOPIC_DATABASE.unshift({
+                  id: entryId,
+                  topic: chName,
+                  subject: subName,
+                  score: subData.score,
+                  max: subData.max || 100,
+                  accuracy: null,
+                  date: t.date,
+                  testName: t.name,
+                  period: 'after',
+                  link: 'afterdiwali.html?subject=' + encodeURIComponent(subName) + '&q=' + encodeURIComponent(chName)
+                });
+              }
+            });
+          });
+          populateComparatorSelects();
+          renderAll();
+        } catch(e) {}
+      })
+      .catch(() => {});
+  }
+
+  // Populate Comparator Dropdowns
+  function populateComparatorSelects() {
+    const selA = document.getElementById('selectTopicA');
+    const selB = document.getElementById('selectTopicB');
+    if (!selA || !selB) return;
+
+    const options = TOPIC_DATABASE.map(t => {
+      const pct = Math.round((t.score / t.max) * 100);
+      return `<option value="${t.id}">[${t.subject.slice(0,4)}] ${t.topic} (${pct}%)</option>`;
+    }).join('');
+
+    selA.innerHTML = options;
+    selB.innerHTML = options;
+
+    if (TOPIC_DATABASE.find(x => x.id === selectedA)) selA.value = selectedA;
+    if (TOPIC_DATABASE.find(x => x.id === selectedB)) selB.value = selectedB;
+  }
+
+  // Render Comparator Comparison Card
+  window.renderComparison = function() {
+    const selA = document.getElementById('selectTopicA');
+    const selB = document.getElementById('selectTopicB');
+    if (selA) selectedA = selA.value;
+    if (selB) selectedB = selB.value;
+
+    const tA = TOPIC_DATABASE.find(x => x.id === selectedA) || TOPIC_DATABASE[0];
+    const tB = TOPIC_DATABASE.find(x => x.id === selectedB) || TOPIC_DATABASE[1];
+
+    const pctA = Math.round((tA.score / tA.max) * 100);
+    const pctB = Math.round((tB.score / tB.max) * 100);
+    const colA = SUBJ_COLORS[tA.subject] || '#14b8a6';
+    const colB = SUBJ_COLORS[tB.subject] || '#14b8a6';
+
+    const detA = document.getElementById('cmpDetailsA');
+    if (detA) {
+      detA.innerHTML = `
+        <div style="font-size:26px; font-weight:800; color:${colA}; margin:8px 0 2px;">
+          ${tA.score} <small style="font-size:14px; color:#94a3b8;">/ ${tA.max}</small>
+          <span style="font-size:16px; margin-left:6px;">(${pctA}%)</span>
+        </div>
+        <div style="height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; margin:8px 0;">
+          <div style="width:${pctA}%; height:100%; background:${colA}; border-radius:4px;"></div>
+        </div>
+        <div style="font-size:11px; color:#94a3b8; display:flex; justify-content:space-between; margin-top:6px;">
+          <span>${tA.testName}</span>
+          <span>${tA.date}</span>
+        </div>
+        ${tA.accuracy ? `<div style="font-size:10.5px; color:${colA}; margin-top:4px;">&bull; Accuracy: ${tA.accuracy}%</div>` : ''}
+      `;
+    }
+
+    const detB = document.getElementById('cmpDetailsB');
+    if (detB) {
+      detB.innerHTML = `
+        <div style="font-size:26px; font-weight:800; color:${colB}; margin:8px 0 2px;">
+          ${tB.score} <small style="font-size:14px; color:#94a3b8;">/ ${tB.max}</small>
+          <span style="font-size:16px; margin-left:6px;">(${pctB}%)</span>
+        </div>
+        <div style="height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; margin:8px 0;">
+          <div style="width:${pctB}%; height:100%; background:${colB}; border-radius:4px;"></div>
+        </div>
+        <div style="font-size:11px; color:#94a3b8; display:flex; justify-content:space-between; margin-top:6px;">
+          <span>${tB.testName}</span>
+          <span>${tB.date}</span>
+        </div>
+        ${tB.accuracy ? `<div style="font-size:10.5px; color:${colB}; margin-top:4px;">&bull; Accuracy: ${tB.accuracy}%</div>` : ''}
+      `;
+    }
+
+    const banner = document.getElementById('cmpDeltaBanner');
+    if (banner) {
+      const diff = pctA - pctB;
+      let diffHtml = '';
+      if (diff > 0) {
+        diffHtml = `<span class="delta-pill delta-up">&#9650; Topic A is +${diff}% higher</span>
+                    <span><b>${tA.topic}</b> leads by ${tA.score - tB.score} marks. Topic B requires focused PYQ practice.</span>`;
+      } else if (diff < 0) {
+        diffHtml = `<span class="delta-pill delta-down">&#9650; Topic B is +${Math.abs(diff)}% higher</span>
+                    <span><b>${tB.topic}</b> leads by ${tB.score - tA.score} marks. Topic A is priority for revision.</span>`;
+      } else {
+        diffHtml = `<span class="delta-pill delta-tie">&#61; Exact Tie (${pctA}%)</span>
+                    <span>Both topics are performing identically at ${pctA}%.</span>`;
+      }
+      banner.innerHTML = diffHtml;
+    }
+  };
+
+  // Quick compare button handler
+  window.quickCompare = function(id) {
+    selectedB = selectedA;
+    selectedA = id;
+    const selA = document.getElementById('selectTopicA');
+    const selB = document.getElementById('selectTopicB');
+    if (selA) selA.value = selectedA;
+    if (selB) selB.value = selectedB;
+    window.renderComparison();
+    document.querySelector('.comparator-box').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
+  // Filter setters
+  window.setSubjFilter = function(s) {
+    currentSubj = s;
+    document.querySelectorAll('#subjChips .chip').forEach(b => {
+      b.classList.toggle('on', b.getAttribute('data-filter') === s);
+    });
+    renderAll();
+  };
+
+  // Render KPIs
+  function renderKPIs(list) {
+    const totalEl = document.getElementById('kpiTopics');
+    const testsEl = document.getElementById('kpiTests');
+    const mastEl = document.getElementById('kpiMastered');
+    const mastPctEl = document.getElementById('kpiMasteredPct');
+    const devEl = document.getElementById('kpiDeveloping');
+    const devPctEl = document.getElementById('kpiDevelopingPct');
+    const critEl = document.getElementById('kpiCritical');
+    const critPctEl = document.getElementById('kpiCriticalPct');
+
+    const total = list.length;
+    if (!total) {
+      if (totalEl) totalEl.textContent = '0';
+      return;
+    }
+
+    let mCount = 0, dCount = 0, cCount = 0;
+    list.forEach(t => {
+      const p = (t.score / t.max) * 100;
+      if (p >= 70) mCount++;
+      else if (p >= 45) dCount++;
+      else cCount++;
+    });
+
+    if (totalEl) totalEl.textContent = total;
+    if (testsEl) testsEl.textContent = `${total} tests tracked`;
+    if (mastEl) mastEl.textContent = mCount;
+    if (mastPctEl) mastPctEl.textContent = `${Math.round((mCount / total) * 100)}% of topics`;
+    if (devEl) devEl.textContent = dCount;
+    if (devPctEl) devPctEl.textContent = `${Math.round((dCount / total) * 100)}% of topics`;
+    if (critEl) critEl.textContent = cCount;
+    if (critPctEl) critPctEl.textContent = `${Math.round((cCount / total) * 100)}% needs focus`;
+  }
+
+  // Render Subject Direct Comparison Matrix
+  function renderSubjectComparison() {
+    const box = document.getElementById('subjCompBox');
+    if (!box) return;
+
+    const subjects = ['Physics', 'Chemistry', 'Maths'];
+    const summary = subjects.map(s => {
+      const items = TOPIC_DATABASE.filter(x => x.subject === s);
+      const totalScore = items.reduce((a, b) => a + b.score, 0);
+      const totalMax = items.reduce((a, b) => a + b.max, 0);
+      const avg = totalMax ? Math.round((totalScore / totalMax) * 100) : 0;
+      const mastered = items.filter(x => (x.score / x.max) >= 0.7).length;
+      return { subject: s, avg, count: items.length, mastered, color: SUBJ_COLORS[s] };
+    });
+
+    box.innerHTML = summary.map(s => `
+      <div class="subj-row">
+        <div style="font-family:'JetBrains Mono', monospace; font-size:13.5px; font-weight:700; color:${s.color}; display:flex; align-items:center; gap:6px;">
+          <span style="width:8px; height:8px; border-radius:50%; background:${s.color};"></span>
+          ${s.subject}
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:11.5px; font-family:'JetBrains Mono', monospace; margin-bottom:5px;">
+            <span style="color:#cbd5e1;">Average Mastery: <b style="color:#fff;">${s.avg}%</b></span>
+            <span style="color:var(--t-muted);">${s.mastered}/${s.count} topics &#8805; 70%</span>
+          </div>
+          <div style="position:relative; height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden;">
+            <div style="width:${s.avg}%; height:100%; background:${s.color}; border-radius:5px; transition:width 0.5s;"></div>
+            <div style="position:absolute; left:75%; top:0; bottom:0; width:2px; background:#f5c451;"></div>
+          </div>
+        </div>
+        <div style="text-align:right; font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:700; color:${s.color};">
+          ${s.avg}%
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render SVG Performance Graph
+  function renderSVGChart(list) {
+    const wrap = document.getElementById('svgChartWrap');
+    if (!wrap) return;
+
+    if (!list.length) {
+      wrap.innerHTML = '<div style="padding:40px; text-align:center; color:#64748b; font-size:12px;">No topic records to plot.</div>';
+      return;
+    }
+
+    // Sort by score descending for ranking graph
+    const sorted = list.slice().sort((a, b) => (b.score / b.max) - (a.score / a.max));
+
+    const W = Math.max(wrap.clientWidth || 800, sorted.length * 34 + 60);
+    const H = 240;
+    const padL = 40, padR = 20, padT = 20, padB = 40;
+    const chartW = W - padL - padR;
+    const chartH = H - padT - padB;
+
+    const barW = Math.max(14, Math.min(26, (chartW / sorted.length) - 8));
+    const step = chartW / sorted.length;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block; overflow:visible;">`;
+
+    // Horizontal Grid Lines
+    [0, 25, 50, 75, 100].forEach(val => {
+      const y = padT + chartH - (val / 100) * chartH;
+      const isTarget = val === 75;
+      svg += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${isTarget ? '#f5c451' : 'rgba(255,255,255,0.08)'}" stroke-dasharray="${isTarget ? '4 3' : 'none'}" stroke-width="${isTarget ? 1.5 : 1}"/>`;
+      svg += `<text x="${padL - 8}" y="${y + 3.5}" fill="${isTarget ? '#f5c451' : '#64748b'}" font-size="9" font-family="'JetBrains Mono', monospace" text-anchor="end">${val}%</text>`;
+    });
+
+    // Bars
+    sorted.forEach((t, i) => {
+      const pct = Math.round((t.score / t.max) * 100);
+      const barH = (pct / 100) * chartH;
+      const x = padL + i * step + (step - barW) / 2;
+      const y = padT + chartH - barH;
+      const col = SUBJ_COLORS[t.subject] || '#14b8a6';
+
+      svg += `
+        <g class="chart-bar-group" data-idx="${i}" style="cursor:pointer;" onclick="quickCompare('${t.id}')">
+          <rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="${col}" opacity="0.88">
+            <animate attributeName="height" from="0" to="${barH}" dur="0.5s" fill="freeze"/>
+            <animate attributeName="y" from="${padT + chartH}" to="${y}" dur="0.5s" fill="freeze"/>
+          </rect>
+          <text x="${x + barW / 2}" y="${y - 5}" fill="${col}" font-size="9.5" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">${pct}%</text>
+          <text x="${x + barW / 2}" y="${padT + chartH + 16}" fill="#94a3b8" font-size="8.5" font-family="'JetBrains Mono', monospace" text-anchor="middle">${t.topic.slice(0, 4)}..</text>
+          <!-- Hover hit target -->
+          <rect x="${x - 4}" y="${padT}" width="${barW + 8}" height="${chartH + 20}" fill="transparent" data-topic="${t.topic}" data-subj="${t.subject}" data-score="${t.score}/${t.max}" data-pct="${pct}%" data-date="${t.date}" data-id="${t.id}" class="bar-hit"/>
+        </g>
+      `;
+    });
+
+    svg += `</svg>`;
+    wrap.innerHTML = svg;
+
+    // Attach Tooltip events
+    const tooltip = document.getElementById('chartTooltip');
+    wrap.querySelectorAll('.bar-hit').forEach(hit => {
+      hit.addEventListener('mouseenter', e => {
+        if (!tooltip) return;
+        const topic = hit.getAttribute('data-topic');
+        const subj = hit.getAttribute('data-subj');
+        const score = hit.getAttribute('data-score');
+        const pct = hit.getAttribute('data-pct');
+        const date = hit.getAttribute('data-date');
+        tooltip.innerHTML = `<b>${topic}</b> &bull; ${subj}<br><span style="color:#fff;">${score} (${pct})</span> &bull; ${date}<br><small style="color:var(--acc);">Click to compare</small>`;
+        tooltip.style.opacity = '1';
+      });
+      hit.addEventListener('mousemove', e => {
+        if (!tooltip) return;
+        const rect = wrap.getBoundingClientRect();
+        tooltip.style.left = (e.clientX - rect.left + 14) + 'px';
+        tooltip.style.top = (e.clientY - rect.top - 20) + 'px';
+      });
+      hit.addEventListener('mouseleave', () => {
+        if (tooltip) tooltip.style.opacity = '0';
+      });
+    });
+  }
+
+  // Render Topic Cards List
+  function renderTopicList(list) {
+    const container = document.getElementById('topicCardsList');
+    const countLabel = document.getElementById('topicCountLabel');
+    if (!container) return;
+
+    if (countLabel) countLabel.textContent = `Showing ${list.length} topics`;
+
+    if (!list.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <b>No topics matching "${searchQuery}"</b>
+          <span>Try searching for another chapter, subject name, or date.</span>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = list.map(t => {
+      const pct = Math.round((t.score / t.max) * 100);
+      const col = SUBJ_COLORS[t.subject] || '#14b8a6';
+
+      let statusBadge = '';
+      if (pct >= 70) {
+        statusBadge = '<span class="kpi-badge badge-green">&#9733; Mastered</span>';
+      } else if (pct >= 45) {
+        statusBadge = '<span class="kpi-badge badge-blue">Solid</span>';
+      } else {
+        statusBadge = '<span class="kpi-badge badge-coral">&#9888; Critical Focus</span>';
+      }
+
+      const periodBadge = t.period === 'after'
+        ? '<span style="font-size:9.5px; padding:1px 6px; border-radius:4px; background:rgba(20,184,166,0.15); color:var(--acc); border:1px solid rgba(20,184,166,0.3); font-weight:600;">After Diwali</span>'
+        : '';
+
+      const targetGap = 75 - pct;
+      const targetTxt = targetGap <= 0
+        ? `<span style="color:#6fcf97;">+${Math.abs(targetGap)}% above 75% target</span>`
+        : `<span style="color:#f5c451;">${targetGap}% to 75% target</span>`;
+
+      return `
+        <div class="topic-card" id="card_${t.id}">
+          <div class="t-top">
+            <div>
+              <div class="t-name">
+                <span style="width:9px; height:9px; border-radius:50%; background:${col}; flex-shrink:0;"></span>
+                <span>${t.topic}</span>
+                ${periodBadge}
+              </div>
+              <div class="t-meta">
+                <span>${t.subject}</span> &bull; <span>${t.testName}</span> &bull; <span>${t.date}</span>
+                ${t.accuracy ? ` &bull; <span style="color:${col};">${t.accuracy}% Acc</span>` : ''}
+              </div>
+            </div>
+            <div class="t-score-box">
+              <div class="t-score-num" style="color:${col};">${t.score}<small style="font-size:12px; color:var(--t-muted);">/${t.max}</small></div>
+              <div class="t-pct" style="color:${col};">${pct}%</div>
+            </div>
+          </div>
+
+          <!-- Progress Bar with Target Guide Line -->
+          <div class="bar-rail">
+            <div class="bar-fill" style="width:${pct}%; background:${col};"></div>
+            <div class="target-line" style="left:75%;" title="75% Benchmark Target"></div>
+          </div>
+
+          <div class="t-bot">
+            <div>${statusBadge} &bull; ${targetTxt}</div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-cmp-sm" onclick="quickCompare('${t.id}')">&#9876; Compare</button>
+              <a href="${t.link || '#'}" class="btn-cmp-sm" style="text-decoration:none;">View Test &rarr;</a>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Master Render Function
+  function renderAll() {
+    let filtered = TOPIC_DATABASE;
+
+    // Filter by subject
+    if (currentSubj !== 'all') {
+      filtered = filtered.filter(t => t.subject.toLowerCase() === currentSubj.toLowerCase());
+    }
+
+    // Filter by search query
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase().trim();
+      filtered = filtered.filter(t =>
+        t.topic.toLowerCase().includes(q) ||
+        t.subject.toLowerCase().includes(q) ||
+        t.testName.toLowerCase().includes(q) ||
+        t.date.includes(q) ||
+        String(t.score).includes(q)
+      );
+    }
+
+    renderKPIs(filtered);
+    renderSubjectComparison();
+    renderSVGChart(filtered);
+    renderTopicList(filtered);
+  }
+
+  // Search input listener
+  const searchInp = document.getElementById('topicSearch');
+  if (searchInp) {
+    searchInp.addEventListener('input', e => {
+      searchQuery = e.target.value;
+      renderAll();
+    });
+  }
+
+  // Initial population and rendering
+  populateComparatorSelects();
+  renderComparison();
+  renderAll();
+  syncAfterDiwali();
+})();
+</script>
+</body>
+</html>

@@ -11,7 +11,7 @@ function apply(){R.setAttribute('data-mood',S.mood||'void');
 apply();
 /* subject from URL */
 var p=location.pathname.toLowerCase(),subj='';
-['physics','chemistry','maths','combine','adv'].forEach(function(s){if(p.indexOf('/'+s)>-1)subj=s});
+['physics','chemistry','maths','combine','adv','track'].forEach(function(s){if(p.indexOf('/'+s)>-1 || p.indexOf(s+'.html')>-1)subj=s});
 if(/\/afterdiwali/.test(p)){var q=new URLSearchParams(location.search).get('subject');if(q)subj=q.toLowerCase().slice(0,5)==='chemi'?'chemistry':q.toLowerCase()}
 if(subj)R.setAttribute('data-subject',subj);
 var home=/dashboard\.html$/.test(p)||/\/$/.test(p);
@@ -30,29 +30,15 @@ ready(function(){
    chemistry:'<path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3"/><path d="M7.5 15h9"/>',
    maths:'<path d="M18 5H7l6 7-6 7h11"/>',
    combine:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+   track:'<circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>',
    theme:'<circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2"/><circle cx="12" cy="7.5" r="1.2"/><circle cx="16" cy="10" r="1.2"/><path d="M12 21c-1.5 0-2-1.5-1-2.5s0-2.5-1.5-2.5"/>'};
-  var items=[['home','Home','dashboard.html'],['physics','Phy','physics.html'],['chemistry','Chem','chemistry.html'],['maths','Maths','maths.html'],['combine','All','combine-menu.html']];
+  var items=[['home','Home','dashboard.html'],['physics','Phy','physics.html'],['chemistry','Chem','chemistry.html'],['maths','Maths','maths.html'],['combine','All','combine-menu.html'],['track','Track','track.html']];
   var nav=D.createElement('nav');nav.className='t-nav';
   nav.innerHTML=items.map(function(i){
     var on=(i[0]==='home'&&home&&!subj)||(i[0]===subj)||(i[0]==='combine'&&subj==='adv');
     return '<a href="'+BASE+i[2]+'"'+(on?' class="on"':'')+'><svg viewBox="0 0 24 24">'+ic[i[0]]+'</svg>'+i[1]+'</a>'}).join('')+
-    '<button type="button" class="t-track-btn" aria-label="Track"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>Track</button>'+
     '<button type="button" class="t-theme-btn" aria-label="Theme"><svg viewBox="0 0 24 24">'+ic.theme+'</svg>Theme</button>';
   B.appendChild(nav);
-  var trk=nav.querySelector('.t-track-btn');
-  if(trk){
-    trk.addEventListener('click',function(e){
-      e.preventDefault();
-      if(window.akOpenScreen){
-        window.akOpenScreen('today');
-      } else {
-        var s=D.createElement('script');
-        s.src=BASE+'studyhub.js?v=4';
-        s.onload=function(){ if(window.akOpenScreen) window.akOpenScreen('today'); };
-        D.body.appendChild(s);
-      }
-    });
-  }
   /* theme panel */
   var pn=D.createElement('div');pn.className='t-panel';
   pn.innerHTML='<h4>Mood</h4><div class="t-moods">'+MOODS.map(function(m){return '<button type="button" data-m="'+m[0]+'" aria-label="'+m[0]+'" style="--sw:'+m[1]+';background:radial-gradient(circle at 30% 25%,'+m[1]+',#05060d 85%)"></button>'}).join('')+'</div><div class="t-row">Animations<button type="button" class="t-sw" aria-label="Animations"></button></div>';
