@@ -2245,7 +2245,7 @@
         <div class="hm-well" id="hubHeatmapGrid"></div>
         <div class="hm-stats-row">
           <div class="hm-stat-box">
-            <div class="hm-stat-val" id="hmActiveDays" onclick="editStreakDays()" style="color:var(--accent); cursor:pointer;" title="Click to edit streak / active days">1/21</div>
+            <div class="hm-stat-val" id="hmActiveDays" onclick="editStreakDays()" style="color:var(--accent); cursor:pointer;" title="Click to edit streak / active days">8/44</div>
             <div class="hm-stat-lbl">Active Days</div>
           </div>
           <div class="hm-stat-box">
@@ -2610,11 +2610,14 @@
   const HUB_THEME_KEY = 'akiva_hub_slider_theme';
   const REV_KEY = 'akiva_revision_v1';
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  function toLocalYMD(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+  const todayStr = toLocalYMD(new Date());
   function shiftDate(days) {
     const d = new Date();
     d.setDate(d.getDate() + days);
-    return d.toISOString().split('T')[0];
+    return toLocalYMD(d);
   }
 
   const defaultState = {
@@ -3568,7 +3571,7 @@
     let cur = new Date(SPRINT_START + 'T00:00:00');
     const end = new Date(TARGET_END + 'T00:00:00');
     while (cur <= end) {
-      sprintDates.push(cur.toISOString().split('T')[0]);
+      sprintDates.push(toLocalYMD(cur));
       cur.setDate(cur.getDate() + 1);
     }
   })();
