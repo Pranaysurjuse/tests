@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Logo Studio — SVG & PNG Exporter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+<style>:root { --background:#06080c; --foreground:#f1f5f9; --card:#0f131b; --border:rgba(255,255,255,0.1); --secondary:#1e293b; --muted-foreground:#94a3b8; }</style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased min-h-screen p-4 md:p-6">
+
+  <div class="max-w-6xl mx-auto space-y-5">
+    <!-- Top Studio Header -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="text-xs font-extrabold uppercase tracking-widest text-amber-500">Brand Identity Lab</div>
+        <h1 class="text-xl font-extrabold mt-0.5">6 Vector SVG Logos for Your Study App</h1>
+        <p class="text-xs text-[var(--muted-foreground)] mt-1">
+          Edit your brand name below, switch color themes, preview inside your sidebar &amp; browser tab, and export crisp <strong>.SVG</strong> or <strong>512&times;512 .PNG</strong> files.
+        </p>
+      </div>
+
+      <!-- Brand & Accent Controls -->
+      <div class="flex flex-wrap items-center gap-2.5">
+        <input id="brandNameInput" type="text" value="Akiva" oninput="renderAll()"
+               placeholder="App Name..."
+               class="px-3 py-1.5 rounded-xl bg-black/20 border border-[var(--border)] text-xs font-bold outline-none focus:border-amber-500 w-32" />
+        <select id="paletteSelect" onchange="renderAll()"
+                class="px-3 py-1.5 rounded-xl bg-black/20 border border-[var(--border)] text-xs font-bold outline-none cursor-pointer">
+          <option value="amber">🔥 Amber &amp; Obsidian</option>
+          <option value="owl">🦉 Night Owl Violet</option>
+          <option value="cyan">⚡ Physics Cyan</option>
+          <option value="emerald">🧪 Chem Emerald</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 6 Logo Concept Picker Cards -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5" id="logoCardsGrid"></div>
+
+    <!-- Main Interactive Preview & Export Stage -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      <!-- Left: Hero Icon & Wordmark Preview -->
+      <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 flex flex-col justify-between gap-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <span id="activeNum" class="font-mono text-xs font-black text-amber-400">01</span>
+            <h2 id="activeTitle" class="text-lg font-extrabold inline ml-1.5">Delta Spark A</h2>
+            <p id="activeDesc" class="text-xs text-[var(--muted-foreground)] mt-0.5"></p>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="downloadActiveSVG()" class="px-3 py-1.5 rounded-xl border border-[var(--border)] hover:bg-[var(--secondary)] text-xs font-bold transition cursor-pointer">
+              ⬇ SVG
+            </button>
+            <button onclick="downloadActivePNG()" class="px-3.5 py-1.5 rounded-xl bg-amber-500 text-black hover:bg-amber-400 text-xs font-extrabold transition cursor-pointer shadow-lg shadow-amber-500/20">
+              ⬇ 512px PNG
+            </button>
+          </div>
+        </div>
+
+        <!-- Dark & Light Lockups -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="rounded-2xl bg-[#090a0f] border border-white/10 p-6 flex flex-col items-center justify-center gap-4 min-h-[210px]">
+            <div id="heroIconDark" class="w-24 h-24"></div>
+            <div class="flex items-center gap-2.5">
+              <div id="miniIconDark" class="w-7 h-7"></div>
+              <span id="wordmarkDark" class="text-xl font-black tracking-tight text-white">Akiva</span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-500">DARK DESK LOCKUP</span>
+          </div>
+
+          <div class="rounded-2xl bg-[#f8fafc] border border-slate-200 p-6 flex flex-col items-center justify-center gap-4 min-h-[210px]">
+            <div id="heroIconLight" class="w-24 h-24"></div>
+            <div class="flex items-center gap-2.5">
+              <div id="miniIconLight" class="w-7 h-7"></div>
+              <span id="wordmarkLight" class="text-xl font-black tracking-tight text-slate-900">Akiva</span>
+            </div>
+            <span class="text-[10px] font-mono text-slate-400">LIGHT PAPER LOCKUP</span>
+          </div>
+        </div>
+
+        <!-- Copy Raw SVG -->
+        <div class="flex items-center justify-between gap-3 pt-2 border-t border-[var(--border)]">
+          <span class="text-[11px] text-[var(--muted-foreground)]">Pure inline SVG vector &mdash; infinitely sharp at any size.</span>
+          <button id="btnCopySvg" onclick="copySvgCode()" class="px-3 py-1 rounded-lg bg-white/5 border border-[var(--border)] text-xs font-bold hover:bg-white/10 transition cursor-pointer">
+            📋 Copy SVG Code
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Live App Context Mockups (Sidebar, Browser Tab, Mobile App) -->
+      <div class="lg:col-span-5 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 space-y-4">
+        <div class="text-xs font-extrabold uppercase tracking-wider text-[var(--muted-foreground)]">Real-World App Previews</div>
+
+        <!-- 1. Browser Tab Favicon -->
+        <div class="space-y-1.5">
+          <div class="text-[11px] font-bold text-[var(--muted-foreground)]">Browser Tab (16&times;16 Favicon)</div>
+          <div class="rounded-xl bg-[#0d1117] border border-white/10 p-2 flex items-center gap-2">
+            <div class="flex items-center gap-2 bg-[#1a202c] border border-white/10 px-3 py-1.5 rounded-lg max-w-[200px]">
+              <div id="faviconPreview" class="w-4 h-4 shrink-0"></div>
+              <span id="tabTitlePreview" class="text-[11px] font-semibold text-slate-200 truncate">Akiva &bull; Study Desk</span>
+              <span class="text-slate-500 text-xs ml-1">&times;</span>
+            </div>
+            <span class="text-slate-600 text-sm">+</span>
+          </div>
+        </div>
+
+        <!-- 2. Sidebar Top Identity Slot -->
+        <div class="space-y-1.5">
+          <div class="text-[11px] font-bold text-[var(--muted-foreground)]">Inside Your 58px Sidebar Rail</div>
+          <div class="rounded-xl bg-[#090b10] border border-white/10 p-3 flex items-center gap-4">
+            <div class="w-[54px] py-3 rounded-2xl bg-[#130e0a] border border-amber-500/25 flex flex-col items-center gap-2.5">
+              <div id="sidebarLogoPreview" class="w-9 h-9 rounded-xl shadow-lg"></div>
+              <div class="px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[8px] font-bold">● LIVE</div>
+              <div class="w-5 h-px bg-white/10"></div>
+              <div class="text-sm opacity-75">📋</div>
+              <div class="text-sm opacity-75">🔄</div>
+            </div>
+            <div class="text-xs text-slate-400 space-y-1">
+              <div class="font-bold text-white">Replaces the plain "P" square</div>
+              <div class="text-[11px]">Fits cleanly inside your 38&times;38 top rail slot with instant brand recognition.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Mobile / Desktop Launcher Icon -->
+        <div class="space-y-1.5">
+          <div class="text-[11px] font-bold text-[var(--muted-foreground)]">PWA / Desktop App Icon</div>
+          <div class="rounded-xl bg-gradient-to-br from-slate-900 to-black border border-white/10 p-4 flex items-center gap-4">
+            <div id="launcherIconPreview" class="w-14 h-14 rounded-2xl shadow-2xl"></div>
+            <div>
+              <div id="launcherLabel" class="text-xs font-extrabold text-white">Akiva</div>
+              <div class="text-[10px] text-slate-400">JEE Study &amp; Revision OS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="exportCanvas" width="512" height="512" class="hidden"></canvas>
+
+  <script>
+    const PALETTES = {
+      amber:   { bg: '#120d09', bg2: '#1e140c', a1: '#fbbf24', a2: '#ea580c', stroke: '#f59e0b' },
+      owl:     { bg: '#110921', bg2: '#231246', a1: '#c084fc', a2: '#f59e0b', stroke: '#a855f7' },
+      cyan:    { bg: '#08101c', bg2: '#0f2036', a1: '#38bdf8', a2: '#2563eb', stroke: '#0ea5e9' },
+      emerald: { bg: '#071410', bg2: '#0e2920', a1: '#34d399', a2: '#059669', stroke: '#10b981' }
+    };
+
+    const LOGOS = [
+      {
+        id: 'delta-spark',
+        num: '01',
+        name: 'Delta Spark A',
+        desc: 'Upward Delta / "A" peak symbolizing JEE rank climb + glowing spark apex.',
+        svg: (p, uid) => `
+          <defs>
+            <linearGradient id="bg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.bg2}"/><stop offset="100%" stop-color="${p.bg}"/></linearGradient>
+            <linearGradient id="fg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.a1}"/><stop offset="100%" stop-color="${p.a2}"/></linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="30" fill="url(#bg_${uid})" stroke="${p.a1}" stroke-opacity="0.28" stroke-width="2"/>
+          <path d="M64 22 L98 96 H79 L64 60 L49 96 H30 Z" fill="url(#fg_${uid})"/>
+          <path d="M64 72 L74 96 H54 Z" fill="${p.bg}" opacity="0.85"/>
+          <circle cx="64" cy="22" r="5" fill="#ffffff"/>
+          <path d="M26 84 Q64 106 102 64" fill="none" stroke="${p.a1}" stroke-width="3.5" stroke-linecap="round" opacity="0.8"/>`
+      },
+      {
+        id: 'night-owl',
+        num: '02',
+        name: 'Night Owl Crest',
+        desc: 'Minimalist geometric Night Owl silhouette integrated with crescent moon & book wings.',
+        svg: (p, uid) => `
+          <defs>
+            <linearGradient id="bg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.bg2}"/><stop offset="100%" stop-color="${p.bg}"/></linearGradient>
+            <linearGradient id="fg_${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${p.a1}"/><stop offset="100%" stop-color="${p.a2}"/></linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="30" fill="url(#bg_${uid})" stroke="${p.a1}" stroke-opacity="0.3" stroke-width="2"/>
+          <path d="M32 34 L48 48 C56 44 72 44 80 48 L96 34 L94 64 C94 88 80 102 64 104 C48 102 34 88 34 64 Z" fill="none" stroke="url(#fg_${uid})" stroke-width="5.5" stroke-linejoin="round"/>
+          <circle cx="50" cy="64" r="9" fill="${p.bg}" stroke="${p.a1}" stroke-width="4"/>
+          <circle cx="78" cy="64" r="9" fill="${p.bg}" stroke="${p.a1}" stroke-width="4"/>
+          <circle cx="50" cy="64" r="3" fill="#ffffff"/>
+          <circle cx="78" cy="64" r="3" fill="#ffffff"/>
+          <path d="M58 75 L64 84 L70 75 Z" fill="${p.a2}"/>`
+      },
+      {
+        id: 'fox-apex',
+        num: '03',
+        name: 'Fox Focus Apex',
+        desc: 'Sharp origami geometric Fox emblem inspired by your Fox Study Desk.',
+        svg: (p, uid) => `
+          <defs>
+            <linearGradient id="bg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.bg2}"/><stop offset="100%" stop-color="${p.bg}"/></linearGradient>
+            <linearGradient id="fg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.a1}"/><stop offset="100%" stop-color="${p.a2}"/></linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="30" fill="url(#bg_${uid})" stroke="${p.a1}" stroke-opacity="0.28" stroke-width="2"/>
+          <polygon points="30,30 54,50 74,50 98,30 92,72 64,102 36,72" fill="url(#fg_${uid})"/>
+          <polygon points="36,72 64,102 64,74" fill="${p.bg}" opacity="0.35"/>
+          <polygon points="92,72 64,102 64,74" fill="#ffffff" opacity="0.22"/>
+          <circle cx="50" cy="65" r="3.5" fill="${p.bg}"/>
+          <circle cx="78" cy="65" r="3.5" fill="${p.bg}"/>`
+      },
+      {
+        id: 'pcm-atom',
+        num: '04',
+        name: 'PCM Tri-Orbit',
+        desc: 'Three interlocking Physics, Chemistry, and Maths orbital rings around a focused core.',
+        svg: (p, uid) => `
+          <defs>
+            <linearGradient id="bg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.bg2}"/><stop offset="100%" stop-color="${p.bg}"/></linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="30" fill="url(#bg_${uid})" stroke="${p.a1}" stroke-opacity="0.28" stroke-width="2"/>
+          <ellipse cx="64" cy="64" rx="40" ry="15" transform="rotate(30 64 64)" fill="none" stroke="#38bdf8" stroke-width="4"/>
+          <ellipse cx="64" cy="64" rx="40" ry="15" transform="rotate(-30 64 64)" fill="none" stroke="#34d399" stroke-width="4"/>
+          <ellipse cx="64" cy="64" rx="40" ry="15" transform="rotate(90 64 64)" fill="none" stroke="#c084fc" stroke-width="4"/>
+          <circle cx="64" cy="64" r="8" fill="${p.a1}"/>`
+      },
+      {
+        id: 'revision-loop',
+        num: '05',
+        name: 'Revision Dial Ring',
+        desc: 'Circular speedo progress arc wrapping a checkmark bolt for daily revision mastery.',
+        svg: (p, uid) => `
+          <defs>
+            <linearGradient id="bg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.bg2}"/><stop offset="100%" stop-color="${p.bg}"/></linearGradient>
+            <linearGradient id="fg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.a1}"/><stop offset="100%" stop-color="${p.a2}"/></linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="30" fill="url(#bg_${uid})" stroke="${p.a1}" stroke-opacity="0.28" stroke-width="2"/>
+          <circle cx="64" cy="64" r="36" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="8"/>
+          <path d="M64 28 A36 36 0 1 1 30 76" fill="none" stroke="url(#fg_${uid})" stroke-width="8" stroke-linecap="round"/>
+          <polyline points="48,64 60,76 82,50" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`
+      },
+      {
+        id: 'north-star',
+        num: '06',
+        name: 'Cognition North Star',
+        desc: 'Sharp 4-point brilliance star nested inside an open revision book arc.',
+        svg: (p, uid) => `
+          <defs>
+            <linearGradient id="bg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.bg2}"/><stop offset="100%" stop-color="${p.bg}"/></linearGradient>
+            <linearGradient id="fg_${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${p.a1}"/><stop offset="100%" stop-color="${p.a2}"/></linearGradient>
+          </defs>
+          <rect width="128" height="128" rx="30" fill="url(#bg_${uid})" stroke="${p.a1}" stroke-opacity="0.28" stroke-width="2"/>
+          <path d="M64 24 Q64 56 96 56 Q64 56 64 88 Q64 56 32 56 Q64 56 64 24 Z" fill="url(#fg_${uid})"/>
+          <path d="M30 92 Q48 82 64 94 Q80 82 98 92" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>`
+      }
+    ];
+
+    let activeLogoId = 'delta-spark';
+
+    function makeSvgString(logo, palette, uid) {
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">${logo.svg(palette, uid)}</svg>`;
+    }
+
+    function renderAll() {
+      const brand = document.getElementById('brandNameInput').value.trim() || 'Akiva';
+      const palKey = document.getElementById('paletteSelect').value;
+      const palette = PALETTES[palKey];
+
+      // 1. Selector Cards
+      document.getElementById('logoCardsGrid').innerHTML = LOGOS.map((l, i) => {
+        const active = l.id === activeLogoId;
+        return `
+          <button onclick="selectLogo('${l.id}')" class="p-3 rounded-xl border text-left transition flex flex-col items-center gap-2 cursor-pointer ${
+            active ? 'bg-amber-500/15 border-amber-500 shadow-sm' : 'bg-[var(--card)] border-[var(--border)] hover:border-amber-500/40'
+          }">
+            <div class="w-12 h-12">${makeSvgString(l, palette, 'card_' + i)}</div>
+            <div class="w-full text-center">
+              <div class="text-[11px] font-extrabold truncate">${l.name}</div>
+              <div class="font-mono text-[9px] text-[var(--muted-foreground)]">#${l.num}</div>
+            </div>
+          </button>`;
+      }).join('');
+
+      // 2. Active Stage
+      const logo = LOGOS.find(l => l.id === activeLogoId);
+      document.getElementById('activeNum').textContent = logo.num;
+      document.getElementById('activeTitle').textContent = logo.name;
+      document.getElementById('activeDesc').textContent = logo.desc;
+
+      document.getElementById('heroIconDark').innerHTML = makeSvgString(logo, palette, 'hd');
+      document.getElementById('miniIconDark').innerHTML = makeSvgString(logo, palette, 'md');
+      document.getElementById('heroIconLight').innerHTML = makeSvgString(logo, palette, 'hl');
+      document.getElementById('miniIconLight').innerHTML = makeSvgString(logo, palette, 'ml');
+
+      document.getElementById('wordmarkDark').textContent = brand;
+      document.getElementById('wordmarkLight').textContent = brand;
+      document.getElementById('tabTitlePreview').textContent = `${brand} • Study Desk`;
+      document.getElementById('launcherLabel').textContent = brand;
+
+      document.getElementById('faviconPreview').innerHTML = makeSvgString(logo, palette, 'fav');
+      document.getElementById('sidebarLogoPreview').innerHTML = makeSvgString(logo, palette, 'side');
+      document.getElementById('launcherIconPreview').innerHTML = makeSvgString(logo, palette, 'lnch');
+    }
+
+    window.selectLogo = id => { activeLogoId = id; renderAll(); };
+
+    function getCleanSvgExport() {
+      const palKey = document.getElementById('paletteSelect').value;
+      const palette = PALETTES[palKey];
+      const logo = LOGOS.find(l => l.id === activeLogoId);
+      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="512" height="512">${logo.svg(palette, 'export')}</svg>`;
+    }
+
+    window.copySvgCode = () => {
+      const btn = document.getElementById('btnCopySvg');
+      navigator.clipboard.writeText(getCleanSvgExport()).then(() => {
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => btn.textContent = '📋 Copy SVG Code', 1800);
+      });
+    };
+
+    window.downloadActiveSVG = () => {
+      const blob = new Blob([getCleanSvgExport()], { type: 'image/svg+xml' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${activeLogoId}-logo.svg`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    };
+
+    window.downloadActivePNG = () => {
+      const svgText = getCleanSvgExport();
+      const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.getElementById('exportCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, 512, 512);
+        ctx.drawImage(img, 0, 0, 512, 512);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(pngBlob => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(pngBlob);
+          a.download = `${activeLogoId}-512px.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, 'image/png');
+      };
+      img.src = url;
+    };
+
+    renderAll();
+  </script>
+</body>
+</html>
