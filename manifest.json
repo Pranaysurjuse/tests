@@ -1,0 +1,29 @@
+{
+  "name": "Cognition Tracker — Akiva JEE",
+  "short_name": "Akiva",
+  "description": "Personal JEE study dashboard, test tracker, and lecture revision desk.",
+  "start_url": "./dashboard.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#06080c",
+  "theme_color": "#120d09",
+  "icons": [
+    {
+      "src": "logos/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logos/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logos/cognition_north_star.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
