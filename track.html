@@ -633,11 +633,11 @@
 (function() {
   'use strict';
 
-  // Base Data Set: Only tests that actually have a test name
+  // Base Data Set: Starts with only the Isomerism test; upcoming tests with chapter names will auto-register
   const TOPIC_DATABASE = [
     {
       id: "ad_chem_isomerism",
-      topic: "Chemistry Test (ISOMERISM - 1)",
+      topic: "ISOMERISM - 1",
       subject: "Chemistry",
       score: 64,
       max: 100,
@@ -646,72 +646,37 @@
       testName: "Chemistry Test (ISOMERISM - 1)",
       period: "after",
       link: "afterdiwali.html?subject=Chemistry&q=isomerism"
-    },
-    {
-      id: "ad_phy_classtest",
-      topic: "Physics Class Test",
-      subject: "Physics",
-      score: 42,
-      max: 100,
-      accuracy: null,
-      date: "2026-11-21",
-      testName: "Physics Class Test",
-      period: "after",
-      link: "afterdiwali.html?subject=Physics&q=Physics%20Class%20Test"
-    },
-    {
-      id: "ad_mains_phy",
-      topic: "Mains Test 1: Physics",
-      subject: "Physics",
-      score: 46,
-      max: 100,
-      accuracy: null,
-      date: "2026-11-16",
-      testName: "Mains Test 1",
-      period: "after",
-      link: "afterdiwali.html?subject=Physics&q=mains"
-    },
-    {
-      id: "ad_mains_chem",
-      topic: "Mains Test 1: Chemistry",
-      subject: "Chemistry",
-      score: 43,
-      max: 100,
-      accuracy: null,
-      date: "2026-11-16",
-      testName: "Mains Test 1",
-      period: "after",
-      link: "afterdiwali.html?subject=Chemistry&q=mains"
-    },
-    {
-      id: "ad_mains_math",
-      topic: "Mains Test 1: Maths",
-      subject: "Maths",
-      score: 12,
-      max: 100,
-      accuracy: null,
-      date: "2026-11-16",
-      testName: "Mains Test 1",
-      period: "after",
-      link: "afterdiwali.html?subject=Maths&q=mains"
     }
   ];
+
+  const BENCHMARK_ITEM = {
+    id: "benchmark_target",
+    topic: "75% Target Benchmark",
+    subject: "Target",
+    score: 75,
+    max: 100,
+    accuracy: null,
+    date: "Standard",
+    testName: "JEE 99%ile Benchmark",
+    period: "target"
+  };
 
   // Colors dictionary
   const SUBJ_COLORS = {
     Physics: '#6fcf97',
     Chemistry: '#3b9dff',
     Maths: '#ef8b7c',
-    Combine: '#a78bfa'
+    Combine: '#a78bfa',
+    Target: '#f5c451'
   };
 
   // State
   let currentSubj = 'all';
   let searchQuery = '';
   let selectedA = 'ad_chem_isomerism';
-  let selectedB = 'ad_phy_classtest';
+  let selectedB = 'benchmark_target';
 
-  // Dynamic sync from afterdiwali.html — ignores any tests without a name
+  // Dynamic sync from afterdiwali.html — only registers tests that have a given chapter name
   function syncAfterDiwali() {
     fetch('afterdiwali.html')
       .then(r => r.text())
@@ -721,20 +686,31 @@
         try {
           const raw = (new Function("return " + m[1]))();
           raw.forEach(t => {
-            // Ignore tests without a real name or empty
-            if (!t.name || !t.name.trim() || /^Test\s*#?\d+$/i.test(t.name.trim())) return;
+            if (!t.name || !t.name.trim()) return;
             if (!t.subjects) return;
+
+            // Extract chapter name from parentheses or explicit chapter property
+            const chMatch = t.name.match(/\(([^)]+)\)/);
+            let chapterName = '';
+            if (t.chapter && t.chapter.trim()) {
+              chapterName = t.chapter.trim();
+            } else if (chMatch) {
+              chapterName = chMatch[1].trim();
+            } else if (/isomerism/i.test(t.name)) {
+              chapterName = 'ISOMERISM - 1';
+            } else {
+              // Ignore general tests without a given chapter name
+              return;
+            }
 
             Object.keys(t.subjects).forEach(subName => {
               const subData = t.subjects[subName];
-              const isMultiSub = Object.keys(t.subjects).length > 1;
-              const chName = isMultiSub ? (t.name + ': ' + subName) : t.name;
-              const entryId = 'ad_' + t.date + '_' + subName.toLowerCase() + '_' + t.name.replace(/\W+/g, '');
-              const existing = TOPIC_DATABASE.find(x => x.date === t.date && x.subject === subName && x.testName === t.name);
+              const entryId = 'ad_' + t.date + '_' + subName.toLowerCase() + '_' + chapterName.replace(/\W+/g, '');
+              const existing = TOPIC_DATABASE.find(x => x.date === t.date && x.subject === subName && x.topic === chapterName);
               if (!existing) {
                 TOPIC_DATABASE.unshift({
                   id: entryId,
-                  topic: chName,
+                  topic: chapterName,
                   subject: subName,
                   score: subData.score,
                   max: subData.max || 100,
@@ -742,7 +718,7 @@
                   date: t.date,
                   testName: t.name,
                   period: 'after',
-                  link: 'afterdiwali.html?subject=' + encodeURIComponent(subName) + '&q=' + encodeURIComponent(t.name)
+                  link: 'afterdiwali.html?subject=' + encodeURIComponent(subName) + '&q=' + encodeURIComponent(chapterName)
                 });
               }
             });
@@ -760,16 +736,22 @@
     const selB = document.getElementById('selectTopicB');
     if (!selA || !selB) return;
 
-    const options = TOPIC_DATABASE.map(t => {
+    let itemsForA = TOPIC_DATABASE;
+    let itemsForB = TOPIC_DATABASE.length > 1 ? TOPIC_DATABASE : [BENCHMARK_ITEM, ...TOPIC_DATABASE];
+
+    selA.innerHTML = itemsForA.map(t => {
       const pct = Math.round((t.score / t.max) * 100);
       return `<option value="${t.id}">[${t.subject.slice(0,4)}] ${t.topic} (${pct}%)</option>`;
     }).join('');
 
-    selA.innerHTML = options;
-    selB.innerHTML = options;
+    selB.innerHTML = itemsForB.map(t => {
+      const pct = Math.round((t.score / t.max) * 100);
+      return `<option value="${t.id}">[${t.subject.slice(0,4)}] ${t.topic} (${pct}%)</option>`;
+    }).join('');
 
-    if (TOPIC_DATABASE.find(x => x.id === selectedA)) selA.value = selectedA;
-    if (TOPIC_DATABASE.find(x => x.id === selectedB)) selB.value = selectedB;
+    if (itemsForA.find(x => x.id === selectedA)) selA.value = selectedA;
+    if (itemsForB.find(x => x.id === selectedB)) selB.value = selectedB;
+    else if (itemsForB.length > 0) selB.value = itemsForB[0].id;
   }
 
   // Render Comparator Comparison Card
@@ -779,8 +761,9 @@
     if (selA) selectedA = selA.value;
     if (selB) selectedB = selB.value;
 
-    const tA = TOPIC_DATABASE.find(x => x.id === selectedA) || TOPIC_DATABASE[0];
-    const tB = TOPIC_DATABASE.find(x => x.id === selectedB) || TOPIC_DATABASE[1];
+    const allItems = [...TOPIC_DATABASE, BENCHMARK_ITEM];
+    const tA = allItems.find(x => x.id === selectedA) || TOPIC_DATABASE[0];
+    const tB = allItems.find(x => x.id === selectedB) || (TOPIC_DATABASE.length > 1 ? TOPIC_DATABASE[1] : BENCHMARK_ITEM);
 
     const pctA = Math.round((tA.score / tA.max) * 100);
     const pctB = Math.round((tB.score / tB.max) * 100);
@@ -827,11 +810,19 @@
     if (banner) {
       const diff = pctA - pctB;
       let diffHtml = '';
-      if (diff > 0) {
-        diffHtml = `<span class="delta-pill delta-up">&#9650; Topic A is +${diff}% higher</span>
-                    <span><b>${tA.topic}</b> leads by ${tA.score - tB.score} marks. Topic B requires focused PYQ practice.</span>`;
+      if (tB.id === 'benchmark_target') {
+        if (pctA >= 75) {
+          diffHtml = `<span class="delta-pill delta-up">&#9650; Target Achieved (+${pctA - 75}%)</span>
+                      <span><b>${tA.topic}</b> is ${pctA - 75} marks above the 75% target benchmark! Excellent command.</span>`;
+        } else {
+          diffHtml = `<span class="delta-pill delta-down">&#9660; ${75 - pctA}% Below 75% Benchmark</span>
+                      <span><b>${tA.topic}</b> is currently at ${pctA}%. Needs ${75 - pctA} more marks to hit the 99%ile target benchmark.</span>`;
+        }
+      } else if (diff > 0) {
+        diffHtml = `<span class="delta-pill delta-up">&#9650; Topic A leads by +${diff}%</span>
+                    <span><b>${tA.topic}</b> leads by ${tA.score - tB.score} marks. Focus on Topic B to raise overall percentile.</span>`;
       } else if (diff < 0) {
-        diffHtml = `<span class="delta-pill delta-down">&#9650; Topic B is +${Math.abs(diff)}% higher</span>
+        diffHtml = `<span class="delta-pill delta-down">&#9650; Topic B leads by +${Math.abs(diff)}%</span>
                     <span><b>${tB.topic}</b> leads by ${tB.score - tA.score} marks. Topic A is priority for revision.</span>`;
       } else {
         diffHtml = `<span class="delta-pill delta-tie">&#61; Exact Tie (${pctA}%)</span>
@@ -912,27 +903,52 @@
       return { subject: s, avg, count: items.length, mastered, color: SUBJ_COLORS[s] };
     });
 
-    box.innerHTML = summary.map(s => `
-      <div class="subj-row">
-        <div style="font-family:'JetBrains Mono', monospace; font-size:13.5px; font-weight:700; color:${s.color}; display:flex; align-items:center; gap:6px;">
-          <span style="width:8px; height:8px; border-radius:50%; background:${s.color};"></span>
-          ${s.subject}
-        </div>
-        <div>
-          <div style="display:flex; justify-content:space-between; font-size:11.5px; font-family:'JetBrains Mono', monospace; margin-bottom:5px;">
-            <span style="color:#cbd5e1;">Average Mastery: <b style="color:#fff;">${s.avg}%</b></span>
-            <span style="color:var(--t-muted);">${s.mastered}/${s.count} topics &#8805; 70%</span>
+    box.innerHTML = summary.map(s => {
+      if (s.count === 0) {
+        return `
+          <div class="subj-row">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:13.5px; font-weight:700; color:${s.color}; display:flex; align-items:center; gap:6px;">
+              <span style="width:8px; height:8px; border-radius:50%; background:${s.color};"></span>
+              ${s.subject}
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; font-size:11.5px; font-family:'JetBrains Mono', monospace; margin-bottom:5px;">
+                <span style="color:#64748b;">No chapter tests registered yet</span>
+                <span style="color:var(--t-muted);">Auto-registers when submitted</span>
+              </div>
+              <div style="position:relative; height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden;">
+                <div style="width:0%; height:100%; background:${s.color}; border-radius:5px;"></div>
+                <div style="position:absolute; left:75%; top:0; bottom:0; width:2px; background:#f5c451;"></div>
+              </div>
+            </div>
+            <div style="text-align:right; font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:700; color:#64748b;">
+              &mdash;
+            </div>
           </div>
-          <div style="position:relative; height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden;">
-            <div style="width:${s.avg}%; height:100%; background:${s.color}; border-radius:5px; transition:width 0.5s;"></div>
-            <div style="position:absolute; left:75%; top:0; bottom:0; width:2px; background:#f5c451;"></div>
+        `;
+      }
+      return `
+        <div class="subj-row">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:13.5px; font-weight:700; color:${s.color}; display:flex; align-items:center; gap:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:${s.color};"></span>
+            ${s.subject}
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:11.5px; font-family:'JetBrains Mono', monospace; margin-bottom:5px;">
+              <span style="color:#cbd5e1;">Average Mastery: <b style="color:#fff;">${s.avg}%</b></span>
+              <span style="color:var(--t-muted);">${s.mastered}/${s.count} topics &#8805; 70%</span>
+            </div>
+            <div style="position:relative; height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden;">
+              <div style="width:${s.avg}%; height:100%; background:${s.color}; border-radius:5px; transition:width 0.5s;"></div>
+              <div style="position:absolute; left:75%; top:0; bottom:0; width:2px; background:#f5c451;"></div>
+            </div>
+          </div>
+          <div style="text-align:right; font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:700; color:${s.color};">
+            ${s.avg}%
           </div>
         </div>
-        <div style="text-align:right; font-family:'JetBrains Mono', monospace; font-size:12.5px; font-weight:700; color:${s.color};">
-          ${s.avg}%
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   // Render SVG Performance Graph
