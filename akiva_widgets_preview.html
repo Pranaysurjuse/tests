@@ -2239,10 +2239,13 @@
       <!-- 🔥 Streak & Consistency (From Day 8) -->
       <div class="hub-widget-card">
         <div class="hub-widget-head">
-          <span class="hub-widget-title">🔥 Streak &amp; Consistency <button onclick="toggleTodayFire()" title="Toggle Today 🔥 Fire" style="background:rgba(255,90,44,0.14); border:1px solid rgba(255,90,44,0.35); color:var(--flame); border-radius:5px; font-size:9px; font-weight:800; padding:1px 5px; cursor:pointer; margin-left:4px;">🔥 Today</button><button onclick="resetStreakToDay8()" title="Reset to Day 8" style="background:none; border:none; color:var(--text-muted); font-size:9.5px; cursor:pointer; margin-left:4px;">↺</button></span>
+          <span class="hub-widget-title">🔥 Streak &amp; Consistency <button onclick="resetStreakToDay8()" title="Reset to Day 8" style="background:none; border:none; color:var(--text-muted); font-size:9.5px; cursor:pointer; margin-left:4px;">↺</button></span>
           <span class="hub-widget-badge" id="hmConsistBadge">From Day 8 • 100%</span>
         </div>
-        <div class="hm-well" id="hubHeatmapGrid"></div>
+                <div class="hm-well" id="hubHeatmapGrid"></div>
+        <button id="pullStickyBtn" onclick="pullTodaySticky()" style="width:100%; padding:8px 10px; border-radius:10px; border:1px dashed var(--complement-border); background:var(--complement-dim); color:var(--complement); font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; transition:all 0.2s;">
+          <span>🗒️</span> Pull Today's Sticky (Mark Productive)
+        </button>
         <div class="hm-stats-row">
           <div class="hm-stat-box">
             <div class="hm-stat-val" id="hmActiveDays" onclick="editStreakDays()" style="color:var(--accent); cursor:pointer;" title="Click to edit streak / active days">8/44</div>
@@ -2916,7 +2919,7 @@
     const t = state.tasks.find(x => x.id === id);
     if (t) {
       t.done = !t.done;
-      saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+      saveData(state);
       render();
     }
   };
@@ -2926,14 +2929,14 @@
     if (t) {
       const cycle = { 'L': 'P', 'P': 'R', 'R': 'L' };
       t.mode = cycle[t.mode] || 'L';
-      saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+      saveData(state);
       render();
     }
   };
 
   window.deleteTask = function(id) {
     state.tasks = state.tasks.filter(x => x.id !== id);
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     render();
   };
 
@@ -2967,7 +2970,7 @@
       done: false,
       date: todayStr
     });
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     window.toggleTaskAddBox();
     render();
   };
@@ -3049,14 +3052,14 @@
 
     state.tests.push({ id: Date.now(), name, subject, pattern, date, syllabus, badge, badgeClass });
     state.tests.sort((a, b) => a.date.localeCompare(b.date));
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     window.toggleTestAddBox();
     renderRadar();
   };
 
   window.deleteTest = function(id) {
     state.tests = state.tests.filter(t => t.id !== id);
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     renderRadar();
   };
 
@@ -3217,7 +3220,7 @@
         date
       });
     }
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     document.getElementById('futureAddBox').style.display = 'none';
     render();
   };
@@ -3283,7 +3286,7 @@
         done: false,
         date: todayStr
       });
-      saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+      saveData(state);
       render();
     }
   };
@@ -3303,7 +3306,7 @@
         date: todayStr
       });
     }
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     render();
   };
 
@@ -3334,7 +3337,7 @@
       missedDays: `${daysAgo} day${daysAgo > 1 ? 's' : ''} ago`,
       date: shiftDate(-parseInt(daysAgo))
     });
-    saveData(state); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveData(state);
     window.toggleBacklogAddBox();
     render();
   };
@@ -3393,7 +3396,7 @@
     const it = coachingRevData.find(x => x.id === id);
     if (it) {
       it.done = !it.done;
-      saveCoachingRev(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+      saveCoachingRev();
       renderRevision();
     if (typeof renderHubWidgets === "function") renderHubWidgets();
     }
@@ -3401,7 +3404,7 @@
 
   window.akDeleteLecture = function(id) {
     coachingRevData = coachingRevData.filter(x => x.id !== id);
-    saveCoachingRev(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveCoachingRev();
     renderRevision();
     if (typeof renderHubWidgets === "function") renderHubWidgets();
   };
@@ -3440,7 +3443,7 @@
       desc: (descInp && descInp.value.trim()) || 'Revise notes & illustrations',
       done: false
     });
-    saveCoachingRev(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    saveCoachingRev();
     document.getElementById('revAddBox').style.display = 'none';
     renderRevision();
     if (typeof renderHubWidgets === "function") renderHubWidgets();
@@ -3593,6 +3596,23 @@
     setTxt('hubProfileStreak', `🔥 ${s} Days Active Streak`);
     setTxt('hmStreakFire', `🔥 ${s}d`);
     setTxt('hmBestStreak', `${b}d`);
+    const stickyBtn = document.getElementById('pullStickyBtn');
+    if (stickyBtn) {
+      const pulled = (streakState.lastActiveDate === todayStr && typeof hmLevels !== 'undefined' && hmLevels[todayIdx] === 3);
+      if (pulled) {
+        stickyBtn.innerHTML = '<span>🔥</span> Sticky Pulled Today &bull; Productive! (Undo)';
+        stickyBtn.style.borderStyle = 'solid';
+        stickyBtn.style.background = 'var(--accent-grad)';
+        stickyBtn.style.color = 'var(--accent-text)';
+        stickyBtn.style.borderColor = 'transparent';
+      } else {
+        stickyBtn.innerHTML = '<span>🗒️</span> Pull Today\'s Sticky (Mark Productive)';
+        stickyBtn.style.borderStyle = 'dashed';
+        stickyBtn.style.background = 'var(--complement-dim)';
+        stickyBtn.style.color = 'var(--complement)';
+        stickyBtn.style.borderColor = 'var(--complement-border)';
+      }
+    }
   }
 
   // =========================================================
@@ -3636,7 +3656,7 @@
   window.onStudyScaleInput = function(val) {
     const hrs = Math.max(0, Math.min(14, parseFloat(val) || 0));
     pcmState.focusMins = Math.round(hrs * 60);
-    savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    savePcm();
     renderHubWidgets();
   };
 
@@ -3644,18 +3664,14 @@
     const curHrs = (pcmState.focusMins || 0) / 60;
     const nextHrs = Math.max(0, Math.min(14, Math.round((curHrs + delta) * 2) / 2));
     pcmState.focusMins = Math.round(nextHrs * 60);
-    savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+    savePcm();
     renderHubWidgets();
   };
 
   window.chgPcmQ = function(subj, delta) {
     pcmState[subj] = Math.max(0, (pcmState[subj] || 0) + delta);
-    // Automatically update Day 8+ live cell based on total questions solved
-    const tot = pcmState.Phy + pcmState.Chem + pcmState.Math;
-    const totAim = pcmState.aim * 3;
-    hmLevels[todayIdx] = 3; // Automatic fire on widget interaction
-    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
-    savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+
+    savePcm();
     renderHubWidgets();
   };
 
@@ -3664,16 +3680,32 @@
     const num = parseInt(val, 10);
     if (num && num > 0 && num <= 200) {
       pcmState.aim = num;
-      savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
+      savePcm();
       renderHubWidgets();
     }
   };
 
 
-  window.toggleTodayFire = function() {
-    hmLevels[todayIdx] = (hmLevels[todayIdx] === 3) ? 2 : 3;
+  window.pullTodaySticky = function() {
+    const alreadyPulled = (streakState.lastActiveDate === todayStr && hmLevels[todayIdx] === 3);
+    if (alreadyPulled) {
+      // Undo sticky pull
+      streakState.streak = Math.max(0, (streakState.streak || 1) - 1);
+      streakState.lastActiveDate = yesterdayStr;
+      hmLevels[todayIdx] = 0;
+    } else {
+      // Pull sticky note after a productive day -> +1 streak & 🔥 Today!
+      if (streakState.lastActiveDate !== todayStr) {
+        streakState.streak = (streakState.lastActiveDate === yesterdayStr || (streakState.streak || 0) > 0)
+          ? (streakState.streak || 0) + 1
+          : 1;
+        streakState.lastActiveDate = todayStr;
+      }
+      streakState.bestStreak = Math.max(streakState.bestStreak || 0, streakState.streak);
+      hmLevels[todayIdx] = 3;
+    }
+    saveStreak();
     try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
-    if (typeof recordDailyActivity === "function") recordDailyActivity();
     renderHubWidgets();
   };
 
