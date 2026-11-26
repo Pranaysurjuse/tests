@@ -2766,7 +2766,8 @@
 
   window.toggleLogoHub = function() {
     if (activeWidget === 'hub') {
-      window.closeAllDrawers();
+      render();
+  window.closeAllDrawers();
     } else {
       window.openWidget('hub');
     }
@@ -2837,7 +2838,8 @@
   // =========================================================
   window.toggleActiveWidget = function(widgetName) {
     if (activeWidget === widgetName) {
-      window.closeAllDrawers();
+      render();
+  window.closeAllDrawers();
     } else {
       window.openWidget(widgetName);
     }
@@ -3796,6 +3798,7 @@
     wrap.appendChild(closeBtn);
   });
 
+  render();
   window.closeAllDrawers();
 
   // =========================================================
