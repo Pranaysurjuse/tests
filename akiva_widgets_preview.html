@@ -2239,7 +2239,7 @@
       <!-- 🔥 Streak & Consistency (From Day 8) -->
       <div class="hub-widget-card">
         <div class="hub-widget-head">
-          <span class="hub-widget-title">🔥 Streak &amp; Consistency <button onclick="resetStreakToDay8()" title="Reset to Day 8" style="background:none; border:none; color:var(--text-muted); font-size:9.5px; cursor:pointer; margin-left:4px;">↺</button></span>
+          <span class="hub-widget-title">🔥 Streak &amp; Consistency <button onclick="toggleTodayFire()" title="Toggle Today 🔥 Fire" style="background:rgba(255,90,44,0.14); border:1px solid rgba(255,90,44,0.35); color:var(--flame); border-radius:5px; font-size:9px; font-weight:800; padding:1px 5px; cursor:pointer; margin-left:4px;">🔥 Today</button><button onclick="resetStreakToDay8()" title="Reset to Day 8" style="background:none; border:none; color:var(--text-muted); font-size:9.5px; cursor:pointer; margin-left:4px;">↺</button></span>
           <span class="hub-widget-badge" id="hmConsistBadge">From Day 8 • 100%</span>
         </div>
         <div class="hm-well" id="hubHeatmapGrid"></div>
@@ -3537,8 +3537,8 @@
     saveStreak();
     // Keep Day 8+ heatmap cell active today
     const cellIdx = todayIdx;
-    if (hmLevels[cellIdx] === 0) {
-      hmLevels[cellIdx] = 2;
+    if (hmLevels[cellIdx] < 3) {
+      hmLevels[cellIdx] = 3;
       try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     }
     renderStreakUI();
@@ -3586,6 +3586,13 @@
   // 11. HUB COCKPIT: PCM CALCULATOR, HEATMAP & SCOREBOARD
   // =========================================================
   const PCM_KEY = 'akiva_pcm_questions_v1';
+  let pcmState = { date: todayStr, aim: 30, Phy: 0, Chem: 0, Math: 0, focusMins: 390 };
+  try {
+    const savedPcm = JSON.parse(localStorage.getItem(PCM_KEY) || 'null');
+    if (savedPcm && savedPcm.date === todayStr) pcmState = savedPcm;
+    else if (savedPcm && savedPcm.aim) pcmState.aim = savedPcm.aim;
+  } catch(e) {}
+
   const HM_KEY = 'akiva_jan1_full_v2';
   const SPRINT_START = '2026-11-19';
   const TARGET_END = '2027-01-01';
@@ -3647,6 +3654,14 @@
       savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
       renderHubWidgets();
     }
+  };
+
+
+  window.toggleTodayFire = function() {
+    hmLevels[todayIdx] = (hmLevels[todayIdx] === 3) ? 2 : 3;
+    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
+    if (typeof recordDailyActivity === "function") recordDailyActivity();
+    renderHubWidgets();
   };
 
   window.cycleHmCell = function(idx) {
