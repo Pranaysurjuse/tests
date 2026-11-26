@@ -3494,14 +3494,14 @@
   // =========================================================
   // LIVE DATE-BASED STREAK ENGINE (Starts at Day 8)
   // =========================================================
-  const STREAK_KEY = 'akiva_streak_live_v1';
+  const STREAK_KEY = 'akiva_streak_live_v2';
   const yesterdayStr = shiftDate(-1);
 
   let streakState = {
-    streak: 8,
-    bestStreak: 8,
-    lastActiveDate: todayStr,
-    activeDates: [todayStr]
+    streak: 7,
+    bestStreak: 7,
+    lastActiveDate: yesterdayStr,
+    activeDates: []
   };
   try {
     const savedSt = JSON.parse(localStorage.getItem(STREAK_KEY) || 'null');
@@ -3535,10 +3535,9 @@
     }
     streakState.bestStreak = Math.max(streakState.bestStreak || 0, streakState.streak);
     saveStreak();
-    // Keep Day 8+ heatmap cell active today
-    const cellIdx = todayIdx;
-    if (hmLevels[cellIdx] < 3) {
-      hmLevels[cellIdx] = 3;
+    // Automatically light Today's cell with 🔥 Fire upon any widget interaction
+    if (typeof hmLevels !== 'undefined' && hmLevels[todayIdx] !== 3) {
+      hmLevels[todayIdx] = 3;
       try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     }
     renderStreakUI();
@@ -3559,14 +3558,14 @@
 
   window.resetStreakToDay8 = function() {
     streakState = {
-      streak: 8,
-      bestStreak: 8,
-      lastActiveDate: todayStr,
-      activeDates: [todayStr]
+      streak: 7,
+      bestStreak: 7,
+      lastActiveDate: yesterdayStr,
+      activeDates: []
     };
     saveStreak();
     hmLevels = new Array(SPRINT_DAYS).fill(0);
-    for (let k = 0; k <= todayIdx; k++) hmLevels[k] = 2;
+    for (let k = 0; k < todayIdx; k++) hmLevels[k] = 2;
     try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     render();
   };
@@ -3593,7 +3592,7 @@
     else if (savedPcm && savedPcm.aim) pcmState.aim = savedPcm.aim;
   } catch(e) {}
 
-  const HM_KEY = 'akiva_jan1_full_v2';
+  const HM_KEY = 'akiva_jan1_fire_v3';
   const SPRINT_START = '2026-11-19';
   const TARGET_END = '2027-01-01';
   const sprintDates = [];
@@ -3609,7 +3608,7 @@
   const todayIdx = Math.max(0, sprintDates.indexOf(todayStr));
 
   let hmLevels = new Array(SPRINT_DAYS).fill(0);
-  for (let k = 0; k <= todayIdx; k++) hmLevels[k] = 2; // Days 1..8 active
+  for (let k = 0; k < todayIdx; k++) hmLevels[k] = 2; // Past Days 1..7 active; Today awaits interaction
   try {
     const savedHm = JSON.parse(localStorage.getItem(HM_KEY) || 'null');
     if (Array.isArray(savedHm) && savedHm.length === SPRINT_DAYS) hmLevels = savedHm;
@@ -3640,7 +3639,7 @@
     // Automatically update Day 8+ live cell based on total questions solved
     const tot = pcmState.Phy + pcmState.Chem + pcmState.Math;
     const totAim = pcmState.aim * 3;
-    hmLevels[todayIdx] = tot >= totAim * 0.75 ? 3 : (tot >= totAim * 0.35 ? 2 : (tot > 0 ? 1 : 0));
+    hmLevels[todayIdx] = 3; // Automatic fire on widget interaction
     try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
     savePcm(); if (typeof recordDailyActivity === "function") recordDailyActivity();
     renderHubWidgets();
@@ -3688,7 +3687,7 @@
     setW('pcmBarMath', pcmState.Math);
 
     // Heatmap (Nov 26 -> Dec 1 Target Sprint)
-    if (hmLevels.every(x => x === 0)) { for (let k = 0; k <= todayIdx; k++) hmLevels[k] = 2; }
+    if (hmLevels.every(x => x === 0)) { for (let k = 0; k < todayIdx; k++) hmLevels[k] = 2; }
     const hmGrid = document.getElementById('hubHeatmapGrid');
     if (hmGrid) {
       hmGrid.innerHTML = sprintDates.map((dStr, i) => {
