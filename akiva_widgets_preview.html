@@ -2249,7 +2249,11 @@
             <div class="hm-stat-lbl">Active Days</div>
           </div>
           <div class="hm-stat-box">
-            <div class="hm-stat-val" id="hmStreakFire" onclick="editStreakDays()" style="color:var(--complement); cursor:pointer;" title="Click to edit streak">🔥 8d</div>
+            <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+              <button class="pcm-btn" style="background:rgba(255,255,255,0.06); color:var(--text-muted); padding:1px 5px;" onclick="stepStreak(-1)" title="Decrease streak">-</button>
+              <div class="hm-stat-val" id="hmStreakFire" onclick="editStreakDays()" style="color:var(--complement); cursor:pointer;" title="Click to edit streak">🔥 8d</div>
+              <button class="pcm-btn" style="background:var(--complement-dim); color:var(--complement); padding:1px 5px;" onclick="stepStreak(1)" title="Increase streak">+</button>
+            </div>
             <div class="hm-stat-lbl">Streak Fire</div>
           </div>
           <div class="hm-stat-box">
@@ -3494,12 +3498,12 @@
   // =========================================================
   // LIVE DATE-BASED STREAK ENGINE (Starts at Day 8)
   // =========================================================
-  const STREAK_KEY = 'akiva_streak_live_v2';
+  const STREAK_KEY = 'akiva_streak_live_v3';
   const yesterdayStr = shiftDate(-1);
 
   let streakState = {
-    streak: 7,
-    bestStreak: 7,
+    streak: 8,
+    bestStreak: 8,
     lastActiveDate: yesterdayStr,
     activeDates: []
   };
@@ -3544,6 +3548,16 @@
   };
 
 
+
+  window.stepStreak = function(delta) {
+    const next = Math.max(0, Math.min(365, (streakState.streak || 0) + delta));
+    streakState.streak = next;
+    streakState.bestStreak = Math.max(streakState.bestStreak || 0, next);
+    streakState.lastActiveDate = todayStr;
+    saveStreak();
+    renderStreakUI();
+  };
+
   window.editStreakDays = function() {
     const val = prompt('Set current streak days (e.g. 8):', streakState.streak || 8);
     const num = parseInt(val, 10);
@@ -3558,8 +3572,8 @@
 
   window.resetStreakToDay8 = function() {
     streakState = {
-      streak: 7,
-      bestStreak: 7,
+      streak: 8,
+      bestStreak: 8,
       lastActiveDate: yesterdayStr,
       activeDates: []
     };
@@ -3592,8 +3606,8 @@
     else if (savedPcm && savedPcm.aim) pcmState.aim = savedPcm.aim;
   } catch(e) {}
 
-  const HM_KEY = 'akiva_jan1_fire_v3';
-  const SPRINT_START = '2026-11-19';
+  const HM_KEY = 'akiva_jan1_fire_v4';
+  const SPRINT_START = '2026-11-18';
   const TARGET_END = '2027-01-01';
   const sprintDates = [];
   (function buildSprintDates() {
