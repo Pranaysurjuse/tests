@@ -1661,7 +1661,7 @@
     background: var(--complement);
     box-shadow: 0 0 8px var(--complement);
   }
-  .cal-weekdays span:nth-child(6),
+  .cal-weekdays span:nth-child(1),
   .cal-weekdays span:nth-child(7) {
     color: var(--complement) !important;
   }
@@ -2348,7 +2348,7 @@
   <!-- ======================================================= -->
   <div class="akiva-drawer" id="drawer-radar">
     <div class="drawer-hud">
-      <span class="drawer-hud-title">TEST RADAR &bull; NOVEMBER 2026</span>
+      <span class="drawer-hud-title" id="radarHudMonthTitle">TEST RADAR &bull; NOVEMBER 2026</span>
       <button class="drawer-hud-close" onclick="closeAllDrawers()">&times;</button>
     </div>
 
@@ -2362,8 +2362,9 @@
 
     <!-- Mini Calendar -->
     <div class="calendar-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;"><button onclick="shiftCalMonth(-1)" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:12px; padding:0 6px;">&lsaquo;</button><span id="calMonthLbl" style="font-size:11px; font-weight:800; color:var(--text-primary); letter-spacing:0.04em;">November 2026</span><button onclick="shiftCalMonth(1)" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:12px; padding:0 6px;">&rsaquo;</button></div>
       <div class="cal-weekdays">
-        <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
       </div>
       <div class="cal-grid-cells" id="radarCalGrid"></div>
     </div>
@@ -3055,25 +3056,47 @@
     renderRadar();
   };
 
+  let calViewYear = new Date().getFullYear();
+  let calViewMonth = new Date().getMonth();
+
+  window.shiftCalMonth = function(delta) {
+    calViewMonth += delta;
+    if (calViewMonth < 0) { calViewMonth = 11; calViewYear--; }
+    else if (calViewMonth > 11) { calViewMonth = 0; calViewYear++; }
+    renderRadar();
+  };
+
   function renderRadar() {
     const grid = document.getElementById('radarCalGrid');
     if (grid) {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth();
-      const currentDay = now.getDate();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const mName = `${monthNames[calViewMonth]} ${calViewYear}`;
+      const lbl = document.getElementById('calMonthLbl');
+      if (lbl) lbl.textContent = mName;
+      const hudTitle = document.getElementById('radarHudMonthTitle');
+      if (hudTitle) hudTitle.textContent = `TEST RADAR • ${mName.toUpperCase()}`;
+
+      const firstWeekday = new Date(calViewYear, calViewMonth, 1).getDay(); // 0=Su .. 6=Sa
+      const daysInMonth = new Date(calViewYear, calViewMonth + 1, 0).getDate();
+      const prevMonthDays = new Date(calViewYear, calViewMonth, 0).getDate();
       const testDatesSet = new Set(state.tests.map(t => t.date));
 
       let html = '';
-      for (let i = 0; i < 4; i++) html += `<span class="cal-cell muted">${27 + i}</span>`;
+      for (let i = firstWeekday - 1; i >= 0; i--) {
+        html += `<span class="cal-cell muted">${prevMonthDays - i}</span>`;
+      }
       for (let d = 1; d <= daysInMonth; d++) {
-        const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dStr = `${calViewYear}-${String(calViewMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         let cls = 'cal-cell';
-        if (d === currentDay) cls += ' today';
+        if (dStr === todayStr) cls += ' today';
         if (testDatesSet.has(dStr)) cls += ' test-day';
         const style = selectedCalDate === dStr ? 'outline:2px solid var(--accent); color:#fff;' : '';
         html += `<span class="${cls}" style="${style}" onclick="selectCalDate('${dStr}')">${d}</span>`;
+      }
+      const totalCells = firstWeekday + daysInMonth;
+      const trailing = (7 - (totalCells % 7)) % 7;
+      for (let t = 1; t <= trailing; t++) {
+        html += `<span class="cal-cell muted">${t}</span>`;
       }
       grid.innerHTML = html;
     }
