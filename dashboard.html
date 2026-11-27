@@ -2598,7 +2598,7 @@
   // =========================================================
   // 1. ALL CONSTANTS & STATE AT TOP (No TDZ ReferenceErrors)
   // =========================================================
-  const STORAGE_KEY = 'akiva_suite_v5_data';
+  const STORAGE_KEY = 'akiva_suite_clean_v6';
   const THEME_KEY = 'akiva_suite_v5_theme';
   const HUB_THEME_KEY = 'akiva_hub_slider_theme';
   const REV_KEY = 'akiva_revision_v1';
@@ -2614,22 +2614,9 @@
   }
 
   const defaultState = {
-    tasks: [
-      { id: 't_kinematics', title: 'Kinematics', path: 'Kinematics >> Physics', subject: 'Physics', mode: 'L', exam: 'JEE Mains + Adv', timeLeft: '23 hrs', done: false, date: todayStr },
-      { id: 't_mole', title: 'Mole Concepts Practice', path: 'Chemistry >> Physical Chem', subject: 'Chemistry', mode: 'P', exam: 'JEE Mains', timeLeft: '18 hrs', done: true, date: todayStr },
-      { id: 't_matrices', title: 'Matrices & Determinants', path: 'Maths >> Algebra', subject: 'Maths', mode: 'R', exam: 'JEE Mains + Adv', timeLeft: '14 hrs', done: false, date: todayStr },
-      { id: 't_solids', title: 'Mechanical Properties of Solids', path: 'Physics >> Mechanics', subject: 'Physics', mode: 'L', exam: 'JEE Mains', timeLeft: '21 hrs', done: false, date: todayStr },
-      { id: 'ft_demo1', title: 'Rotational Dynamics PYQs', path: 'Physics >> Planned', subject: 'Physics', mode: 'P', exam: 'JEE Mains + Adv', timeLeft: shiftDate(1), done: false, date: shiftDate(1) }
-    ],
-    backlogs: [
-      { id: 'b_ionic', title: 'Ionic Equilibrium Buffer Formulas', path: 'Chemistry >> Physical Chem', subject: 'Chemistry', missedDays: '2 days ago', date: shiftDate(-2) },
-      { id: 'b_com', title: 'Centre of Mass Collisions Revision', path: 'Physics >> Mechanics', subject: 'Physics', missedDays: '1 day ago', date: shiftDate(-1) }
-    ],
-    tests: [
-      { id: 1, name: 'Coaching Part Test #5', pattern: 'JEE Main', date: shiftDate(2), syllabus: 'Rotational • Ionic Eq • Definite Int', badge: 'in 2d', badgeClass: 'badge-amber' },
-      { id: 2, name: 'All India Test Series (AITS-1)', pattern: 'JEE Adv (P1+P2)', date: shiftDate(7), syllabus: 'Full Mechanics + Physical Chem', badge: 'in 7d', badgeClass: 'badge-blue' },
-      { id: 3, name: 'Monthly Full Mock #2', pattern: 'JEE Main', date: shiftDate(14), syllabus: 'Full 11th Syllabus Test', badge: 'in 14d', badgeClass: 'badge-rose' }
-    ]
+    tasks: [],
+    backlogs: [],
+    tests: []
   };
 
   const defaultRev = {
@@ -2650,7 +2637,7 @@
     } catch(e) { return defaultState; }
   }
   function saveData(d) {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e) {}
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
   }
 
   let state = loadData();
@@ -3426,20 +3413,16 @@
   // 9. WIDGET 5: COACHING LECTURE REVISION
   // =========================================================
   const REV_CIRC = 163.36;
-  const defaultCoachingRev = [
-    { id: '1', title: 'Rotational Motion', subject: 'Physics', desc: 'Revise notes & class illustrations', done: false },
-    { id: '2', title: 'Ionic Equilibrium', subject: 'Chemistry', desc: 'Buffer solutions & Hydrolysis formulas', done: false },
-    { id: '3', title: 'Definite Integration', subject: 'Maths', desc: 'Properties 1 to 4 formulas review', done: false }
-  ];
+  const defaultCoachingRev = [];
   let coachingRevData = defaultCoachingRev;
   try {
-    const saved = localStorage.getItem('akiva_coaching_revision_v1');
+    const saved = localStorage.getItem('akiva_coaching_revision_v2');
     if (saved) coachingRevData = JSON.parse(saved);
-    else localStorage.setItem('akiva_coaching_revision_v1', JSON.stringify(coachingRevData));
+    else localStorage.setItem('akiva_coaching_revision_v2', JSON.stringify(coachingRevData));
   } catch(e) {}
 
   function saveCoachingRev() {
-    try { localStorage.setItem('akiva_coaching_revision_v1', JSON.stringify(coachingRevData)); } catch(e) {}
+    try { localStorage.setItem('akiva_coaching_revision_v2', JSON.stringify(coachingRevData)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
   }
 
   window.akToggleDone = function(id) {
@@ -3526,6 +3509,10 @@
       dockBadge.style.background = left === 0 && total > 0 ? '#10b981' : '#f59e0b';
     }
 
+    if (coachingRevData.length === 0) {
+      list.innerHTML = '<div style="text-align:center; padding:22px 10px; color:var(--text-muted); font-size:11.5px;">No lectures added yet. Click "+ Add Topic For Revision" below!</div>';
+      return;
+    }
     list.innerHTML = coachingRevData.map(item => {
       const sc = item.subject === 'Chemistry' ? 'subj-chem' : (item.subject === 'Maths' ? 'subj-math' : 'subj-phy');
       return `
@@ -3572,7 +3559,7 @@
   } catch(e) {}
 
   function saveStreak() {
-    try { localStorage.setItem(STREAK_KEY, JSON.stringify(streakState)); } catch(e) {}
+    try { localStorage.setItem(STREAK_KEY, JSON.stringify(streakState)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
   }
 
   window.recordDailyActivity = function() {
@@ -3595,7 +3582,7 @@
     // Automatically light Today's cell with 🔥 Fire upon any widget interaction
     if (typeof hmLevels !== 'undefined' && hmLevels[todayIdx] !== 3) {
       hmLevels[todayIdx] = 3;
-      try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
+      try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
     }
     renderStreakUI();
   };
@@ -3633,7 +3620,7 @@
     saveStreak();
     hmLevels = new Array(SPRINT_DAYS).fill(0);
     for (let k = 0; k < todayIdx; k++) hmLevels[k] = 2;
-    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
+    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
     render();
   };
 
@@ -3699,7 +3686,7 @@
   } catch(e) {}
 
   function savePcm() {
-    try { localStorage.setItem(PCM_KEY, JSON.stringify(pcmState)); } catch(e) {}
+    try { localStorage.setItem(PCM_KEY, JSON.stringify(pcmState)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
   }
 
 
@@ -3755,13 +3742,13 @@
       hmLevels[todayIdx] = 3;
     }
     saveStreak();
-    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
+    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
     renderHubWidgets();
   };
 
   window.cycleHmCell = function(idx) {
     hmLevels[idx] = (hmLevels[idx] + 1) % 4;
-    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {}
+    try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
     renderHubWidgets();
   };
 
@@ -3879,16 +3866,82 @@
   try { window.setHubTheme(localStorage.getItem(HUB_THEME_KEY) || 'auto'); } catch(e) { window.setHubTheme('auto'); }
 
 
+
+  // =========================================================
+  // DISK-BACKED PERSISTENCE SYNC (/api/state on localhost)
+  // =========================================================
+  const IS_LOCALHOST = (location.hostname === 'localhost' || location.hostname === '127.0.0.1');
+  let _syncTimer = null;
+  function syncToServer() {
+    if (!IS_LOCALHOST) return;
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(() => {
+      try {
+        fetch('/api/state', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            [STORAGE_KEY]: state,
+            [PCM_KEY]: pcmState,
+            [HM_KEY]: hmLevels,
+            [STREAK_KEY]: streakState,
+            akiva_coaching_revision_v2: coachingRevData
+          })
+        }).catch(() => {});
+      } catch(e) {}
+    }, 150);
+  }
+
+  function syncFromServer() {
+    if (!IS_LOCALHOST) return;
+    fetch('/api/state')
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (!data || typeof data !== 'object') return;
+        let updated = false;
+        if (data[STORAGE_KEY]) {
+          state = data[STORAGE_KEY];
+          try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+          updated = true;
+        }
+        if (data[PCM_KEY] && data[PCM_KEY].date === todayStr) {
+          pcmState = data[PCM_KEY];
+          try { localStorage.setItem(PCM_KEY, JSON.stringify(pcmState)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
+          updated = true;
+        }
+        if (Array.isArray(data[HM_KEY]) && data[HM_KEY].length === SPRINT_DAYS) {
+          hmLevels = data[HM_KEY];
+          try { localStorage.setItem(HM_KEY, JSON.stringify(hmLevels)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
+          updated = true;
+        }
+        if (data[STREAK_KEY]) {
+          streakState = data[STREAK_KEY];
+          try { localStorage.setItem(STREAK_KEY, JSON.stringify(streakState)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
+          updated = true;
+        }
+        if (Array.isArray(data.akiva_coaching_revision_v2)) {
+          coachingRevData = data.akiva_coaching_revision_v2;
+          try { localStorage.setItem('akiva_coaching_revision_v2', JSON.stringify(coachingRevData)); } catch(e) {} if (typeof syncToServer === "function") syncToServer();
+          updated = true;
+        }
+        if (updated) {
+          rolloverExpiredTasks();
+          render();
+        }
+      }).catch(() => {});
+  }
+
   window.addEventListener('storage', function(e) {
     if (e.key === STORAGE_KEY && e.newValue) {
       try { state = JSON.parse(e.newValue); render(); } catch(err) {}
-    } else if (e.key === 'akiva_coaching_revision_v1' && e.newValue) {
+    } else if (e.key === 'akiva_coaching_revision_v2' && e.newValue) {
       try { coachingRevData = JSON.parse(e.newValue); render(); } catch(err) {}
     } else if (e.key === STREAK_KEY && e.newValue) {
       try { streakState = JSON.parse(e.newValue); render(); } catch(err) {}
     }
   });
 
+  syncFromServer();
   setInterval(updateDeskClock, 1000);
   updateDeskClock();
   setInterval(updateHubClock, 1000);
