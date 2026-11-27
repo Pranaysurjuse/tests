@@ -2659,7 +2659,9 @@
   function loadData() {
     try {
       const s = localStorage.getItem(STORAGE_KEY);
-      return s ? JSON.parse(s) : defaultState;
+      if (s) return JSON.parse(s);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultState));
+      return defaultState;
     } catch(e) { return defaultState; }
   }
   function saveData(d) {
@@ -2676,6 +2678,64 @@
   function saveRev() {
     try { localStorage.setItem(REV_KEY, JSON.stringify(revState)); } catch(e) {}
   }
+
+  // =========================================================
+  // 24-HOUR TASK LIFESPAN & ROLLOVER TO BACKLOG (Fixes 4-5hr / Midnight Reset)
+  // =========================================================
+  const TASK_SPAN_MS = 24 * 60 * 60 * 1000;
+
+  function isTaskActiveToday(t) {
+    if (t.date > todayStr) return false; // Future task stays in Future until its date arrives
+    if (t.date === todayStr) return true;
+    // If created within last 24 hours, keep in Today's Tasks even across midnight!
+    const created = t.createdAt || new Date(t.date + 'T12:00:00').getTime();
+    return (Date.now() - created) < TASK_SPAN_MS;
+  }
+
+  function rolloverExpiredTasks() {
+    let changed = false;
+    const now = Date.now();
+    const keep = [];
+    (state.tasks || []).forEach(t => {
+      if (!t.createdAt) {
+        t.createdAt = (t.date === todayStr) ? now : new Date(t.date + 'T12:00:00').getTime();
+        changed = true;
+      }
+      const age = now - t.createdAt;
+      // Only roll over AFTER full 24 hours AND date has passed
+      if (t.date < todayStr && age >= TASK_SPAN_MS) {
+        if (!t.done) {
+          state.backlogs = state.backlogs || [];
+          if (!state.backlogs.some(b => b.id === 'b_' + t.id || b.title === t.title)) {
+            state.backlogs.unshift({
+              id: 'b_' + t.id,
+              title: t.title,
+              path: t.path || `${t.subject} >> Missed`,
+              subject: t.subject || 'Physics',
+              missedDays: t.date,
+              date: t.date
+            });
+          }
+        }
+        changed = true;
+      } else {
+        keep.push(t);
+      }
+    });
+    if (changed) {
+      state.tasks = keep;
+      saveData(state);
+    }
+  }
+
+  function getTaskTimeLeft(t) {
+    const created = t.createdAt || Date.now();
+    const hrs = Math.max(1, Math.ceil((created + TASK_SPAN_MS - Date.now()) / 3600000));
+    return `${hrs} hrs`;
+  }
+
+
+  rolloverExpiredTasks();
 
   let activeWidget = 'task';
   let activeHubTheme = 'auto';
@@ -2968,7 +3028,8 @@
       exam: 'JEE Mains + Adv',
       timeLeft: '24 hrs',
       done: false,
-      date: todayStr
+      date: todayStr,
+      createdAt: Date.now()
     });
     saveData(state);
     window.toggleTaskAddBox();
@@ -2979,7 +3040,7 @@
     const container = document.getElementById('taskListContainer');
     if (!container) return;
 
-    let list = state.tasks.filter(t => t.date === todayStr);
+    let list = state.tasks.filter(isTaskActiveToday);
     if (taskFilter === 'today') list = list.filter(t => !t.done);
     else if (taskFilter === 'completed') list = list.filter(t => t.done);
 
@@ -3010,7 +3071,7 @@
             <span class="mode-badge ${t.mode === 'R' ? 'active' : ''}" onclick="cycleTaskMode('${t.id}')">R</span>
           </div>
           <span class="exam-badge">${t.exam}</span>
-          <span class="time-left-badge">⏱️ ${t.timeLeft}</span>
+          <span class="time-left-badge">⏱️ ${getTaskTimeLeft(t)}</span>
         </div>
       </div>
     `).join('');
@@ -3284,7 +3345,8 @@
         exam: 'JEE Mains + Adv',
         timeLeft: '24 hrs',
         done: false,
-        date: todayStr
+        date: todayStr,
+        createdAt: Date.now()
       });
       saveData(state);
       render();
@@ -3386,6 +3448,7 @@
   try {
     const saved = localStorage.getItem('akiva_coaching_revision_v1');
     if (saved) coachingRevData = JSON.parse(saved);
+    else localStorage.setItem('akiva_coaching_revision_v1', JSON.stringify(coachingRevData));
   } catch(e) {}
 
   function saveCoachingRev() {
@@ -3753,7 +3816,7 @@
     if (typeof renderStreakUI === 'function') renderStreakUI();
 
     // Daily Scoreboard (Tasks + Revision + Questions)
-    const todayTasks = state.tasks.filter(t => t.date === todayStr);
+    const todayTasks = state.tasks.filter(isTaskActiveToday);
     const tDone = todayTasks.filter(t => t.done).length;
     const tTot = todayTasks.length;
     const rDone = coachingRevData.filter(d => d.done).length;
@@ -3783,7 +3846,7 @@
   // 10. MASTER RENDER & INITIALIZATION
   // =========================================================
   function render() {
-    const todayTasks = state.tasks.filter(t => t.date === todayStr);
+    const todayTasks = state.tasks.filter(isTaskActiveToday);
     const total = todayTasks.length;
     const completed = todayTasks.filter(t => t.done).length;
     const planned = total - completed;
@@ -3827,6 +3890,17 @@
   window.applyTheme(savedTheme);
 
   try { window.setHubTheme(localStorage.getItem(HUB_THEME_KEY) || 'auto'); } catch(e) { window.setHubTheme('auto'); }
+
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === STORAGE_KEY && e.newValue) {
+      try { state = JSON.parse(e.newValue); render(); } catch(err) {}
+    } else if (e.key === 'akiva_coaching_revision_v1' && e.newValue) {
+      try { coachingRevData = JSON.parse(e.newValue); render(); } catch(err) {}
+    } else if (e.key === STREAK_KEY && e.newValue) {
+      try { streakState = JSON.parse(e.newValue); render(); } catch(err) {}
+    }
+  });
 
   setInterval(updateDeskClock, 1000);
   updateDeskClock();
